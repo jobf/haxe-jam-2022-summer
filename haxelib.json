@@ -1,0 +1,20 @@
+{
+    "name": "tyke",
+    "url" : "https://github.com/jobf/tyke/",
+    "license": "MIT",
+    "tags": ["game", "lime", "peote", "thanks"],
+    "description": "what even is an engine?",
+    "version": "0.0.1",
+    "releasenote": "not released",
+    "contributors": ["jobf"],
+    "classPath": "src",
+    "dependencies": {
+        "lime": "",
+        "peote-view": "",
+        "peote-text": "",
+        "json2object":"",
+        "echo": "",
+        "hxmath": "",
+        "ob.gum": ""
+    }
+}

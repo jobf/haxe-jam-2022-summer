@@ -1,0 +1,23 @@
+{
+    "runItOn": {
+        "commands": [
+            // build whenever a file is saved
+            // change .hx- to .hx to enable
+            {
+                "match": ".hx-",
+                "isShellCommand": true,
+                "cmd": "lime build html5 --app-main=Samples.AsciiApp -debug"
+            }
+        ],
+    },
+    // live serve from /bin directory
+    "liveServer.settings.root": "/bin/html5/bin",
+    // prevent live server from reloading when source files are edited (will still reload when the build dir changes)
+    "liveServer.settings.ignoreFiles": [
+        ".vscode/**",
+        "**/*.scss",
+        "**/*.sass",
+        "**/*.ts",
+        "**/*.hx"
+    ],
+}
