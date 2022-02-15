@@ -27,7 +27,12 @@ jobs:
         haxelib git echo https://github.com/AustinEast/echo.git
         haxelib git ob.gum https://github.com/jobf/ob.gum.git
     - name: Build
-      run: haxelib run lime build html5 -final
+      run: |
+        haxelib run lime build --app-main=Samples.ShapeDebugApp --app-path=bin-shapes html5 -final
+        haxelib run lime build --app-main=Samples.GlyphDemoApp --app-path=bin-glyph html5 -final
+        haxelib run lime build --app-main=Samples.TApp html5 -final
+        cp -a ./bin-shapes/html5/bin ./bin/html5/bin/shapes
+        cp -a ./bin-glyph/html5/bin ./bin/html5/bin/glyph
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       with:
