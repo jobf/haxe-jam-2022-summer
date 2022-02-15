@@ -1,0 +1,37 @@
+name: CI
+
+on: [push, pull_request, repository_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        persist-credentials: false
+    - uses: lix-pm/setup-lix@master
+    - uses: HaxeFlixel/setup-flixel@master
+      with:
+        haxe-version: stable
+        flixel-versions: release
+        target: html5
+    - name: Setup
+      run: |
+        haxelib install json2object
+        git clone https://github.com/maitag/peote-view.git
+        haxelib dev peote-view peote-view
+        git clone https://github.com/maitag/peote-text.git
+        haxelib git peote-text https://github.com/maitag/peote-text.git
+        haxelib dev peote-text peote-text
+        haxelib install hxmath
+        haxelib git echo https://github.com/AustinEast/echo.git
+        haxelib git ob.gum https://github.com/jobf/ob.gum.git
+    - name: Build
+      run: haxelib run lime build html5 -final
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{secrets.GITHUB_TOKEN}}
+        publish_dir: ./bin/html5/bin
+        force_orphan: true
+      if: github.ref == 'refs/heads/master'
