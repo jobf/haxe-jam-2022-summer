@@ -6,6 +6,23 @@ A grid and a game loop, what more do you want...
 
 api is still in the oven!
 
+## Samples
+
+Samples I am using to test the API etc. (works in progress).
+
+### glyph manipulation, sprites, physics, shaders
+
+https://jobf.github.io/tyke/
+
+### glyph manipulation
+
+https://jobf.github.io/tyke/glyph/
+
+### physics
+
+https://jobf.github.io/tyke/shapes/
+
+
 ## Quick start
 
 You need [haxe](https://haxe.org/download/) and [lime](https://lib.haxe.org/p/lime/) installed first
