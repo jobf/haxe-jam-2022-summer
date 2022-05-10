@@ -26,10 +26,11 @@ class Stage {
 		display.addProgram(program);
 		var view = new ViewElement(0, 0, display.width, display.height);
 		buffer.addElement(view);
-		globalFrameBuffer = makeFrameBuffer("frameBuffer");
+		final isGlobalFrameBufferPersistent = false;
+		globalFrameBuffer = makeFrameBuffer("globalFramebuffer", isGlobalFrameBufferPersistent);
 	}
 
-	public function globalFilter(formula:String, inject:String){
+	public function globalFilter(formula:String, inject:String) {
 		program.injectIntoFragmentShader(inject, true);
 		program.setColorFormula(formula);
 	}
@@ -38,42 +39,42 @@ class Stage {
 		program.addTexture(frameBuffer.texture, name, true);
 	}
 
-	function makeFrameBuffer(name:String): FrameBuffer{
-		var frameBuffer = coreLoop.getFrameBufferDisplay(display.x, display.y, display.width, display.height);
+	function makeFrameBuffer(name:String, isPersistent:Bool):FrameBuffer {
+		var frameBuffer = coreLoop.getFrameBufferDisplay(display.x, display.y, display.width, display.height, isPersistent);
 		chainFrameBuffer(frameBuffer, name);
 		return frameBuffer;
 	}
 
-	public function createLayer(name:String, useGlobalFrameBuffer:Bool = true) {
-		var fb = useGlobalFrameBuffer ? globalFrameBuffer : makeFrameBuffer(name);
+	public function createLayer(name:String, isPersistentFrameBuffer:Bool, useGlobalFrameBuffer:Bool = true):Layer {
+		var fb = useGlobalFrameBuffer ? globalFrameBuffer : makeFrameBuffer(name, isPersistentFrameBuffer);
 		var layer = new Layer(fb);
 		layers[name] = layer;
 		return layer;
 	}
 
-	function initGraphicsBuffer(name:String, buffer:IHaveGraphicsBuffer){
-		var layer = createLayer(name);
+	function initGraphicsBuffer(name:String, buffer:IHaveGraphicsBuffer, isPersistentFrameBuffer:Bool, isIndividualFrameBuffer:Bool ) {
+		var layer = createLayer(name, isPersistentFrameBuffer, !isIndividualFrameBuffer);
 		layer.registerGraphicsBuffer(buffer);
 		layer.addProgramToFrameBuffer(buffer.program);
 		layers[name] = layer;
 	}
 
-	public function createEchoDebugLayer():DrawShapes {
+	public function createShapeRenderLayer(isPersistentFrameBuffer:Bool = false, isIndividualFrameBuffer:Bool = false):DrawShapes {
 		final name = "echo";
 		var frames = new DrawShapes();
-		initGraphicsBuffer(name, frames);
+		initGraphicsBuffer(name, frames, isPersistentFrameBuffer, isIndividualFrameBuffer);
 		return frames;
 	}
 
-	public function createSpriteFramesLayer(name:String, image:Image, frameSize:Int):SpriteFrames {
+	public function createSpriteFramesLayer(name:String, image:Image, frameSize:Int, isPersistentFrameBuffer:Bool = false, isIndividualFrameBuffer:Bool = false):SpriteFrames {
 		var frames = new SpriteFrames(image, frameSize);
-		initGraphicsBuffer(name, frames);
+		initGraphicsBuffer(name, frames, isPersistentFrameBuffer, isIndividualFrameBuffer);
 		return frames;
 	}
 
-	public function createGlyphFramesLayer(name:String, font:Font<FontStyle>):GlyphFrames {
+	public function createGlyphFramesLayer(name:String, font:Font<FontStyle>, isPersistentFrameBuffer:Bool = false, isIndividualFrameBuffer:Bool = false):GlyphFrames {
 		var frames = new GlyphFrames(font);
-		initGraphicsBuffer(name, frames);
+		initGraphicsBuffer(name, frames, isPersistentFrameBuffer, isIndividualFrameBuffer);
 		return frames;
 	}
 
@@ -89,6 +90,14 @@ class Stage {
 
 	function get_height():Int {
 		return display.height;
+	}
+
+	public function centerX():Float {
+		return width * 0.5;
+	}
+
+	public function centerY():Float {
+		return height * 0.5;
 	}
 }
 
@@ -113,9 +122,10 @@ interface IHaveGraphicsBuffer {
 }
 
 class Layer {
-
 	var frameBuffer(default, null):FrameBuffer;
+
 	public var display(get, null):Display;
+
 	var buffers:Array<IHaveGraphicsBuffer>;
 
 	public function new(frameBuffer:FrameBuffer) {
@@ -133,7 +143,7 @@ class Layer {
 		buffers.push(frames);
 	}
 
-	public function addProgramToFrameBuffer(program:Program){
+	public function addProgramToFrameBuffer(program:Program) {
 		frameBuffer.display.addProgram(program);
 	}
 
@@ -166,8 +176,8 @@ class Tweens {
 
 	public function add(action:GranularAction) {
 		actions.push(action);
-		
 	}
 
-	public static var linear:(time:Float, begin:Float, change:Float, duration:Float) -> Float = (time, begin, change, duration) -> return change * time / duration + begin;
+	public static var linear:(time:Float, begin:Float, change:Float,
+		duration:Float) -> Float = (time, begin, change, duration) -> return change * time / duration + begin;
 }
