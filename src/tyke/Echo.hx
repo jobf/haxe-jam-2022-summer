@@ -22,7 +22,6 @@ class Utility {
 }
 
 class DrawShapes implements IHaveGraphicsBuffer {
-	// var display:Display;
 	var buffer:Buffer<Shape>;
 	var _program:Program;
 
@@ -33,7 +32,6 @@ class DrawShapes implements IHaveGraphicsBuffer {
 	}
 
 	public function new(bufferSize:Int = 256) {
-		// this.display = display;
 		buffer = new Buffer<Shape>(bufferSize, bufferSize, true);
 		_program = new Program(buffer);
 		_program.setFragmentFloatPrecision("high");
@@ -43,10 +41,7 @@ class DrawShapes implements IHaveGraphicsBuffer {
 		_program.setColorFormula(Shape.ColorFormula);
 	}
 
-	public function makeShape(body:BodyOptions, shape:Geometry, color:Color = Color.LIME):Shape {
-		var width = Std.int(body.shape.width);
-		var height = Std.int(body.shape.height);
-
+	public function makeShape(x:Int, y:Int, width:Int, height:Int, shape:Geometry, color:Color = Color.LIME):Shape {
 		var shapeType:Int = switch (shape) {
 			case CIRCLE: 1;
 			case RECT: 0;
@@ -58,7 +53,7 @@ class DrawShapes implements IHaveGraphicsBuffer {
 			case _: 4;
 		}
 
-		var shape = new Shape(Std.int(body.x), Std.int(body.y), width, height, shapeType, numSides, color);
+		var shape = new Shape(Std.int(x), Std.int(y), width, height, shapeType, numSides, color);
 		buffer.addElement(shape);
 		return shape;
 	}
