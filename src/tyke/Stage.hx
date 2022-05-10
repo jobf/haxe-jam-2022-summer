@@ -11,6 +11,7 @@ class Stage {
 	var coreLoop:PeoteViewLoop;
 	var sprites:Array<SpriteFrames> = [];
 	var layers:Map<String, Layer> = [];
+
 	public var width(get, null):Int;
 	public var height(get, null):Int;
 
