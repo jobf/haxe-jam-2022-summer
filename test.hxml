@@ -1,0 +1,17 @@
+-cp test
+-cp src
+-lib utest
+-lib lime
+-lib json2object
+-lib peote-view
+-lib peote-text
+-lib ob.gum
+-lib ob.parameters
+-lib ob.seq
+-lib ob.traxe
+-lib ob.easing
+-lib echo
+-lib compiletime
+-main test.RunTests
+--interp
+

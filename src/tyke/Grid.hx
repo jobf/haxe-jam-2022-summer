@@ -70,11 +70,15 @@ class GridStructure<T> extends GridLogic {
 	}
 
 	public function indexesInSection(x:Int, y:Int, w:Int, h:Int):Array<Int> {
-		var section:Array<Int> = [];
-		forEachInSection(x, y, w, h, (i, c) -> {
-			section.push(i);
-		});
-		return section;
+		var temp = new GridLogic(w, h);
+		var total = w * h;
+		return [
+			for (i in 0...total) {
+				var c = temp.column(i) + x;
+				var r = temp.row(i) + y;
+				index(c, r);
+			}
+		];
 	}
 
 	public function forEachInSection(x:Int, y:Int, w:Int, h:Int, processCell:(Int, T) -> Void) {
