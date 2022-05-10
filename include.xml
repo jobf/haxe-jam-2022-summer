@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	<!-- Adds an `object` field with `FlxObject` type to echo's `Body` class -->
+	<haxeflag name="--macro" value="echo.Macros.add_data('sprite','tyke.Sprites.Sprite')" />
+	<haxeflag name="--macro" value="echo.Macros.add_data('utility','tyke.Echo.Utility')" />
+	<haxeflag name="--macro" value="echo.Macros.add_data('hardlight','tyke.Echo.HardLight')"/>
+	<haxelib name="lime" />
+	<haxelib name="input2action" />
+	<haxelib name="json2object" />
+	<haxelib name="peote-view" />
+	<haxelib name="peote-text" />
+	<haxelib name="ob.gum" />
+	<haxelib name="hxmath" />
+	<haxelib name="echo" />
+</project>

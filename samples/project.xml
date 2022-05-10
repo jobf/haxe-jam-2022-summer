@@ -8,9 +8,7 @@
 	<android target-sdk-version="28" />
 	<!-- <meta build-number="1" /> --> <!-- let set the buildnumber manual (android) -->
 	
-	<!-- <app main="Samples.GlyphDemoApp" path="bin" file="tyke" /> -->
-	<app main="Samples.TApp" path="bin" file="tyke" />
-	<!-- <app main="Samples.ShapeDebugApp" path="bin" file="tyke" /> -->
+	<app main="App.TApp" path="bin" file="tyke" />
 	<!--<define name="stats" if="html5" />-->
 	
 	<!--<window fps="60" width="800" height="600" vsync="true" resizable="true" hardware="true" allow-shaders="true" require-shaders="true" depth-buffer="true" stencil-buffer="false" /> -->
@@ -19,17 +17,10 @@
 	
 	<!--<set name="angle" if="windows" />-->
 	
-	<source path="src" />
+	<source path="." />
 	<assets path="assets" />
 	
-	<haxelib name="lime" />
-	
-	<haxelib name="json2object" />
-	
-	<haxelib name="peote-view" />
-	<haxelib name="peote-text" />
-	<haxelib name="ob.gum" />
-	<haxelib name="echo" />
+	<haxelib name="tyke" />
 	
 	<haxedef name="peotetext_debug_macro" />
 	
@@ -55,10 +46,6 @@
 	<!-- <haxedef name="webgl-debug" /> --> <!-- try with chrome and look here: https://www.khronos.org/webgl/wiki/Debugging -->
 	<!-- <haxedef name="source-map-content" /> --> <!-- to debug with chrome id needs also "-debug" -->
 	<haxeflag name="-dce" value="full" />
-
-	<!-- Adds an `object` field with `FlxObject` type to echo's `Body` class -->
-	<haxeflag name="--macro" value="echo.Macros.add_data('sprite','tyke.Sprites.Sprite')"/>
-	<haxeflag name="--macro" value="echo.Macros.add_data('utility','tyke.Echo.Utility')"/>
 
 	<!-- <haxedef name="dump=pretty output" /> -->
 	

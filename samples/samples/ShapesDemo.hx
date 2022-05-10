@@ -1,16 +1,13 @@
 package samples;
 
-import echo.data.Options.BodyOptions;
+
 import samples.TYKE;
 import tyke.Glyph;
-import echo.Body;
-import echo.data.Types;
 import tyke.Echo;
-import echo.World;
 import tyke.Stage;
 
 //	todo ? implement and extend StageLoop instead?
-class ShapeLoop extends WorldStageLoop {
+class ShapesDemo extends WorldStageLoop {
 	var shapes:ShapeShaker;
 
 	public function new(assets:Assets) {
@@ -58,7 +55,7 @@ class ShapeShaker {
 	public function new(world:World, stage:Stage) {
 		this.world = world;
 		this.stage = stage;
-		shapesLayer = this.stage.createEchoDebugLayer();
+		shapesLayer = this.stage.createShapeRenderLayer();
 
 		mouseBody = new HardLight({
 			x: stage.width * 0.5,
@@ -178,46 +175,7 @@ class ShapeShaker {
 	var mouseBody:HardLight;
 }
 
-class HardLight {
-	public var graphic(default, null):Shape;
-	public var body(default, null):Body;
 
-	public function new(config:BodyOptions, world:World, shapes:DrawShapes, color:Color = Color.LIME) {
-		body = world.make(config);
-
-		var geo:Geometry = switch (body.shape.type) {
-			case CIRCLE: CIRCLE;
-			case POLYGON: POLYGON(config.shape.sides);
-			case _: RECT;
-		};
-		graphic = shapes.makeShape(config, geo, color);
-		body.on_move = (x, y) -> {
-			graphic.setPosition(x, y);
-		};
-		body.on_rotate = (r) -> {
-			graphic.rotation = r;
-		};
-
-		body.utility = new Utility(() -> {
-			this.collide();
-		});
-	}
-
-	var debounceDelay = 50;
-
-	public function collide() {
-		var timeNow = Date.now().getTime(); // todo ? use peote time
-		if ((timeNow - lastCollideTime) > debounceDelay) {
-			lastCollideTime = timeNow;
-			lit = !lit;
-			graphic.color.a = lit ? 0xaa : 0x99;
-		}
-	}
-
-	var lastCollideTime:Float;
-
-	var lit:Bool;
-}
 
 typedef Range = {
 	min:Int,

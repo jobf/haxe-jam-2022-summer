@@ -1,11 +1,7 @@
 package;
 
-import samples.ShapeDebug;
-import tyke.Glyph;
-import samples.GlyphDemo;
-import samples.TYKE;
 class SampleApp extends App{
-	var config:GlyphLoopConfig = {
+	var config:tyke.Glyph.GlyphLoopConfig = {
 		numCellsWide: 40,
 		numCellsHigh: 40,
 	}
@@ -13,7 +9,7 @@ class SampleApp extends App{
 	override function init(window:Window, ?config:GumConfig) {
 		super.init(window, {
 			framesPerSecond: 30,
-			drawOnlyWhenRequested: false,
+			drawOnlyWhenRequested: true,
 			displayWidth: 800,
 			displayHeight: 600,
 			displayIsScaled: true
@@ -28,7 +24,9 @@ class SampleApp extends App{
 
 function assets() {
 	return new Assets({
-		fonts: ["assets/fonts/tiled/hack_ascii.json"],
+		fonts: [
+			"assets/fonts/tiled/hack_ascii.json"
+		],
 		images: [
 			"assets/images/bit-bonanza-food.png",
 		]
@@ -38,7 +36,15 @@ function assets() {
 class GlyphDemoApp extends SampleApp {
 	override function initLoop(){
 		super.initLoop();
-		gum.changeLoop(new GlyphDemo(config, assets()));
+		gum.changeLoop(new samples.GlyphDemo(config, assets()));
+	}
+}
+
+
+class CascadeApp extends SampleApp {
+	override function initLoop(){
+		super.initLoop();
+		gum.changeLoop(new samples.Cascade(config, assets()));
 	}
 }
 
@@ -46,7 +52,7 @@ class GlyphDemoApp extends SampleApp {
 class TApp extends SampleApp {
 	override function initLoop(){
 		super.initLoop();
-		gum.changeLoop(new TYKE(config, assets()));
+		gum.changeLoop(new samples.TYKE(config, assets()));
 	}
 }
 
@@ -55,6 +61,6 @@ class TApp extends SampleApp {
 class ShapeDebugApp extends SampleApp {
 	override function initLoop(){
 		super.initLoop();
-		gum.changeLoop(new ShapeLoop(assets()));
+		gum.changeLoop(new samples.ShapesDemo(assets()));
 	}
 }

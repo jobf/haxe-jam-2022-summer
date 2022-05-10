@@ -1,0 +1,2 @@
+lime build html5 --app-main=App.CascadeApp -final
+zip dist.zip -r bin/html5/bin

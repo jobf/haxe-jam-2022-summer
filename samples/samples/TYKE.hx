@@ -59,7 +59,8 @@ class TYKE extends WorldStageLoop {
 
 		final injectTimeUniform = true;
 		var hues = new Filter(stage.width, stage.height, ColorFilterFormulas.Hues, injectTimeUniform);
-		var bgLayer = stage.createLayer("bg");
+		var isLayerPersistent = false;
+		var bgLayer = stage.createLayer("bg", isLayerPersistent);
 		hues.addToDisplay(bgLayer.display);
 
 		var totalColumns = Math.ceil(stage.width  / assets.fontCache[0].config.width);
@@ -67,16 +68,17 @@ class TYKE extends WorldStageLoop {
 		soup = new WordSoup(totalColumns, totalRows, stage, assets.fontCache[0]);
 		salad = new SimulationSalad(world, stage, assets.imageCache[0]);
 
-		// this filter should appear as separate layer with 'frameBuffer' behind it
-		// that was possible when all layers had their own texture being mixed
-		// currently does not work
-		var useGlobalFrameBuffer = false;
-		var curtainLayer = stage.createLayer("curtain", useGlobalFrameBuffer);
-		var curtainFilter = new Filter(stage.width, stage.height, ColorFilterFormulas.Gradient);
-		curtainFilter.addToDisplay(curtainLayer.display);
+		// todo - fix this layer
+		// // this filter should appear as separate layer with 'frameBuffer' behind it
+		// // that was possible when all layers had their own texture being mixed
+		// // currently does not work
+		// var useGlobalFrameBuffer = false;
+		// var curtainLayer = stage.createLayer("curtain", useGlobalFrameBuffer);
+		// var curtainFilter = new Filter(stage.width, stage.height, ColorFilterFormulas.Gradient);
+		// curtainFilter.addToDisplay(curtainLayer.display);
 
 		// set up global shader with reference to teh gloabl frame buffer texture
-		stage.globalFilter("globalCompose(frameBuffer_ID)", FrameBufferFormulas.DotScreen);
+		stage.globalFilter("globalCompose(globalFramebuffer_ID)", FrameBufferFormulas.DotScreen);
 
 		alwaysDraw = true;
 		gum.toggleUpdate(true);
@@ -126,7 +128,7 @@ class WordSoup {
 				}
 			}
 		}
-
+		// var tnt = new Traxe();
 		glyphs = new GlyphLayer(config, fontProgram);
 	}
 
@@ -176,7 +178,7 @@ class SimulationSalad {
 
 	function initSprites(spriteSheet:Image) {
 		spriteFrames = stage.createSpriteFramesLayer(layerName, spriteSheet, frameSize);
-		debugLayer = stage.createEchoDebugLayer();
+		debugLayer = stage.createShapeRenderLayer();
 	}
 
 	function initEdges() {
@@ -207,7 +209,7 @@ class SimulationSalad {
 		final debug = false;
 
 		if (debug) {
-			var d = debugLayer.makeShape(options, RECT);
+			var d = debugLayer.makeShape(x, y, w, h, RECT);
 		}
 	}
 
@@ -280,7 +282,11 @@ class SimulationSalad {
 		body.sprite = sprite;
 		final debug = false;
 		if (debug) {
-			sprite.attachDebug(debugLayer.makeShape(options, RECT));
+			var x = Std.int(options.x);
+			var y = Std.int(options.y);
+			var w = Std.int(options.shape.width);
+			var h = Std.int(options.shape.height);
+			sprite.attachDebug(debugLayer.makeShape(x, y, w, h, RECT));
 		}
 		return sprite;
 	}
