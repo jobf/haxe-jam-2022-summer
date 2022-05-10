@@ -63,9 +63,34 @@ class GridStructure<T> extends GridLogic {
 		}
 	}
 
-	public function forEach(processCell:(Column, Row, T) -> Void) {
-		for (i => cell in cells) {
-			processCell(column(i), row(i), cell);
+	public function forEach(processCell:(Column, Row, T) -> Void, isReversed:Bool = false) {
+		if (isReversed) {
+			var i = cells.length;
+			while (i-- > 0) {
+				processCell(column(i), row(i), cells[i]);
+			}
+		} else {
+			for (i => cell in cells) {
+				processCell(column(i), row(i), cell);
+			}
+		}
+	}
+
+	public function forEachCanExitEarly(processCell:(Column, Row, T) -> Bool, isReversed:Bool = false) {
+		var shouldExitEarly = false;
+		if (isReversed) {
+			var i = cells.length;
+			while (i-- > 0) {
+				shouldExitEarly = processCell(column(i), row(i), cells[i]);
+				if (shouldExitEarly)
+					break;
+			}
+		} else {
+			for (i => cell in cells) {
+				shouldExitEarly = processCell(column(i), row(i), cell);
+				if (shouldExitEarly)
+					break;
+			}
 		}
 	}
 
@@ -111,8 +136,18 @@ class GridStructure<T> extends GridLogic {
 		return cells[index(column, row)];
 	}
 
+	/**
+		store the passed cell into the grid at column,row
+	**/
 	public function set(column:Int, row:Int, cell:T) {
 		cells[index(column, row)] = cell;
+	}
+
+	/**
+		update cell at column,row by modifying with the function passed
+	**/
+	public function update(column:Int, row:Int, modifier:T->Void) {
+		modifier(cells[index(column, row)]);
 	}
 
 	public function swap(indexA:Int, indexB:Int) {
@@ -123,13 +158,16 @@ class GridStructure<T> extends GridLogic {
 		cells[indexB] = a;
 	}
 
-	public function toString():String {
+	public function toString(formatCell:T->String = null):String {
 		var buffer:String = "\n";
 		for (r in 0...numRows) {
 			var start = r * numColumns;
 			var end = start + numColumns;
 			var row = cells.slice(start, end);
-			var line = [for (c in row) formatString(c)].join("");
+			if(formatCell == null){
+				formatCell = formatString;
+			}
+			var line = [for (c in row) formatCell(c)].join("");
 			buffer += line += "\n";
 		}
 		return buffer;
