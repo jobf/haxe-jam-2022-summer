@@ -20,17 +20,26 @@ jobs:
         haxelib install json2object
         git clone https://github.com/maitag/peote-view.git
         haxelib dev peote-view peote-view
+        #
         git clone https://github.com/maitag/peote-text.git
-        haxelib git peote-text https://github.com/maitag/peote-text.git
         haxelib dev peote-text peote-text
+        #
         haxelib install hxmath
-        haxelib git echo https://github.com/AustinEast/echo.git
-        haxelib git ob.gum https://github.com/jobf/ob.gum.git
+        git clone https://github.com/AustinEast/echo.git
+        haxelib dev echo echo
+        #
+        git clone https://github.com/jobf/ob.gum.git
+        haxelib dev ob.gum ob.gum
+        #
+        git clone https://github.com/maitag/input2action.git
+        haxelib dev input2action input2action
+        #
+        haxelib dev tyke .
     - name: Build
       run: |
-        haxelib run lime build --app-main=Samples.ShapeDebugApp --app-path=bin-shapes html5 -final
-        haxelib run lime build --app-main=Samples.GlyphDemoApp --app-path=bin-glyph html5 -final
-        haxelib run lime build --app-main=Samples.TApp html5 -final
+        haxelib run lime build samples/project.xml --app-main=App.ShapeDebugApp --app-path=../bin-shapes html5 -final
+        haxelib run lime build samples/project.xml --app-main=App.GlyphDemoApp --app-path=../bin-glyph html5 -final
+        haxelib run lime build samples/project.xml --app-main=App.TApp html5 --app-path=../bin -final
         cp -a ./bin-shapes/html5/bin ./bin/html5/bin/shapes
         cp -a ./bin-glyph/html5/bin ./bin/html5/bin/glyph
     - name: Deploy
