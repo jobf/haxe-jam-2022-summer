@@ -2,7 +2,7 @@ package tyke;
 
 import tyke.Keyboard;
 import tyke.Echo;
-import tyke.Sprites;
+import tyke.Graphics;
 
 class Stage {
 	var display:Display;
@@ -116,42 +116,6 @@ class ViewElement implements Element {
 	}
 }
 
-interface IHaveGraphicsBuffer {
-	public function updateGraphicsBuffers():Void;
-	public var program(get, null):Program;
-}
-
-class Layer {
-	var frameBuffer(default, null):FrameBuffer;
-
-	public var display(get, null):Display;
-
-	var buffers:Array<IHaveGraphicsBuffer>;
-
-	public function new(frameBuffer:FrameBuffer) {
-		this.frameBuffer = frameBuffer;
-		buffers = [];
-	}
-
-	public function updateGraphicsBuffers() {
-		for (frames in buffers) {
-			frames.updateGraphicsBuffers();
-		}
-	}
-
-	public function registerGraphicsBuffer(frames:IHaveGraphicsBuffer) {
-		buffers.push(frames);
-	}
-
-	public function addProgramToFrameBuffer(program:Program) {
-		frameBuffer.display.addProgram(program);
-	}
-
-	function get_display():Display {
-		return frameBuffer.display;
-	}
-}
-
 typedef IsComplete = Bool;
 
 typedef GranularAction = {
@@ -180,4 +144,45 @@ class Tweens {
 
 	public static var linear:(time:Float, begin:Float, change:Float,
 		duration:Float) -> Float = (time, begin, change, duration) -> return change * time / duration + begin;
+}
+
+typedef AnimationId = String;
+
+class Animation {
+	public var frameCollections(default, null):Map<AnimationId, Array<Int>>;
+	public var frameIndex(default, null):Int;
+	public var currentAnimation(default, null):AnimationId;
+
+	var onAdvance:Animation->Void;
+
+	public function new(?frameCollections:Map<AnimationId, Array<Int>>, startIndex:Int = 0, ?onAdvance:Animation->Void) {
+		this.frameCollections = frameCollections == null ? [] : frameCollections;
+		frameIndex = startIndex;
+		this.onAdvance = onAdvance;
+	}
+
+	public function advance() {
+		if (frameCollections.exists(currentAnimation)) {
+			frameIndex++;
+			frameIndex = frameIndex % frameCollections[currentAnimation].length;
+			if (onAdvance != null) {
+				onAdvance(this);
+			}
+		}
+		// if (frameIndex > frames.length - 1) {
+		// 	frameIndex = 0;
+		// }
+	}
+
+	public function addAnimation(name:String, frameIndexes:Array<Int>) {
+		frameCollections[name] = frameIndexes;
+	}
+
+	public function setAnimation(key:AnimationId) {
+		currentAnimation = key;
+	}
+
+	public function currentTile():Int {
+		return frameCollections[currentAnimation][frameIndex];
+	}
 }

@@ -1,58 +1,7 @@
 package tyke;
 
 import tyke.Stage;
-import tyke.Sprites;
-
-enum Geometry {
-	RECT;
-	CIRCLE;
-	POLYGON(numSides:Int);
-}
-
-class DrawShapes implements IHaveGraphicsBuffer {
-	var buffer:Buffer<Shape>;
-	var _program:Program;
-
-	public var program(get, null):Program;
-
-	public function get_program():Program {
-		return _program;
-	}
-
-	public function new(bufferSize:Int = 256) {
-		buffer = new Buffer<Shape>(bufferSize, bufferSize, true);
-		_program = new Program(buffer);
-		_program.setFragmentFloatPrecision("high");
-		_program.discardAtAlpha(null);
-		final injectTimeUniform = false;
-		_program.injectIntoFragmentShader(Shape.InjectFragment, injectTimeUniform);
-		_program.setColorFormula(Shape.ColorFormula);
-	}
-
-	public function makeShape(x:Int, y:Int, width:Int, height:Int, shape:Geometry, color:Color = Color.LIME):Shape {
-		var shapeType:Int = switch (shape) {
-			case CIRCLE: 1;
-			case RECT: 0;
-			case _: 2; // polygon
-		}
-		var numSides = switch (shape) {
-			case CIRCLE: 1;
-			case POLYGON(sides): sides;
-			case _: 4;
-		}
-
-		var shape = new Shape(Std.int(x), Std.int(y), width, height, shapeType, numSides, color);
-		buffer.addElement(shape);
-		return shape;
-	}
-
-	public function updateGraphicsBuffers() {
-		// trace('echo');
-		buffer.update();
-	}
-}
-
-
+import tyke.Graphics;
 
 interface Collidable {
 	function collide(a:Body, b:Body, collisions:Array<CollisionData>):Void;

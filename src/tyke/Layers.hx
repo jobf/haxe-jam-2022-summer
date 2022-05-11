@@ -1,10 +1,7 @@
 package tyke;
 
 import tyke.Grid;
-import tyke.Loop;
-import tyke.Loop.Glyphs;
 import tyke.Glyph;
-import tyke.Palettes;
 
 typedef LayerConfig<T> = {
 	numColumns:Int,

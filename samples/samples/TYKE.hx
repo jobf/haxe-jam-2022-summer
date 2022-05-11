@@ -6,11 +6,12 @@ import tyke.Palettes.Sixteen;
 import echo.Body;
 import echo.World;
 import echo.Echo;
-import tyke.Sprites;
 import tyke.Layers;
 import tyke.Loop;
 import tyke.Glyph;
 import tyke.Stage;
+import tyke.Graphics;
+import tyke.GLSL;
 
 // todo ?	TYKE need not extend GlyphLoop as it uses stage for layer management
 //			make a StageLoop instead?

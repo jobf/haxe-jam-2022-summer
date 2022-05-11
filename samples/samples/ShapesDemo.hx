@@ -3,6 +3,7 @@ package samples;
 
 import samples.TYKE;
 import tyke.Glyph;
+import tyke.Graphics;
 import tyke.Echo;
 import tyke.Stage;
 
