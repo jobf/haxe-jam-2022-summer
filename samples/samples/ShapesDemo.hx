@@ -88,14 +88,10 @@ class ShapeShaker {
 
 		world.listen({
 			// separate: separate,
-			enter: (body1, body2, array) -> {
+			enter: (body1:Body, body2:Body, array) -> {
 				// if(body1.element != null){}
-				if (body1.utility != null) {
-					body1.utility.collide();
-				}
-				if (body2.utility != null) {
-					body2.utility.collide();
-				}
+				body1.hardlight.collide(body1, body2, array);
+				body2.hardlight.collide(body1, body2, array);
 			},
 			// stay: stay,
 			// exit: exit,

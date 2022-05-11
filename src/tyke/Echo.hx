@@ -9,18 +9,6 @@ enum Geometry {
 	POLYGON(numSides:Int);
 }
 
-class Utility {
-	public function new(onCollide:Void->Void) {
-		this.onCollide = onCollide;
-	}
-
-	var onCollide:Void->Void;
-
-	public function collide() {
-		onCollide();
-	}
-}
-
 class DrawShapes implements IHaveGraphicsBuffer {
 	var buffer:Buffer<Shape>;
 	var _program:Program;
