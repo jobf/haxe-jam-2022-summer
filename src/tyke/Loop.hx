@@ -8,7 +8,13 @@ import tyke.Keyboard;
 import tyke.Glyph;
 import tyke.Stage;
 
-typedef Text = {font:Font<FontStyle>, fontStyle:FontStyle, fontProgram:FontProgram<FontStyle>}
+@:structInit
+class Text 
+{
+	public var font:Font<FontStyle>;
+	public var fontStyle:FontStyle;
+	public var fontProgram:FontProgram<FontStyle>;
+}
 
 class Glyphs {
 	public static function initText(?display:Display, font:Font<FontStyle>):Text {

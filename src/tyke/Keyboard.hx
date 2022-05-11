@@ -1,5 +1,7 @@
 package tyke;
 
+// todo - it smells in here
+
 @:generic
 typedef KeyPress<T> = {
 	description:String,

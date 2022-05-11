@@ -173,10 +173,10 @@ class ShapeShaker {
 }
 
 
-
-typedef Range = {
-	min:Int,
-	max:Int
+@:structInit
+class Range {
+	public var min:Int;
+	public var max:Int;
 }
 
 class Emitter {

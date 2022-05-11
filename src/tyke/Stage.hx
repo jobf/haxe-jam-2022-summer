@@ -118,9 +118,10 @@ class ViewElement implements Element {
 
 typedef IsComplete = Bool;
 
-typedef GranularAction = {
-	isEnabled:Bool,
-	perform:Tick->IsComplete,
+@:structInit
+class GranularAction {
+	public var isEnabled:Bool;
+	public var perform:Tick->IsComplete;
 }
 
 class Tweens {

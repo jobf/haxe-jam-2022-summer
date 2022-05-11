@@ -1,17 +1,19 @@
 package tyke;
 
-typedef GlyphModel = {
-	char:Int,
+@:structInit
+class GlyphModel {
+	public var char:Int;
 	// todo - remove glyph from here (need to reimplement layers first)
-	glyph:Glyph<FontStyle>,
-	paletteIndexFg:Int,
-	paletteIndexBg:Int,
-	bgIntensity:Float
+	public var glyph:Glyph<FontStyle>;
+	public var paletteIndexFg:Int;
+	public var paletteIndexBg:Int;
+	public var bgIntensity:Float;
 }
 
-typedef GlyphLoopConfig = {
-	numCellsWide:Int,
-	numCellsHigh:Int
+@:structInit
+class GlyphLoopConfig {
+	public var numCellsWide:Int;
+	public var numCellsHigh:Int;
 }
 
 class CellWorks {
