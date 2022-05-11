@@ -13,37 +13,7 @@ import tyke.Stage;
 import tyke.Graphics;
 import tyke.GLSL;
 
-// todo ?	TYKE need not extend GlyphLoop as it uses stage for layer management
-//			make a StageLoop instead?
-class WorldStageLoop extends GlyphLoop {
-	var stage:Stage;
-	var world:World;
-
-	public function new(assets:Assets) {
-		super({
-			numCellsWide: 10,
-			numCellsHigh: 10
-		}, assets);
-	}
-
-	function initWorldAndStage() {
-		stage = new Stage(display, this);
-		world = Echo.start({
-			width: display.width,
-			height: display.height,
-			gravity_y: 100,
-			iterations: 2
-		});
-	}
-
-
-	override function onDraw(deltaMs:Int) {
-		world.step(deltaMs / 1000);
-		stage.updateGraphicsBuffers();
-	}
-}
-
-class TYKE extends WorldStageLoop {
+class TYKE extends PhysicalStageLoop {
 	public function new(data:GlyphLoopConfig, assets:Assets) {
 		super(assets);
 		onInitComplete = () -> {

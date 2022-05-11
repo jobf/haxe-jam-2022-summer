@@ -1,14 +1,13 @@
 package samples;
 
 
-import samples.TYKE;
+import tyke.Loop;
 import tyke.Glyph;
 import tyke.Graphics;
 import tyke.Echo;
 import tyke.Stage;
 
-//	todo ? implement and extend StageLoop instead?
-class ShapesDemo extends WorldStageLoop {
+class ShapesDemo extends PhysicalStageLoop {
 	var shapes:ShapeShaker;
 
 	public function new(assets:Assets) {
