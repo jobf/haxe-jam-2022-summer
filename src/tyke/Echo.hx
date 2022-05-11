@@ -12,7 +12,7 @@ class HardLight implements Collidable {
 	public var body(default, null):Body;
 	public var entity(default, null):Collidable;
 
-	public function new(?entity:Collidable, config:BodyOptions, world:World, shapes:DrawShapes, color:Color = Color.LIME) {
+	public function new(?entity:Collidable, config:BodyOptions, world:World, shapes:ShapeRenderer, color:Color = Color.LIME) {
 		body = world.make(config);
 		body.on_move = onMove;
 		body.on_rotate = onRotate;

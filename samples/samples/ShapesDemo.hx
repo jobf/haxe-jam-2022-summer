@@ -51,7 +51,7 @@ class ShapesDemo extends WorldStageLoop {
 class ShapeShaker {
 	var stage:Stage;
 	var world:World;
-	var shapesLayer:DrawShapes;
+	var shapesLayer:ShapeRenderer;
 
 	public function new(world:World, stage:Stage) {
 		this.world = world;

@@ -106,7 +106,7 @@ class WordSoup {
 	public final layerName = "glyphs";
 
 	public function new(numColumns:Int, numRows:Int, stage:Stage, font:Font<FontStyle>) {
-		glyphFrames = stage.createGlyphFramesLayer(layerName, font);
+		glyphFrames = stage.createGlyphRendererLayer(layerName, font);
 		var fontProgram = glyphFrames.fontProgram;
 		var config:GlyphLayerConfig = {
 			numColumns: numColumns,
@@ -155,16 +155,16 @@ class WordSoup {
 	}
 
 	var glyphs:GlyphLayer;
-	var glyphFrames:GlyphFrames;
+	var glyphFrames:GlyphRenderer;
 }
 
 class SimulationSalad {
 	var stage:Stage;
 	var world:World;
 	var sprites:Array<Sprite>;
-	var spriteFrames:SpriteFrames;
+	var spriteFrames:SpriteRenderer;
 	final frameSize:Int = 10;
-	var debugLayer:DrawShapes;
+	var debugLayer:ShapeRenderer;
 
 	public function new(world:World, stage:Stage, spriteSheet:Image) {
 		this.world = world;
@@ -178,7 +178,7 @@ class SimulationSalad {
 	public final layerName = "sprites";
 
 	function initSprites(spriteSheet:Image) {
-		spriteFrames = stage.createSpriteFramesLayer(layerName, spriteSheet, frameSize);
+		spriteFrames = stage.createSpriteRendererLayer(layerName, spriteSheet, frameSize);
 		debugLayer = stage.createShapeRenderLayer();
 	}
 

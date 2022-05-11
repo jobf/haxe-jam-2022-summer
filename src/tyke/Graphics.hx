@@ -44,7 +44,7 @@ class Layer {
 	}
 }
 
-class GlyphFrames implements IHaveGraphicsBuffer {
+class GlyphRenderer implements IHaveGraphicsBuffer {
 	var text:Text;
 
 	public var program(get, null):Program;
@@ -175,7 +175,7 @@ class Shape implements Element {
 	}
 }
 
-class DrawShapes implements IHaveGraphicsBuffer {
+class ShapeRenderer implements IHaveGraphicsBuffer {
 	var buffer:Buffer<Shape>;
 	var _program:Program;
 
@@ -328,7 +328,7 @@ class Sprite implements Element {
 }
 
 /* Handle Sprites from spritesheet Image */
-class SpriteFrames implements IHaveGraphicsBuffer {
+class SpriteRenderer implements IHaveGraphicsBuffer {
 	var spriteSheet:Texture;
 	var buffer:Buffer<Sprite>;
 	var _program:Program;

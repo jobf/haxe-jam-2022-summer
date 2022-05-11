@@ -9,7 +9,7 @@ class Stage {
 	var program:Program;
 	var globalFrameBuffer:FrameBuffer;
 	var coreLoop:PeoteViewLoop;
-	var sprites:Array<SpriteFrames> = [];
+	var sprites:Array<SpriteRenderer> = [];
 	var layers:Map<String, Layer> = [];
 
 	public var width(get, null):Int;
@@ -59,21 +59,21 @@ class Stage {
 		layers[name] = layer;
 	}
 
-	public function createShapeRenderLayer(isPersistentFrameBuffer:Bool = false, isIndividualFrameBuffer:Bool = false):DrawShapes {
+	public function createShapeRenderLayer(isPersistentFrameBuffer:Bool = false, isIndividualFrameBuffer:Bool = false):ShapeRenderer {
 		final name = "echo";
-		var frames = new DrawShapes();
+		var frames = new ShapeRenderer();
 		initGraphicsBuffer(name, frames, isPersistentFrameBuffer, isIndividualFrameBuffer);
 		return frames;
 	}
 
-	public function createSpriteFramesLayer(name:String, image:Image, frameSize:Int, isPersistentFrameBuffer:Bool = false, isIndividualFrameBuffer:Bool = false):SpriteFrames {
-		var frames = new SpriteFrames(image, frameSize);
+	public function createSpriteRendererLayer(name:String, image:Image, frameSize:Int, isPersistentFrameBuffer:Bool = false, isIndividualFrameBuffer:Bool = false):SpriteRenderer {
+		var frames = new SpriteRenderer(image, frameSize);
 		initGraphicsBuffer(name, frames, isPersistentFrameBuffer, isIndividualFrameBuffer);
 		return frames;
 	}
 
-	public function createGlyphFramesLayer(name:String, font:Font<FontStyle>, isPersistentFrameBuffer:Bool = false, isIndividualFrameBuffer:Bool = false):GlyphFrames {
-		var frames = new GlyphFrames(font);
+	public function createGlyphRendererLayer(name:String, font:Font<FontStyle>, isPersistentFrameBuffer:Bool = false, isIndividualFrameBuffer:Bool = false):GlyphRenderer {
+		var frames = new GlyphRenderer(font);
 		initGraphicsBuffer(name, frames, isPersistentFrameBuffer, isIndividualFrameBuffer);
 		return frames;
 	}
