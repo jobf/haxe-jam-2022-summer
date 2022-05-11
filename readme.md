@@ -41,6 +41,9 @@ haxelib git peote-text https://github.com/maitag/peote-text.git
 haxelib install hxmath
 haxelib git echo https://github.com/AustinEast/echo.git
 
+# input (keyboard/game controller)
+haxelib git input2action https://github.com/maitag/input2action.git
+
 # glue
 haxelib git ob.gum https://github.com/jobf/ob.gum.git
 ```
@@ -48,12 +51,25 @@ haxelib git ob.gum https://github.com/jobf/ob.gum.git
 ### Run
 
 ```shell
+# change working directory
+cd samples
+
 # html5
 lime test html5
 
-# hashlink
+# hashlink 
 lime test hl
 
 # =^.^=
 lime test neko
+```
+
+#### Samples
+
+There are multiple samples in the samples directory.
+
+There are scripts to run each, following the command structure beneath.
+
+```shell
+lime test hl --app-main=App.CascadeApp
 ```
