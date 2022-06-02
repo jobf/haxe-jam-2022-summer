@@ -9,8 +9,7 @@ import tyke.Glyph;
 import tyke.Stage;
 
 @:structInit
-class Text 
-{
+class Text {
 	public var font:Font<FontStyle>;
 	public var fontStyle:FontStyle;
 	public var fontProgram:FontProgram<FontStyle>;
@@ -22,7 +21,7 @@ class Glyphs {
 		fontStyle.width = font.config.width;
 		fontStyle.height = font.config.height;
 		var fontProgram = font.createFontProgram(fontStyle);
-		if(display != null){
+		if (display != null) {
 			display.addProgram(fontProgram);
 		}
 		return {
@@ -34,7 +33,7 @@ class Glyphs {
 }
 
 class GlyphLoop extends PeoteViewLoop {
-	public var layers(default, null):Array<GlyphLayer>;
+	public var layers(default, null):Array<GlyphGrid>;
 	public var palette(default, null):Palette;
 
 	var data:GlyphLoopConfig;
@@ -42,6 +41,7 @@ class GlyphLoop extends PeoteViewLoop {
 	var keyboard:KeyPresses<GlyphLoop>;
 	var mouse:Mouse;
 	final transparent:Int = 0x00000000;
+
 	public var text:Text;
 
 	var onInitComplete:Void->Void = () -> return;
@@ -99,7 +99,7 @@ class GlyphLoop extends PeoteViewLoop {
 	override function onMouseDown(x:Float, y:Float, button:MouseButton) {
 		mouse.onDown(x, y, button);
 	}
-	
+
 	override function onMouseUp(x:Float, y:Float, button:MouseButton) {
 		mouse.onUp(x, y, button);
 	}
@@ -109,9 +109,7 @@ class GlyphLoop extends PeoteViewLoop {
 	}
 }
 
-
-class PhysicalStageLoop extends PeoteViewLoop
-{
+class PhysicalStageLoop extends PeoteViewLoop {
 	var stage:Stage;
 	var world:World;
 	var onInitComplete:Void->Void = () -> throw "You must set onInitComplete function!";
@@ -147,13 +145,17 @@ class PhysicalStageLoop extends PeoteViewLoop
 
 	override public function onTick(tick:Int) {
 		var requestDrawUpdate = false;
-		
 
 		return alwaysDraw || requestDrawUpdate;
 	}
 
-	override public function onDraw(deltaMs:Int) {
+	override public function onUpdate(deltaMs:Int) {
+		// trace('world step');
 		world.step(deltaMs / 1000);
+	}
+
+	override public function onDraw(deltaMs:Int) {
+		// trace('draw');
 		stage.updateGraphicsBuffers();
 	}
 
@@ -162,28 +164,65 @@ class PhysicalStageLoop extends PeoteViewLoop
 	}
 }
 
-class CountDown{
-	var duration:Float;
-	var countDown:Float;
+class CountDownInt {
+	var duration:Int;
+	var countDown:Int;
 	var onComplete:() -> Void;
 	var restartWhenComplete:Bool;
-	public function new(durationSeconds:Float, onComplete:Void->Void, restartWhenComplete:Bool = false){
-		this.duration = durationSeconds;
+
+	public function new(durationTicks:Int, onComplete:Void->Void, restartWhenComplete:Bool = false) {
+		this.duration = durationTicks;
+		this.countDown = durationTicks;
 		this.onComplete = onComplete;
 		this.restartWhenComplete = restartWhenComplete;
-		this.countDown = durationSeconds;
 	}
-	public function update(elapsedSeconds:Float){
-		countDown -= elapsedSeconds;
-		if(countDown <= 0){
+
+	public function update(elapsedTicks:Int) {
+		countDown -= elapsedTicks;
+		if (countDown <= 0) {
 			onComplete();
-			if(restartWhenComplete){
+			if (restartWhenComplete) {
 				countDown = duration;
 			}
 		}
 	}
 
-}class Extensions {
+	public function changeDuration(duration:Int) {
+		this.duration = duration;
+		onComplete();
+		countDown = duration;
+	}
+
+	public function restart() {
+		countDown = duration;
+	}
+}
+
+class CountDown {
+	var duration:Float;
+	var countDown:Float;
+	var onComplete:() -> Void;
+	var restartWhenComplete:Bool;
+
+	public function new(durationSeconds:Float, onComplete:Void->Void, restartWhenComplete:Bool = false) {
+		this.duration = durationSeconds;
+		this.onComplete = onComplete;
+		this.restartWhenComplete = restartWhenComplete;
+		this.countDown = durationSeconds;
+	}
+
+	public function update(elapsedSeconds:Float) {
+		countDown -= elapsedSeconds;
+		if (countDown <= 0) {
+			onComplete();
+			if (restartWhenComplete) {
+				countDown = duration;
+			}
+		}
+	}
+}
+
+class Extensions {
 	public static inline function int(f:Float) {
 		return Std.int(f);
 	};
