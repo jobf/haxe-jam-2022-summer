@@ -1,6 +1,6 @@
 package samples;
 
-
+import haxe.ds.Vector;
 import tyke.Loop;
 import tyke.Glyph;
 import tyke.Graphics;
@@ -55,7 +55,7 @@ class ShapeShaker {
 	public function new(world:World, stage:Stage) {
 		this.world = world;
 		this.stage = stage;
-		shapesLayer = this.stage.createShapeRenderLayer();
+		shapesLayer = this.stage.createShapeRenderLayer("shapes");
 
 		mouseBody = new HardLight({
 			x: stage.width * 0.5,
@@ -85,7 +85,7 @@ class ShapeShaker {
 				height: stage.height * 0.03,
 			}
 		}, this.world, shapesLayer, 0xffff4455);
-
+		
 		world.listen({
 			// separate: separate,
 			enter: (body1:Body, body2:Body, array) -> {
@@ -169,8 +169,8 @@ class ShapeShaker {
 	}
 
 	var mouseBody:HardLight;
-}
 
+}
 
 @:structInit
 class Range {

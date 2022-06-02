@@ -29,7 +29,7 @@ class GlyphDemo extends GlyphLoop {
 	}
 
 	function begin() {
-		var config:GlyphLayerConfig = {
+		var config:GlyphGridConfig = {
 			numColumns: data.numCellsWide,
 			numRows: data.numCellsHigh,
 			cellWidth: Math.ceil(text.fontStyle.width),
@@ -37,7 +37,7 @@ class GlyphDemo extends GlyphLoop {
 			palette: palette,
 			cellInit: getInitFor(" ", 0, 3)
 		}
-		var infoConfig:GlyphLayerConfig = {
+		var infoConfig:GlyphGridConfig = {
 			numColumns: data.numCellsWide,
 			numRows: data.numCellsHigh,
 			cellWidth: Math.ceil(text.fontStyle.width),
@@ -77,7 +77,7 @@ class GlyphDemo extends GlyphLoop {
 
 
 
-class InfoLayer extends GlyphLayer {
+class InfoLayer extends GlyphGrid {
 	var lines:Array<Array<Int>> = [];
 
 	public function addLine(text:String) {
@@ -99,8 +99,8 @@ class InfoLayer extends GlyphLayer {
 	}
 }
 
-class DemoLayer extends GlyphLayer {
-	override function onTick(tick:Int):Void {
+class DemoLayer extends GlyphGrid {
+	override public function onTick(tick:Int):Void {
 		forEach((c, r, cell) -> {
 			if (isPaletteCycle) {
 				CellWorks.cyclePalette(cell, palette, reduceColoursBy, tick);

@@ -80,7 +80,7 @@ class Cascade extends GlyphLoop {
 			playBoundsBottom: 12
 		}
 
-		var config:GlyphLayerConfig = {
+		var config:GlyphGridConfig = {
 			numColumns: geometry.displayColumns,
 			numRows: geometry.displayRows,
 			// numColumns: 19,
@@ -113,7 +113,6 @@ class Cascade extends GlyphLoop {
 			}
 		}
 
-		cascade.hasChanged = true;
 		gum.toggleUpdate(true);
 	}
 
@@ -147,7 +146,7 @@ class Cascade extends GlyphLoop {
 	}
 }
 
-class Overlay extends GlyphLayer {
+class Overlay extends GlyphGrid {
 	var lines:Array<Array<Int>> = [];
 
 	public function addLine(text:String) {
@@ -173,8 +172,8 @@ class CacadeArea {
 	public function new() {}
 }
 
-class CascadeLayer extends GlyphLayer {
-	public function new(config:GlyphLayerConfig, fontProgram:FontProgram<FontStyle>, geometry:ScreenGeometry) {
+class CascadeLayer extends GlyphGrid {
+	public function new(config:GlyphGridConfig, fontProgram:FontProgram<FontStyle>, geometry:ScreenGeometry) {
 		super(config, fontProgram);
 
 		this.geometry = geometry;
@@ -214,10 +213,6 @@ class CascadeLayer extends GlyphLayer {
 	public final treasureChar = "0".charCodeAt(0);
 
 	final threshold:Int = 12;
-
-	override function onTick(tick:Int):Void {
-		// hasChanged = true;
-	}
 
 	// var palettes = [Sixteen.VanillaMilkshake, Sixteen.Soldier, Sixteen.Versitle];
 	// var paletteIndex:Int = 0;

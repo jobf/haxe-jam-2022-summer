@@ -11,7 +11,7 @@ import tyke.Loop;
 import tyke.Glyph;
 import tyke.Stage;
 import tyke.Graphics;
-import tyke.GLSL;
+import samples.GLSL;
 
 class TYKE extends PhysicalStageLoop {
 	public function new(data:GlyphLoopConfig, assets:Assets) {
@@ -145,11 +145,9 @@ class SimulationSalad {
 		initCollisionListeners();
 	}
 
-	public final layerName = "sprites";
-
 	function initSprites(spriteSheet:Image) {
-		spriteFrames = stage.createSpriteRendererLayer(layerName, spriteSheet, frameSize);
-		debugLayer = stage.createShapeRenderLayer();
+		spriteFrames = stage.createSpriteRendererLayer("fruitSprites", spriteSheet, frameSize);
+		debugLayer = stage.createShapeRenderLayer("echo");
 	}
 
 	function initEdges() {
@@ -268,8 +266,8 @@ class SimulationSalad {
 			mass: 10 - randomInt(5),
 			x: -100,
 			y: -100,
-			max_velocity_x: 9000,
-			max_velocity_y: 9000,
+			max_velocity_x: 900,
+			max_velocity_y: 900,
 			max_rotational_velocity: 200,
 			shape: {
 				type: RECT,

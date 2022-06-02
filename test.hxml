@@ -12,6 +12,7 @@
 -lib ob.easing
 -lib echo
 -lib compiletime
+-lib ldtk-haxe-api
 -main test.RunTests
 --interp
 
