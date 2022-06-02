@@ -3,48 +3,41 @@ package tyke;
 import tyke.Grid;
 import tyke.Glyph;
 
-typedef LayerConfig<T> = {
-	numColumns:Int,
-	numRows:Int,
-	cellWidth:Int,
-	cellHeight:Int,
-	palette:Palette,
-	?cellInit:(Column, Row) -> T
+@:structInit
+class LayerConfig<T> {
+	public var numColumns:Int;
+	public var numRows:Int;
+	public var cellWidth:Int;
+	public var cellHeight:Int;
+	public var palette:Palette;
+	public var cellInit:(Column, Row) -> T;
 }
 
-class GridLayer<T> extends GridStructure<T> {
+typedef GlyphGridConfig = LayerConfig<GlyphModel>
+
+class GlyphGrid extends GridStructure<GlyphModel> {
+	
 	public var hasChanged:Bool = false;
-	public var palette(default, null):Palette;
-
-	public function new(config:LayerConfig<T>) {
-		super(config.numColumns, config.numRows, config.cellInit);
-		palette = config.palette;
-	}
-
-	public function onTick(tick:Int):Void {
-		// hasChanged = true;
-	}
-}
-
-class GlyphLayer extends GridLayer<GlyphModel> {
-	var fontProgram:FontProgram<FontStyle>;
-	var fontStyle:FontStyle;
-
 	public var offsetX:Int;
 	public var offsetY:Int;
 	public var cellWidth(get, null):Float;
+	public var cellHeight(get, null):Float;
+	public var palette(default, null):Palette;
+
+	var fontProgram:FontProgram<FontStyle>;
+	var fontStyle:FontStyle;
 
 	function get_cellWidth():Float {
 		return fontStyle == null ? 20 : fontStyle.width;
 	}
 
-	public var cellHeight(get, null):Float;
-
 	function get_cellHeight():Float {
 		return fontStyle == null ? 36 : fontStyle.height;
 	}
 
-	public function new(config:GlyphLayerConfig, fontProgram:FontProgram<FontStyle>) {
+	public function new(config:GlyphGridConfig, fontProgram:FontProgram<FontStyle>) {
+		super(config.numColumns, config.numRows, config.cellInit);
+		palette = config.palette;
 		this.fontProgram = fontProgram;
 		fontProgram.fontStyle.bgColor = 0x00000000;
 		final space = 0x20;
@@ -62,7 +55,10 @@ class GlyphLayer extends GridLayer<GlyphModel> {
 				};
 			}
 		}
-		super(config);
+	}
+
+	public function onTick(tick:Int):Void {
+		// hasChanged = true;
 	}
 
 	public function draw() {
@@ -103,4 +99,3 @@ class GlyphLayer extends GridLayer<GlyphModel> {
 	}
 }
 
-typedef GlyphLayerConfig = LayerConfig<GlyphModel>
