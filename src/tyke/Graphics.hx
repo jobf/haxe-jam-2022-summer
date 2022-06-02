@@ -14,8 +14,7 @@ enum Geometry {
 }
 
 class Layer {
-	var frameBuffer(default, null):FrameBuffer;
-
+	public var frameBuffer(default, null):FrameBuffer;
 	public var display(get, null):Display;
 
 	var buffers:Array<IHaveGraphicsBuffer>;
@@ -175,6 +174,9 @@ class Shape implements Element {
 	}
 }
 
+
+
+
 class ShapeRenderer implements IHaveGraphicsBuffer {
 	var buffer:Buffer<Shape>;
 	var _program:Program;
@@ -217,6 +219,84 @@ class ShapeRenderer implements IHaveGraphicsBuffer {
 		buffer.update();
 	}
 }
+
+class Rectangle implements Element {
+	// @pivotX @formula("w * 0.5 + px_offset") public var px_offset:Float;
+	// @pivotY @formula("h * 0.5 + py_offset") public var py_offset:Float;
+	@pivotX public var px_offset:Float = 0.0;
+	@pivotY public var py_offset:Float = 0.0;
+	@rotation public var rotation:Float = 0.0;
+	@sizeX @varying public var w:Float;
+	@sizeY @varying public var h:Float;
+	@color public var color:Color = 0xaabb00ff;
+	// @color public var c:Color = 0xaabb00ff;
+	@posX @set("Position") public var x:Float;
+	@posY @set("Position") public var y:Float;
+	@custom @varying public var sides:Float = 3.0;
+	@custom @varying public var shape:Float = 0.0;
+
+	var OPTIONS = {alpha: true};
+
+	public static var InjectFragment = "
+   
+    ";
+
+	public static var ColorFormula = "";
+
+	public function new(positionX:Float = 0, positionY:Float = 0, width:Float, height:Float, rotation:Float = 3.0, color:Int = 0xffffffFF) {
+		this.x = positionX;
+		this.y = positionY;
+		this.w = width;
+		this.h = height;
+		this.color = color;
+		this.rotation = rotation;
+	}
+
+	public var visible(get, set):Bool;
+
+	function get_visible():Bool {
+		return color.alpha == 0;
+	}
+
+	function set_visible(isVisible:Bool):Bool {
+		color.alpha = isVisible ? 0xff : 0x00;
+		return isVisible;
+	}
+}
+
+
+class RectangleRenderer implements IHaveGraphicsBuffer {
+	var buffer:Buffer<Rectangle>;
+	var _program:Program;
+
+	public var program(get, null):Program;
+
+	public function get_program():Program {
+		return _program;
+	}
+
+	public function new(bufferSize:Int = 256) {
+		buffer = new Buffer<Rectangle>(bufferSize, bufferSize, true);
+		_program = new Program(buffer);
+		// _program.setFragmentFloatPrecision("high");
+		_program.discardAtAlpha(null);
+		// final injectTimeUniform = false;
+		// _program.injectIntoFragmentShader(Rectangle.InjectFragment, injectTimeUniform);
+		// _program.setColorFormula(Rectangle.ColorFormula);
+	}
+
+	public function makeRectangle(x:Float, y:Float, width:Float, height:Float, angle:Float, color:Color = Color.LIME):Rectangle {
+		var element = new Rectangle(x, y, width, height, angle, color);
+		buffer.addElement(element);
+		return element;
+	}
+
+	public function updateGraphicsBuffers() {
+		// trace('echo');
+		buffer.update();
+	}
+}
+
 
 class Sprite implements Element {
 	// @posX public var x:Int;

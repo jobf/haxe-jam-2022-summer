@@ -19,7 +19,7 @@ class HardLight implements Collidable {
 		body.hardlight = this;
 
 		this.entity = entity == null ? this : entity;
-		
+
 		var geo:Geometry = switch (body.shape.type) {
 			case CIRCLE: CIRCLE;
 			case POLYGON: POLYGON(config.shape.sides);
@@ -53,12 +53,12 @@ class HardLight implements Collidable {
 
 	function destroy() {
 		body.active = false;
-		// body.dispose(); todo - do all dispose together once per update 
+		// body.dispose(); todo - do all dispose together once per update
 		graphic.visible = false;
 	}
-	
 
 	var lastCollideTime:Float;
 
 	var lit:Bool;
 }
+

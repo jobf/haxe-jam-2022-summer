@@ -61,9 +61,14 @@ class Stage {
 		layers[name] = layer;
 	}
 
-	public function createShapeRenderLayer(isPersistentFrameBuffer:Bool = false, isIndividualFrameBuffer:Bool = false):ShapeRenderer {
-		final name = "echo";
+	public function createShapeRenderLayer(name:String, isPersistentFrameBuffer:Bool = false, isIndividualFrameBuffer:Bool = false):ShapeRenderer {
 		var frames = new ShapeRenderer();
+		initGraphicsBuffer(name, frames, isPersistentFrameBuffer, isIndividualFrameBuffer);
+		return frames;
+	}
+
+	public function createRectangleRenderLayer(name:String, isPersistentFrameBuffer:Bool = false, isIndividualFrameBuffer:Bool = false):RectangleRenderer {
+		var frames = new RectangleRenderer();
 		initGraphicsBuffer(name, frames, isPersistentFrameBuffer, isIndividualFrameBuffer);
 		return frames;
 	}
