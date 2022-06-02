@@ -246,12 +246,16 @@ class Sprite implements Element {
 
 	// at what peote.time it have to shake
 	@custom public var shakeAtTime:Float = -100.0;
+	@custom public var shakeFrequencyY:Float = 6.0;
+	@custom public var shakeFrequencyX:Float = 6.0;
+	@custom public var shakeDistanceY:Float = 3.0;
+	@custom public var shakeDistanceX:Float = 3.0;
 	@custom public var shakeDurationX:Float = 1.2;
 	@custom public var shakeDurationY:Float = 0.9;
 
 	// params for shake: number of shakes, size in pixel, durationtime in seconds
-	@posX @set("Position") @formula("x + shake(shakeAtTime, 7.0, 8.0, shakeDurationX)") public var x:Float;
-	@posY @set("Position") @formula("y + shake(shakeAtTime, 5.0, 6.0, shakeDurationY)") public var y:Float;
+	@posX @set("Position") @formula("x + shake(shakeAtTime, shakeFrequencyX, shakeDistanceX, shakeDurationX)") public var x:Float;
+	@posY @set("Position") @formula("y + shake(shakeAtTime, shakeFrequencyY, shakeDistanceY, shakeDurationY)") public var y:Float;
 
 	var OPTIONS = {alpha: true};
 
@@ -293,9 +297,7 @@ class Sprite implements Element {
 		// var adjustPosBy = isFlippedX ? width * 0.5 : 0;
 		w = width * flipBy;
 		// x += adjustPosBy;
-	}
-
-	public var visible(get, set):Bool;
+	}	public var visible(get, set):Bool;
 
 	function get_visible():Bool {
 		return c.alpha == 0;
