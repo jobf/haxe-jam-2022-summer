@@ -6,25 +6,27 @@ import tyke.Graphics;
 
 class Stage {
 	var display:Display;
-	var program:Program;
+	public var program(default, null):Program;
 	var globalFrameBuffer:FrameBuffer;
 	var coreLoop:PeoteViewLoop;
 	var sprites:Array<SpriteRenderer> = [];
 	var layers:Map<String, Layer> = [];
-
+	var view:ViewElement;
+	var buffer:Buffer<ViewElement>;
+	
 	public var width(get, null):Int;
 	public var height(get, null):Int;
 
 	public function new(display:Display, coreLoop:PeoteViewLoop) {
 		this.display = display;
 		this.coreLoop = coreLoop;
-		var buffer = new Buffer<ViewElement>(1);
+		buffer = new Buffer<ViewElement>(1);
 		program = new Program(buffer);
 		program.setFragmentFloatPrecision("high");
 		program.alphaEnabled = true;
 		program.discardAtAlpha(null);
 		display.addProgram(program);
-		var view = new ViewElement(0, 0, display.width, display.height);
+		view = new ViewElement(0, 0, display.width, display.height);
 		buffer.addElement(view);
 		final isGlobalFrameBufferPersistent = false;
 		globalFrameBuffer = makeFrameBuffer("globalFramebuffer", isGlobalFrameBufferPersistent);
@@ -99,11 +101,32 @@ class Stage {
 	public function centerY():Float {
 		return height * 0.5;
 	}
+	public function setZoom(z:Int) {
+		display.set_zoom(z);
+	}
+	public function setScroll(x:Int, y:Int){
+		view.x = x;
+		view.y = y;
+		buffer.update();
+		// set_x and set_ xOffset are reverse of each other?
+		// display.set_x(x);
+		// display.set_y(y);
+		// display.set_xOffset(x);
+		// display.set_yOffset(y);
+	}
+
+	public function getLayer(name:String) {
+		return layers[name];
+	}
+
+	public function getTime():Float {
+		return coreLoop.peoteView.get_time();
+	}
 }
 
 class ViewElement implements Element {
-	@posX var x:Int = 0;
-	@posY var y:Int = 0;
+	@posX public var x:Int = 0;
+	@posY public var y:Int = 0;
 
 	@sizeX var w:Int;
 	@sizeY var h:Int;
@@ -212,4 +235,26 @@ class Animation {
 	public function currentTile():Int {
 		return frameCollections[currentAnimation].tileIndexes[frameIndex];
 	}
+}
+
+
+class Camera {
+	public var body(default, null):Body;
+
+	public function new(onMove:(x:Float, y:Float) -> Void) {
+		body = new Body({
+			shape: {
+				width: 1,
+				height: 1,
+			},
+			kinematic: true,
+			mass: 1,
+			x: 0,
+			y: 0,
+		});
+		
+		body.on_move = onMove;
+	}
+	
+	var onMove:(x:Float, y:Float) -> Void;
 }
