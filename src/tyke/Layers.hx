@@ -85,6 +85,14 @@ class GlyphGrid extends GridStructure<GlyphModel> {
 		return {x: c, y: r};
 	}
 
+	public function windowToDisplay(mouseX:Float, mouseY:Float, windowWidth:Float, windowHeight:Float, displayWidth:Float, displayHeight:Float):Point {
+		var pX = mouseX / windowWidth;
+		var pY = mouseY / windowHeight;
+		var x = Std.int(pX * displayWidth);
+		var y = Std.int(pY * displayHeight);
+		return {x: x, y: y};
+	}
+
 	public function writeText(column:Int, row:Int, text:String, trimAt:Int = 0) {
 		var chars = text.split("");
 		var width = trimAt == 0 ? chars.length : trimAt;
