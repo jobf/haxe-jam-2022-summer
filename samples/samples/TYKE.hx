@@ -1,11 +1,9 @@
 package samples;
 
 import echo.data.Options.BodyOptions;
-import tyke.Echo;
 import tyke.Palettes.Sixteen;
 import echo.Body;
 import echo.World;
-import echo.Echo;
 import tyke.Layers;
 import tyke.Loop;
 import tyke.Glyph;
@@ -13,119 +11,163 @@ import tyke.Stage;
 import tyke.Graphics;
 import samples.GLSL;
 
+/** 
+	TYKE extends PhysicalStageLoop which provides graphics and arcade physics.
+	Here is the setup logic for the whole scene.
+**/
 class TYKE extends PhysicalStageLoop {
+	var salad:SimulationSalad;
+	var soup:WordSoup;
+
 	public function new(data:GlyphLoopConfig, assets:Assets) {
+		// pass the assets to the super class to which will attempt to load them and set up graphics and physics
 		super(assets);
+
+		// called when assets etc are ready
 		onInitComplete = () -> {
-			initWorldAndStage();
-			begin(data.numCellsWide, data.numCellsHigh);
+			setupBackgroundLayer();
+
+			var totalColumns = Math.ceil(stage.width / assets.fontCache[0].config.width);
+			var totalRows = Math.ceil(stage.height / assets.fontCache[0].config.height);
+
+			// setup flashing glyphs logic
+			soup = new WordSoup(totalColumns, totalRows, stage, assets.fontCache[0]);
+
+			// setup bouncing fruit logic logic
+			salad = new SimulationSalad(world, stage, assets.imageCache[0]);
+
+			// todo - fix this
+			// setupCurtainLayer();
+
+			// set up shader on the global framebuffer
+			final globalComposeFunction = FrameBufferFormulas.DotScreen;
+			stage.globalFilter("globalCompose(globalFramebuffer_ID)", globalComposeFunction);
+
+			// by default the graphics buffers draw when called manually
+			// settign alwaysDraw will draw every frame
+			alwaysDraw = true;
+
+			// start the game loop
+			gum.toggleUpdate(true);
 		}
 
+		// bind a keyboard letter to a function
 		keyboard.bind(KeyCode.P, "PAUSE", "TOGGLE UPDATE", loop -> {
 			gum.toggleUpdate();
 		});
 	}
 
-	function begin(numColumns:Int, numRows:Int) {
+	override function onTick(deltaMs:Int):Bool {
+		// update the glyphs
+		soup.onTick(deltaMs);
 
+		// update the fruit
+		salad.onTick(deltaMs);
+
+		return alwaysDraw;
+	}
+
+	function setupBackgroundLayer() {
 		final injectTimeUniform = true;
 		var hues = new Filter(stage.width, stage.height, ColorFilterFormulas.Hues, injectTimeUniform);
 		var isLayerPersistent = false;
 		var bgLayer = stage.createLayer("bg", isLayerPersistent);
 		hues.addToDisplay(bgLayer.display);
-
-		var totalColumns = Math.ceil(stage.width  / assets.fontCache[0].config.width);
-		var totalRows = Math.ceil(stage.height  / assets.fontCache[0].config.height);
-		soup = new WordSoup(totalColumns, totalRows, stage, assets.fontCache[0]);
-		salad = new SimulationSalad(world, stage, assets.imageCache[0]);
-
-		// todo - fix this layer
-		// // this filter should appear as separate layer with 'frameBuffer' behind it
-		// // that was possible when all layers had their own texture being mixed
-		// // currently does not work
-		// var useGlobalFrameBuffer = false;
-		// var curtainLayer = stage.createLayer("curtain", useGlobalFrameBuffer);
-		// var curtainFilter = new Filter(stage.width, stage.height, ColorFilterFormulas.Gradient);
-		// curtainFilter.addToDisplay(curtainLayer.display);
-
-		// set up global shader with reference to teh gloabl frame buffer texture
-		stage.globalFilter("globalCompose(globalFramebuffer_ID)", FrameBufferFormulas.DotScreen);
-
-		alwaysDraw = true;
-		gum.toggleUpdate(true);
 	}
 
-	override function onTick(deltaMs:Int):Bool {
-		soup.onTick(deltaMs);
-		salad.onTick(deltaMs);
-		return super.onTick(deltaMs);
+	function setupForegroundLayer() {
+		// this filter should appear as separate layer with 'frameBuffer' behind it
+		// that was possible when all layers had their own texture being mixed
+		// currently does not work
+		var useGlobalFrameBuffer = false;
+		var curtainLayer = stage.createLayer("curtain", useGlobalFrameBuffer);
+		var curtainFilter = new Filter(stage.width, stage.height, ColorFilterFormulas.Gradient);
+		curtainFilter.addToDisplay(curtainLayer.display);
 	}
-
-	override function onDraw(deltaMs:Int) {
-		super.onDraw(deltaMs);
-	}
-
-	var salad:SimulationSalad;
-	var soup:WordSoup;
 }
 
+/**
+	This class handles writing text to the Glyph Layer in variations
+**/
 class WordSoup {
-	var word:String = "TYKE";
-	var stage:Stage;
-
-	public final layerName = "glyphs";
+	var glyphs:GlyphGrid;
+	var glyphRender:GlyphRenderer;
 
 	public function new(numColumns:Int, numRows:Int, stage:Stage, font:Font<FontStyle>) {
-		glyphFrames = stage.createGlyphRendererLayer(layerName, font);
-		var fontProgram = glyphFrames.fontProgram;
-		var config:GlyphLayerConfig = {
+		// set up layer used for rendering the glyphs
+		glyphRender = stage.createGlyphRendererLayer("wordSoup", font);
+
+		var glyphWidth = glyphRender.fontProgram.fontStyle.width;
+		var glyphHeight = glyphRender.fontProgram.fontStyle.height;
+
+		// the configuration for a grid of glyphs
+		var config:GlyphGridConfig = {
 			numColumns: numColumns,
 			numRows: numRows,
-			cellWidth: Math.ceil(fontProgram.fontStyle.width),
-			cellHeight: Math.ceil(fontProgram.fontStyle.height),
+			cellWidth: Math.ceil(glyphWidth),
+			cellHeight: Math.ceil(glyphHeight),
 			palette: new Palette(Sixteen.Versitle.toRGBA()),
+
+			// the cellInit function is run on every cell in the grid to initialise it
 			cellInit: (col, row) -> {
+				// pick a random character from the word for the glyph
 				var charIndex = randomInt(word.length) - 1;
-				// trace(rng);
 				var charCode = word.charCodeAt(charIndex);
-				var x = col * fontProgram.fontStyle.width;
-				var y = row * fontProgram.fontStyle.height;
+
+				// determine pixel position to render glyph at
+				var x = col * glyphWidth;
+				var y = row * glyphHeight;
+
+				// render the glyph
+				var renderedGlyph = glyphRender.fontProgram.createGlyph(charCode, x, y, glyphRender.fontProgram.fontStyle);
+
+				// return cell configuration
 				return {
-					char: 0,
-					glyph: fontProgram.createGlyph(charCode, x, y, fontProgram.fontStyle),
+					char: charCode,
+					glyph: renderedGlyph,
 					paletteIndexFg: 4,
 					paletteIndexBg: -1,
 					bgIntensity: 1.0,
 				}
 			}
 		}
-		// var tnt = new Traxe();
-		glyphs = new GlyphLayer(config, fontProgram);
+
+		// set up the grid
+		glyphs = new GlyphGrid(config, glyphRender.fontProgram);
 	}
 
+	var word:String = "TYKE";
 	var waves = 2;
 	var gain = 0.02;
 	var elapsedTicks:Int = 0;
 
 	public function onTick(deltaMs:Int):Void {
+		// update counter used for sin calculation
 		elapsedTicks++;
-		glyphs.forEach((c, r, cell) -> {
-			var R = 0.5 + 0.5 * Math.cos(elapsedTicks + c + 0);
-			var G = 0.5 + 0.5 * Math.cos(elapsedTicks + r + 2);
-			var B = 0.5 + 0.5 * Math.cos(elapsedTicks + c + 4);
+
+		// run function on every cell in the grid
+		glyphs.forEach((column, row, cell) -> {
+			// next color for each glyph is determined by factor of time and position
+			var R = 0.5 + 0.5 * Math.cos(elapsedTicks + column + 0);
+			var G = 0.5 + 0.5 * Math.cos(elapsedTicks + row + 2);
+			var B = 0.5 + 0.5 * Math.cos(elapsedTicks + column + 4);
+			var A = Math.sin(column - row * waves * elapsedTicks * gain);
 			cell.glyph.color.r = Math.ceil(255 * R);
 			cell.glyph.color.g = Math.ceil(255 * G);
 			cell.glyph.color.b = Math.ceil(255 * B);
-			cell.glyph.color.alpha = Math.ceil(127 * Math.sin(c - r * waves * elapsedTicks * gain) + 127);
-			var CI = 0.5 + 0.5 * Math.sin((elapsedTicks * 0.3) + c + 4);
+			cell.glyph.color.alpha = Math.ceil((127 * A) + 127);
+
+			// next character is determined by factor of time and position
+			var CI = 0.5 + 0.5 * Math.sin((elapsedTicks * 0.3) + column + 4);
 			var charIndex = Math.ceil(CI * (word.length)) - 1;
+
+			// update the cell data
 			cell.char = word.charCodeAt(charIndex);
-			glyphFrames.fontProgram.glyphSetChar(cell.glyph, cell.char);
+
+			// update the rendered glyph
+			glyphRender.fontProgram.glyphSetChar(cell.glyph, cell.char);
 		});
 	}
-
-	var glyphs:GlyphLayer;
-	var glyphFrames:GlyphRenderer;
 }
 
 class SimulationSalad {

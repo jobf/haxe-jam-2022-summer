@@ -48,6 +48,11 @@ haxelib git input2action https://github.com/maitag/input2action.git
 haxelib git ob.gum https://github.com/jobf/ob.gum.git
 ```
 
+### Install this lib
+
+```shell
+haxelib dev tyke .
+
 ### Run
 
 ```shell
