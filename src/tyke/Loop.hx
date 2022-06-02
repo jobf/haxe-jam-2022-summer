@@ -183,4 +183,8 @@ class CountDown{
 		}
 	}
 
+}class Extensions {
+	public static inline function int(f:Float) {
+		return Std.int(f);
+	};
 }
