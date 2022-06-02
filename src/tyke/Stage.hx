@@ -147,27 +147,51 @@ class Tweens {
 		duration:Float) -> Float = (time, begin, change, duration) -> return change * time / duration + begin;
 }
 
-typedef AnimationId = String;
+@:structInit
+class AnimationConfig{
+	public var tileIndexes:Array<Int>;
+	public var speed:Int;
+	public var isLooped:Bool;
+}
 
 class Animation {
-	public var frameCollections(default, null):Map<AnimationId, Array<Int>>;
+	public var frameCollections(default, null):Map<Int, AnimationConfig>;
 	public var frameIndex(default, null):Int;
-	public var currentAnimation(default, null):AnimationId;
+	public var currentAnimation(default, null):Int;
+	var spriteSheetColumns:Int;
 
 	var onAdvance:Animation->Void;
 
-	public function new(?frameCollections:Map<AnimationId, Array<Int>>, startIndex:Int = 0, ?onAdvance:Animation->Void) {
+	public function new(spriteSheetColumns:Int, ?frameCollections:Map<Int, AnimationConfig>, startIndex:Int = 0, ?onAdvance:Animation->Void) {
+		this.spriteSheetColumns = spriteSheetColumns;
 		this.frameCollections = frameCollections == null ? [] : frameCollections;
+		this.spriteSheetColumns = spriteSheetColumns;
 		frameIndex = startIndex;
 		this.onAdvance = onAdvance;
 	}
 
+	public function defineFrames(key:Int, rowIndex:Int, columnIndex:Int, numFrames:Int,  isLooped:Bool = true, speed:Int=1){
+		var firstFrame = (rowIndex * spriteSheetColumns) + columnIndex;
+		var lastFrame = firstFrame + numFrames;
+		var config :AnimationConfig = {
+			tileIndexes: [for (i in firstFrame...lastFrame) i],
+			speed: speed,
+			isLooped: isLooped
+		};
+
+		frameCollections[key] = config;
+	}
+
 	public function advance() {
 		if (frameCollections.exists(currentAnimation)) {
-			frameIndex++;
-			frameIndex = frameIndex % frameCollections[currentAnimation].length;
 			if (onAdvance != null) {
 				onAdvance(this);
+			}
+			if(frameCollections[currentAnimation].isLooped){
+
+				if(frameIndex < frameCollections[currentAnimation].tileIndexes.length)
+					frameIndex++;
+				frameIndex = frameIndex % frameCollections[currentAnimation].tileIndexes.length;
 			}
 		}
 		// if (frameIndex > frames.length - 1) {
@@ -175,15 +199,17 @@ class Animation {
 		// }
 	}
 
-	public function addAnimation(name:String, frameIndexes:Array<Int>) {
-		frameCollections[name] = frameIndexes;
+	public function addAnimation(name:Int, config:AnimationConfig) {
+		frameCollections[name] = config;
 	}
 
-	public function setAnimation(key:AnimationId) {
+	public function setAnimation(key:Int, ?speed:Int = null) {
 		currentAnimation = key;
+		frameIndex = 0;
+		// onAdvance(this);
 	}
 
 	public function currentTile():Int {
-		return frameCollections[currentAnimation][frameIndex];
+		return frameCollections[currentAnimation].tileIndexes[frameIndex];
 	}
 }
