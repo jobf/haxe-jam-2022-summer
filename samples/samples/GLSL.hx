@@ -1,6 +1,13 @@
-package tyke;
+package samples;
 
 class ColorFilterFormulas {
+	public static var White = '
+	vec4 solidColor = vec4(0.03);
+	vec4 compose(){
+		return solidColor;
+	}
+	';
+	
 	public static var Hues = '
 	vec4 compose(){
 		// time varying pixel color
