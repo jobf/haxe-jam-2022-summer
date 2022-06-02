@@ -11,4 +11,6 @@
 	<haxelib name="ob.gum" />
 	<haxelib name="hxmath" />
 	<haxelib name="echo" />
+	<haxelib name="deepnightLibs" />
+	<haxelib name="ldtk-haxe-api" />
 </project>
