@@ -1,5 +1,6 @@
 package tyke;
 
+import echo.util.Debug;
 import tyke.Stage;
 import tyke.Graphics;
 
@@ -62,3 +63,70 @@ class HardLight implements Collidable {
 	var lit:Bool;
 }
 
+class EchoDebug extends Debug {
+	public var canvas:RectangleRenderer;
+	var rectangles:Array<Rectangle> = [];
+	
+	public function new(canvas:RectangleRenderer) {
+		this.canvas = canvas;
+
+		shape_color = 0x5b6ee1aa;
+		shape_fill_color = 0xcbdbfcaa;
+		shape_collided_color = 0xd95763aa;
+		quadtree_color = 0x847e87aa;
+		quadtree_fill_color = 0x9badb7aa;
+		intersection_color = 0xcbdbfcaa;
+		intersection_overlap_color = 0xd95763aa;
+	}
+
+	override public inline function draw_line(from_x:Float, from_y:Float, to_x:Float, to_y:Float, color:Int, alpha:Float = 1.) {
+		var a = to_x - from_x;
+		var b = to_y - from_y;
+		var lineWidth = 3;
+		var lineLength = Math.sqrt(a * a + b * b);
+		var lineRotation = Math.atan2(from_x - to_x, -(from_y - to_y)) * (180 / Math.PI);
+		rectangles.push(canvas.makeRectangle(from_x, from_y, lineWidth, lineLength, lineRotation, shape_color));
+	}
+
+	override public inline function draw_rect(min_x:Float, min_y:Float, width:Float, height:Float, color:Int, ?stroke:Int, alpha:Float = 1.) {
+		// canvas.beginFill(color, alpha);
+		// stroke != null ? canvas.lineStyle(shape_outline_width, stroke, 1) : canvas.lineStyle();
+		// canvas.drawRect(min_x, min_y, width, height);
+		// canvas.endFill();
+		// todo !
+		// rectangles.push(canvas.makeRectangle(min_x, min_y, width, height, 0, shape_fill_color));
+	}
+
+	override public inline function draw_circle(x:Float, y:Float, radius:Float, color:Int, ?stroke:Int, alpha:Float = 1.) {
+		// todo !
+		// canvas.drawCircle(x, y, radius);
+	}
+
+	override public function draw_polygon(count:Int, vertices:Array<Vector2>, color:Int, ?stroke:Int, alpha:Float = 1) {
+		if (count < 2)
+			return;
+
+		var start_x = vertices[0].x;
+		var start_y = vertices[0].y;
+		var from_x = start_x;
+		var from_y = start_y;
+		for (i in 1...count) {
+			var to_x = vertices[i].x;
+			var to_y = vertices[i].y;
+			draw_line(from_x, from_y, to_x, to_y, color, alpha);
+			from_x = to_x;
+			from_y = to_y;
+		}
+		draw_line(from_x, from_y, start_x, start_y, color, alpha);
+	}
+
+	override public inline function clear() {
+		var i = rectangles.length;
+		while(i > 0){
+			var element = rectangles.pop();
+			@:privateAccess
+			canvas.buffer.removeElement(element);
+			i--;
+		}
+	}
+}
