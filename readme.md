@@ -2,26 +2,9 @@
 
 A grid and a game loop, what more do you want...
 
-~~glyphs~~ ~~sprites~~ ~~shaders~~?
+~~glyphs~~ ~~sprites~~ ~~shaders~~ ~~physics~~?
 
 api is still in the oven!
-
-## Samples
-
-Samples I am using to test the API etc. (works in progress).
-
-### glyph manipulation, sprites, physics, shaders
-
-https://jobf.github.io/tyke/
-
-### glyph manipulation
-
-https://jobf.github.io/tyke/glyph/
-
-### physics
-
-https://jobf.github.io/tyke/shapes/
-
 
 ## Quick start
 
@@ -52,29 +35,4 @@ haxelib git ob.gum https://github.com/jobf/ob.gum.git
 
 ```shell
 haxelib dev tyke .
-
-### Run
-
-```shell
-# change working directory
-cd samples
-
-# html5
-lime test html5
-
-# hashlink 
-lime test hl
-
-# =^.^=
-lime test neko
-```
-
-#### Samples
-
-There are multiple samples in the samples directory.
-
-There are scripts to run each, following the command structure beneath.
-
-```shell
-lime test hl --app-main=App.CascadeApp
 ```
