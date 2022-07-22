@@ -266,7 +266,7 @@ class Rectangle implements Element {
 
 
 class RectangleRenderer implements IHaveGraphicsBuffer {
-	var buffer:Buffer<Rectangle>;
+	public var buffer(default, null):Buffer<Rectangle>;
 	var _program:Program;
 
 	public var program(get, null):Program;
