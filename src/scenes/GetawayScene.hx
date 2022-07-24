@@ -2,7 +2,7 @@ package scenes;
 
 import pieces.Vehicle;
 
-class GetawayScene extends BaseScene{
+class GetawayScene extends BaseScene {
     var player:Vehicle;
 
     override function create() {
