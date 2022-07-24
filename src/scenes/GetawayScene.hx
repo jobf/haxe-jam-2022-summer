@@ -3,13 +3,15 @@ package scenes;
 import pieces.Vehicle;
 
 class GetawayScene extends BaseScene{
+    var player:Vehicle;
+
     override function create() {
         super.create();
 
-		var x = Std.int(sceneManager.stage.centerX());
+		var x = 42;
 		var y = Std.int(sceneManager.stage.centerY());
 
-        var player = new Vehicle(x, y, sceneManager.world);
+        player = new Vehicle(x, y, sceneManager.world);
         controller.registerPlayer(player);
 	}
 
@@ -18,5 +20,7 @@ class GetawayScene extends BaseScene{
 
 	override function update(elapsedSeconds:Float) {
         super.update(elapsedSeconds);
+        player.update(elapsedSeconds);
     }
+
 }
