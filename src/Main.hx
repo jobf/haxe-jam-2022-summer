@@ -1,3 +1,4 @@
+import scenes.GetawayScene;
 import lime.ui.KeyCode;
 import echo.Body;
 import peote.view.Color;
@@ -28,7 +29,7 @@ class Main extends App {
 
 class Scenes extends SceneManager {
 	public function new(assets:Assets) {
-		super(assets, loop -> return new TestScene(this));
+		super(assets, loop -> return new GetawayScene(this));
 	}
 }
 
