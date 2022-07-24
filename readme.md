@@ -36,3 +36,60 @@ haxelib git https://github.com/jobf/tyke.git feature/haxe-jam-2022-summer
 # web debug (useful for debugging if hashlink won't debug)
 ./web-debug
 ```
+
+# Theme Ideas
+
+Theme is 
+> Lose it all
+
+## Empty Vessel
+
+Run around a level constantly losing fluid.
+
+When you get to the end of the level you should have lost it all.
+
+If you stop you die.
+
+If you run out of fluid before reaching the end zone you die.
+
+Make a few levels of increasing difficulty.
+
+## Hide and collect
+
+The level has enemies to evade and items to collect.
+
+When you hide in a shadow for long enough an enemy has lost you.
+
+Collect all items in a level, in order to finish.
+
+Collecting levels means you must risk being seen.
+
+You cannot exit a level unless all you lost all the enemies.
+
+## Worst Sport Manager
+
+You manage a sports team.
+
+Before each match you purchase players.
+
+The idea is to lose every match.
+
+So you have to build the team from the worst.
+
+But another team can always be even worse than you.
+
+## Pigeons
+
+You visit a friend who keeps homing pigeons.
+
+Every day they are training the pigeons, by visiting them all in their shed and giving them a map to return home.
+
+Your agenda is to visit all the pigeons and convince them not to come back, instead they need to get lost.
+
+You just want the pigeons to be free. Lost them all.
+
+So visit each pigeon and alter tha map so it is incorrect.
+
+Each level the friend brings more pigeons so the challenge is to convince enough to get lost before he replenishes stock.
+
+
