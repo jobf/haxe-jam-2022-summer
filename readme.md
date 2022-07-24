@@ -92,4 +92,12 @@ So visit each pigeon and alter tha map so it is incorrect.
 
 Each level the friend brings more pigeons so the challenge is to convince enough to get lost before he replenishes stock.
 
+## Getaway Driver
 
+Driving away trying to lose the other vehicles chasing you.
+
+Get to the end of the level and don't get caught.
+
+You have to jump over holes while the chasers fall down them. Or e.g. obstacles they will collide into.
+
+Each level the chasers get faster, more of them, longer level.
