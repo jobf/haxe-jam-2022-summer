@@ -20,7 +20,7 @@ class Main extends App {
 
 		var assets = new Assets({
 			fonts: [],
-			images: []
+			images: ["assets/ldtk/tracks/beach-proto-32.png"]
 		});
 
 		gum.changeLoop(new Scenes(assets));
@@ -71,12 +71,11 @@ class TestScene extends Scene {
 		// add body to world or it will do nothing
 		sceneManager.world.add(body);
 
-		//bind a key to reset the scene
+		// bind a key to reset the scene
 		sceneManager.keyboard.bind(KeyCode.R, "RESET", "Reset Scene", loop -> sceneManager.changeScene(new TestScene(sceneManager)));
 	}
 
-	override function destroy() {
-	}
+	override function destroy() {}
 
 	override function update(elapsedSeconds:Float) {}
 }

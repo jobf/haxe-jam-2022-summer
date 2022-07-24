@@ -1,5 +1,6 @@
 package scenes;
 
+import levels.LevelManager;
 import pieces.Vehicle;
 
 class GetawayScene extends BaseScene {
@@ -7,12 +8,15 @@ class GetawayScene extends BaseScene {
 
     override function create() {
         super.create();
+        
+        var levels = new LevelManager(beachTiles, tileSize);
 
 		var x = 42;
 		var y = Std.int(sceneManager.stage.centerY());
 
         player = new Vehicle(x, y, sceneManager.world);
         controller.registerPlayer(player);
+        
 	}
 
 	override function destroy() {
