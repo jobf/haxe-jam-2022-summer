@@ -14,19 +14,21 @@ class Stage {
 	var view:ViewElement;
 	var buffer:Buffer<ViewElement>;
 	
-	public var width(get, null):Int;
-	public var height(get, null):Int;
+	public var width(default, null):Int;
+	public var height(default, null):Int;
 
-	public function new(display:Display, coreLoop:PeoteViewLoop) {
+	public function new(display:Display, coreLoop:PeoteViewLoop, ?width:Int, ?height:Int) {
 		this.display = display;
 		this.coreLoop = coreLoop;
+		this.width = width == null ? display.width : width;
+		this.height = height == null ? display.height : height;
 		buffer = new Buffer<ViewElement>(1);
 		program = new Program(buffer);
 		program.setFragmentFloatPrecision("high");
 		program.alphaEnabled = true;
 		program.discardAtAlpha(null);
 		display.addProgram(program);
-		view = new ViewElement(0, 0, display.width, display.height);
+		view = new ViewElement(0, 0, this.width, this.height);
 		buffer.addElement(view);
 		final isGlobalFrameBufferPersistent = false;
 		globalFrameBuffer = makeFrameBuffer("globalFramebuffer", isGlobalFrameBufferPersistent);
@@ -42,7 +44,7 @@ class Stage {
 	}
 
 	function makeFrameBuffer(name:String, isPersistent:Bool):FrameBuffer {
-		var frameBuffer = coreLoop.getFrameBufferDisplay(display.x, display.y, display.width, display.height, isPersistent);
+		var frameBuffer = coreLoop.getFrameBufferDisplay(display.x, display.y, width, height, isPersistent);
 		chainFrameBuffer(frameBuffer, name);
 		return frameBuffer;
 	}
@@ -84,19 +86,11 @@ class Stage {
 		initGraphicsBuffer(name, frames, isPersistentFrameBuffer, isIndividualFrameBuffer);
 		return frames;
 	}
-
+	
 	public function updateGraphicsBuffers() {
 		for (layer in layers) {
 			layer.updateGraphicsBuffers();
 		}
-	}
-
-	function get_width():Int {
-		return display.width;
-	}
-
-	function get_height():Int {
-		return display.height;
 	}
 
 	public function centerX():Float {
@@ -106,9 +100,11 @@ class Stage {
 	public function centerY():Float {
 		return height * 0.5;
 	}
+
 	public function setZoom(z:Int) {
 		display.set_zoom(z);
 	}
+	
 	public function setScroll(x:Int, y:Int){
 		view.x = x;
 		view.y = y;
@@ -127,6 +123,7 @@ class Stage {
 	public function getTime():Float {
 		return coreLoop.peoteView.get_time();
 	}
+
 }
 
 class ViewElement implements Element {

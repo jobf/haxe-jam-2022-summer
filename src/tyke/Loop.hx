@@ -115,9 +115,19 @@ class PhysicalStageLoop extends PeoteViewLoop {
 	var onInitComplete:Void->Void;
 	public var assets(default, null):Assets;
 	public var keyboard(default, null):KeyPresses<PhysicalStageLoop>;
+	public var width(default, null):Int;
+	public var height(default, null):Int;
+	var widthOverride(default, null):Null<Int>;
+	var heightOverride(default, null):Null<Int>;
 
-	public function new(assets:Assets, onInitComplete:Void->Void) {
+	public function new(assets:Assets, onInitComplete:Void->Void, ?width:Int, ?height:Int) {
 		super();
+		if(width != null){
+			widthOverride = width;
+		}
+		if(height != null){
+			heightOverride = height;
+		}
 		this.assets = assets;
 		this.onInitComplete = onInitComplete;
 		keyboard = new KeyPresses<PhysicalStageLoop>([]);
@@ -133,11 +143,13 @@ class PhysicalStageLoop extends PeoteViewLoop {
 	}
 
 	function initWorldAndStage():Void {
-		stage = new Stage(display, this);
+		width = widthOverride == null ? display.width : widthOverride;
+		height = heightOverride == null ? display.height : heightOverride;
+		stage = new Stage(display, this, width, height);
 		trace('initialized stage');
 		world = Echo.start({
-			width: display.width,
-			height: display.height,
+			width: width,
+			height: height,
 			gravity_y: 100,
 			iterations: 2
 		});
@@ -223,7 +235,7 @@ class CountDown {
 			}
 		}
 	}
-	
+
 	public inline function reset() {
 		countDown = duration;
 	}
