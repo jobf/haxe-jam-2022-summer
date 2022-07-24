@@ -20,7 +20,7 @@ class Main extends App {
 
 		var assets = new Assets({
 			fonts: [],
-			images: ["assets/ldtk/tracks/beach-proto-32.png"]
+			images: ["assets/ldtk/tracks/beach-tiles-32.png"]
 		});
 
 		gum.changeLoop(new Scenes(assets));
