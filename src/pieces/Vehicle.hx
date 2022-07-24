@@ -6,10 +6,12 @@ import echo.Body;
 
 class Vehicle {
 	public var body(default, null):Body;
-	var accelerationCountDown:CountDown;
+
+	var forwards:Accelerator;
+	var backwards:Accelerator;
 
 	public function new(x:Int, y:Int, world:World) {
-				body = new Body({
+		body = new Body({
 			shape: {
 				width: 32,
 				height: 16,
@@ -23,8 +25,8 @@ class Vehicle {
 		});
 
 		world.add(body);
-
-		accelerationCountDown = new CountDown(0.25, () -> applyAcceleration(), true);
+		forwards = new Accelerator(body, 50);
+		backwards = new Accelerator(body, -50);
 	}
 
 	inline function formatButtonIsDown(buttonIsDown:Bool):String {
@@ -33,32 +35,24 @@ class Vehicle {
 
 	public function controlAccelerate(buttonIsDown:Bool) {
 		trace('controlAccelerate ${formatButtonIsDown(buttonIsDown)}');
-		
-		accelerationIsActive = buttonIsDown;
-		
+
+		forwards.accelerationIsActive = buttonIsDown;
+
 		if (buttonIsDown) {
-			accelerationCountDown.reset();
-			increaseVelocityX();
+			forwards.reset();
+			forwards.increaseVelocityX();
 		}
 	}
-
-	var accelerationIsActive:Bool;
-	function applyAcceleration() {
-		trace('applyAcceleration');
-		if(accelerationIsActive){
-			increaseVelocityX();
-		}
-	}
-
-	var accelerationIncrement = 50;
-	function increaseVelocityX() {
-		trace('increaseVelocityX');
-		body.velocity.x += accelerationIncrement;
-	}
-
 
 	public function controlReverse(buttonIsDown:Bool) {
 		trace('controlReverse ${formatButtonIsDown(buttonIsDown)}');
+
+		backwards.accelerationIsActive = buttonIsDown;
+
+		if (buttonIsDown) {
+			backwards.reset();
+			backwards.increaseVelocityX();
+		}
 	}
 
 	public function controlUp(buttonIsDown:Bool) {
@@ -73,10 +67,44 @@ class Vehicle {
 		trace('controlAction ${formatButtonIsDown(buttonIsDown)}');
 	}
 
+	public function update(elapsedSeconds:Float) {
+		forwards.update(elapsedSeconds);
+		backwards.update(elapsedSeconds);
+	}
+}
 
+class Accelerator {
+	public var accelerationIsActive:Bool;
 
-	public function update(elapsedSeconds:Float){
+	var accelerationCountDown:CountDown;
+	var accelerationIncrement:Float;
+	var body:Body;
+	var label:String;
+
+	public function new(body:Body, accelerationIncrement:Float) {
+		this.body = body;
+		this.accelerationIncrement = accelerationIncrement;
+		this.label = this.accelerationIncrement > 0 ? "forwards" : "reverse";
+		accelerationCountDown = new CountDown(0.25, () -> applyAcceleration(), true);
+	}
+
+	public function applyAcceleration() {
+		trace('applyAcceleration $label');
+		if (accelerationIsActive) {
+			increaseVelocityX();
+		}
+	}
+
+	public function increaseVelocityX() {
+		trace('increaseVelocityX $label');
+		body.velocity.x += accelerationIncrement;
+	}
+
+	public function update(elapsedSeconds:Float) {
 		accelerationCountDown.update(elapsedSeconds);
 	}
 
+	public function reset() {
+		accelerationCountDown.reset();
+	}
 }
