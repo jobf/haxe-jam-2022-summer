@@ -13,6 +13,18 @@ enum Geometry {
 	POLYGON(numSides:Int);
 }
 
+@:structInit
+class RectangleGeometry{
+	public var x:Int;
+	public var y:Int;
+	public var width:Int;
+	public var height:Int;
+
+	public function trace() {
+		trace('x $x y $y w $width height $height');
+	}
+}
+
 class Layer {
 	public var frameBuffer(default, null):FrameBuffer;
 	public var display(get, null):Display;
@@ -26,8 +38,10 @@ class Layer {
 
 	public function updateGraphicsBuffers() {
 		for (frames in buffers) {
+			// trace('update gfx buffer');
 			frames.updateGraphicsBuffers();
 		}
+		// trace('\n');
 	}
 
 	public function registerGraphicsBuffer(frames:IHaveGraphicsBuffer) {
@@ -215,7 +229,7 @@ class ShapeRenderer implements IHaveGraphicsBuffer {
 	}
 
 	public function updateGraphicsBuffers() {
-		// trace('echo');
+		// trace('shape renderer update');
 		buffer.update();
 	}
 }
