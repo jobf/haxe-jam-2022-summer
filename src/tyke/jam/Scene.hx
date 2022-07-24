@@ -24,10 +24,15 @@ class SceneManager extends PhysicalStageLoop {
         scene.create();
 	}
 
+	public function resetScene() {
+		changeScene(scene);
+	}
+
     override function onUpdate(deltaMs:Int) {
         super.onUpdate(deltaMs);
         scene.update(deltaMs / 1000);
     }
+
 }
 
 class Scene {
