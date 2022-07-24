@@ -9,6 +9,8 @@ class Vehicle {
 
 	var forwards:Accelerator;
 	var backwards:Accelerator;
+	
+	var yIncrement:Float = 120;
 
 	public function new(x:Int, y:Int, world:World) {
 		body = new Body({
@@ -57,10 +59,22 @@ class Vehicle {
 
 	public function controlUp(buttonIsDown:Bool) {
 		trace('controlUp ${formatButtonIsDown(buttonIsDown)}');
+		
+		if(buttonIsDown) {
+			body.velocity.y -= yIncrement;
+		} else {
+			body.velocity.y = 0;
+		}
 	}
 
 	public function controlDown(buttonIsDown:Bool) {
 		trace('controlDown ${formatButtonIsDown(buttonIsDown)}');
+		
+		if(buttonIsDown) {
+			body.velocity.y += yIncrement;
+		} else {
+			body.velocity.y = 0;
+		}
 	}
 
 	public function controlAction(buttonIsDown:Bool) {
