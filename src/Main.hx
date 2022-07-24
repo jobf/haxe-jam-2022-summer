@@ -15,7 +15,7 @@ class Main extends App {
 			drawOnlyWhenRequested: false,
 			displayWidth: 640,
 			displayHeight: 360,
-			displayIsScaled: true
+			displayIsScaled: false
 		});
 
 		var assets = new Assets({

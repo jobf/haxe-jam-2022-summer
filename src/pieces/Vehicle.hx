@@ -1,32 +1,44 @@
 package pieces;
 
+import tyke.Graphics;
 import tyke.Loop.CountDown;
 import echo.World;
 import echo.Body;
 
 class Vehicle {
 	public var body(default, null):Body;
-
+	var geometry:RectangleGeometry;
+	
 	var forwards:Accelerator;
 	var backwards:Accelerator;
 	
 	var yIncrement:Float = 120;
 
-	public function new(x:Int, y:Int, world:World) {
+	public function new(geometry:RectangleGeometry, world:World) {
+		this.geometry = geometry;
 		body = new Body({
 			shape: {
-				width: 32,
-				height: 16,
+				width: geometry.width,
+				height: geometry.height,
 			},
 			kinematic: true,
 			mass: 1,
-			x: x,
-			y: y,
+			x: geometry.x,
+			y: geometry.y,
 			max_velocity_x: 200, // stop the vehicle going too fast
 			rotation: 1, // have a bug in debug renderer (does not draw rectangles if straight :thonk:)
 		});
 
+		// track geometry with body movement
+		body.on_move = (x, y) -> {
+			geometry.x = Std.int(x);
+			geometry.y = Std.int(y);
+		};
+
+		// register body in physics simulation
 		world.add(body);
+
+		// init acceleration logic
 		forwards = new Accelerator(body, 50);
 		backwards = new Accelerator(body, -50);
 	}
@@ -85,6 +97,7 @@ class Vehicle {
 		forwards.update(elapsedSeconds);
 		backwards.update(elapsedSeconds);
 	}
+
 }
 
 class Accelerator {
@@ -103,7 +116,7 @@ class Accelerator {
 	}
 
 	public function applyAcceleration() {
-		trace('applyAcceleration $label');
+		// trace('applyAcceleration $label');
 		if (accelerationIsActive) {
 			increaseVelocityX();
 		}

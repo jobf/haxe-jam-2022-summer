@@ -1,5 +1,6 @@
 package scenes;
 
+import tyke.Graphics;
 import tyke.Graphics.SpriteRenderer;
 import input.Controller;
 import lime.ui.KeyCode;
@@ -9,6 +10,7 @@ import tyke.jam.Scene;
 class BaseScene extends Scene {
     var tileSize:Int;
     var beachTiles:SpriteRenderer;
+    var beachTilesLayer:Layer;
     var debugRectangles:EchoDebug;
     var controller:Controller;
     
@@ -17,6 +19,7 @@ class BaseScene extends Scene {
         
         // renderer for beach tiles
         beachTiles = sceneManager.stage.createSpriteRendererLayer("beachTiles", sceneManager.assets.imageCache[0], tileSize);
+        beachTilesLayer = sceneManager.stage.getLayer("beachTiles");
         
         // renderer for body debugging
         debugRectangles = new EchoDebug(sceneManager.stage.createRectangleRenderLayer("debugrectangles"));
@@ -37,5 +40,6 @@ class BaseScene extends Scene {
         // need to call draw on the debug renderer
         debugRectangles.draw(sceneManager.world);
     }
+
 
 }
