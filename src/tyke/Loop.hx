@@ -110,15 +110,16 @@ class GlyphLoop extends PeoteViewLoop {
 }
 
 class PhysicalStageLoop extends PeoteViewLoop {
-	var stage:Stage;
-	var world:World;
-	var onInitComplete:Void->Void = () -> throw "You must set onInitComplete function!";
-	var assets:Assets;
-	var keyboard:KeyPresses<PhysicalStageLoop>;
+	public var stage(default, null):Stage;
+	public var world(default, null):World;
+	var onInitComplete:Void->Void;
+	public var assets(default, null):Assets;
+	public var keyboard(default, null):KeyPresses<PhysicalStageLoop>;
 
-	public function new(assets:Assets) {
+	public function new(assets:Assets, onInitComplete:Void->Void) {
 		super();
 		this.assets = assets;
+		this.onInitComplete = onInitComplete;
 		keyboard = new KeyPresses<PhysicalStageLoop>([]);
 	}
 
@@ -133,12 +134,14 @@ class PhysicalStageLoop extends PeoteViewLoop {
 
 	function initWorldAndStage():Void {
 		stage = new Stage(display, this);
+		trace('initialized stage');
 		world = Echo.start({
 			width: display.width,
 			height: display.height,
 			gravity_y: 100,
 			iterations: 2
 		});
+		trace('initialized echo');
 	}
 
 	var alwaysDraw:Bool = false;
@@ -150,7 +153,7 @@ class PhysicalStageLoop extends PeoteViewLoop {
 	}
 
 	override public function onUpdate(deltaMs:Int) {
-		// trace('world step');
+		// trace('world step $deltaMs');
 		world.step(deltaMs / 1000);
 	}
 
