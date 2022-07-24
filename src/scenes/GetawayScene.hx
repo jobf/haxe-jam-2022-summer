@@ -10,6 +10,7 @@ class GetawayScene extends BaseScene{
 		var y = Std.int(sceneManager.stage.centerY());
 
         var player = new Vehicle(x, y, sceneManager.world);
+        controller.registerPlayer(player);
 	}
 
 	override function destroy() {
