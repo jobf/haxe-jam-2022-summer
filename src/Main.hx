@@ -42,7 +42,7 @@ class TestScene extends Scene {
 		var y = Std.int(sceneManager.stage.centerY());
 		var w = 320;
 		var h = 32;
-		var shape = shapes.makeShape(x, y, w, h, RECT, Color.MAGENTA);
+		var shape = shapes.makeShape(x, y, w, h, RECT, Color.BLUE);
 
 		// init a new echo body to animate the shape with
 		var body = new Body({
