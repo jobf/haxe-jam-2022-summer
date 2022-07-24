@@ -219,9 +219,13 @@ class CountDown {
 		if (countDown <= 0) {
 			onComplete();
 			if (restartWhenComplete) {
-				countDown = duration;
+				reset();
 			}
 		}
+	}
+	
+	public inline function reset() {
+		countDown = duration;
 	}
 }
 
