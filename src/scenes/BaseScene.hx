@@ -10,6 +10,7 @@ import tyke.jam.Scene;
 class BaseScene extends Scene {
     var tileSize:Int;
     var beachTiles:SpriteRenderer;
+    var sprites:SpriteRenderer;
     var beachTilesLayer:Layer;
     var debugRectangles:EchoDebug;
     var controller:Controller;
@@ -20,7 +21,10 @@ class BaseScene extends Scene {
         // renderer for beach tiles
         beachTiles = sceneManager.stage.createSpriteRendererLayer("beachTiles", sceneManager.assets.imageCache[0], tileSize);
         beachTilesLayer = sceneManager.stage.getLayer("beachTiles");
-        
+
+        // renderer for sprites
+        sprites = sceneManager.stage.createSpriteRendererLayer("sprites", sceneManager.assets.imageCache[1], tileSize);
+
         // renderer for body debugging
         debugRectangles = new EchoDebug(sceneManager.stage.createRectangleRenderLayer("debugrectangles"));
 

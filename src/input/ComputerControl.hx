@@ -11,6 +11,25 @@ class ComputerControl {
 
 	public function new(vehicle:Vehicle) {
 		this.vehicle = vehicle;
+        buttonStates = [
+            0 => {
+                isDown: false,
+                action: (isDown, vehicle) -> vehicle.controlReverse(isDown)
+            },
+            1 => {
+                isDown: false,
+                action: (isDown, vehicle) -> vehicle.controlAccelerate(isDown)
+            },
+            // 2 => {
+            //     isDown: false,
+            //     action: (isDown, vehicle) -> vehicle.controlUp(isDown)
+            // },
+            // 3 => {
+            //     isDown: false,
+            //     action: (isDown, vehicle) -> vehicle.controlDown(isDown)
+            // }
+        ];
+        maximumStateId = 1;
 		alterControlCountDown = new CountDown(2.0, () -> alterControl(), true);
 	}
 
@@ -19,19 +38,30 @@ class ComputerControl {
         vehicle.update(elapsedSeconds);
 	}
 
-	var buttonStates:Map<Int, ButtonState> = [
-		0 => {
-			isDown: false,
-			action: (isDown, vehicle) -> vehicle.controlAccelerate(isDown)
-		}
-	];
+	var buttonStates:Map<Int, ButtonState>;
+    var maximumStateId:Int;
 
+    var lastChangedStateId:Int = -1;
 	function alterControl() {
-		var chance = randomChance();
-        var stateId = 0;
-        if(buttonStates[stateId].isDown == chance){
-            buttonStates[stateId].isDown = !chance;
-            buttonStates[stateId].press(vehicle);
+        var nextPressState = randomChance();
+        
+        // is button down
+        if(lastChangedStateId >= 0){
+            if(buttonStates[lastChangedStateId].isDown != nextPressState){
+                buttonStates[lastChangedStateId].isDown = nextPressState;
+                buttonStates[lastChangedStateId].control(vehicle);
+            }
+        }
+        else{
+            lastChangedStateId = randomInt(maximumStateId);
+            if(buttonStates[lastChangedStateId].isDown != nextPressState){
+                buttonStates[lastChangedStateId].isDown = nextPressState;
+                buttonStates[lastChangedStateId].control(vehicle);
+            }
+        }
+        
+        if(!nextPressState){
+            lastChangedStateId = -1;
         }
 	}
 }
@@ -40,7 +70,7 @@ class ComputerControl {
 class ButtonState {
 	public var action:(isDown:Bool, vehicle:Vehicle)->Void;
 	public var isDown:Bool;
-    public function press(vehicle:Vehicle){
+    public function control(vehicle:Vehicle){
         action(isDown, vehicle);
     }
 }

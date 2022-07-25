@@ -14,7 +14,7 @@ class GetawayScene extends BaseScene {
     override function create() {
         super.create();
 
-        var levels = new LevelManager(beachTiles, tileSize);
+        var levels = new LevelManager(beachTiles, sprites, tileSize);
         
         var playerGeometry:RectangleGeometry = {
             y: Std.int(sceneManager.stage.centerY()),
