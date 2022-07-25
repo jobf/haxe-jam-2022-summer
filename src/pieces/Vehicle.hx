@@ -14,7 +14,7 @@ class Vehicle {
 	var forwards:Accelerator;
 	var backwards:Accelerator;
 
-	var yIncrement:Float = 120;
+	var verticalVelocity:Float = 120;
 
 	var groundY:Float;
 	var isJumping:Bool = false;
@@ -83,7 +83,7 @@ class Vehicle {
 		// trace('controlUp ${formatButtonIsDown(buttonIsDown)}');
 
 		if (buttonIsDown) {
-			body.velocity.y -= yIncrement;
+			body.velocity.y = -verticalVelocity;
 		} else {
 			body.velocity.y = 0;
 		}
@@ -93,7 +93,7 @@ class Vehicle {
 		// trace('controlDown ${formatButtonIsDown(buttonIsDown)}');
 
 		if (buttonIsDown) {
-			body.velocity.y += yIncrement;
+			body.velocity.y = verticalVelocity;
 		} else {
 			body.velocity.y = 0;
 		}
