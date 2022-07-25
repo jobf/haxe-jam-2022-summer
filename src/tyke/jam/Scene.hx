@@ -5,8 +5,8 @@ import tyke.Loop.PhysicalStageLoop;
 class SceneManager extends PhysicalStageLoop {
 	var scene:Scene;
 
-	public function new(assets:Assets, initScene:PhysicalStageLoop->Scene) {
-		super(assets, () -> setupInitialScene(initScene));
+	public function new(assets:Assets, initScene:PhysicalStageLoop->Scene, ?width:Int, ?height:Int) {
+		super(assets, () -> setupInitialScene(initScene), width, height);
 	}
 
 	function setupInitialScene(initScene:PhysicalStageLoop->Scene):Void {
