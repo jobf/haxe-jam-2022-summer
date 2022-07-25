@@ -37,6 +37,7 @@
 	<haxedef name="peoteview_instancedrawing" />
 	<haxedef name="peoteview_vertexarrayobjects" />
 
+	<haxeflag name="--macro" value="echo.Macros.add_data('collider','echo.Collider')"/>
 
 	<!--<haxedef name="peoteview_debug_macro" />-->
 	<!--<haxedef name="peoteview_debug_buffer" />-->

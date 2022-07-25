@@ -1,5 +1,6 @@
 package pieces;
 
+import echo.Collider;
 import tyke.Graphics;
 import tyke.Graphics.SpriteRenderer;
 import echo.Body;
@@ -7,18 +8,21 @@ import echo.World;
 import tyke.Graphics.RectangleGeometry;
 
 enum ObstacleType{
+    UNDEFINED;
     RAMP;
     HOLE;
     WATER;
 }
 
 class Obstacle{
-    var body:Body;
+    public var body(default, null):Body;
     var sprite:Sprite;
     var type:ObstacleType;
 
-    public function new(type:ObstacleType, geometry:RectangleGeometry, world:World, sprites:SpriteRenderer){
+    public function new(type:ObstacleType, geometry:RectangleGeometry, world:World, sprite:Sprite){
         this.type = type;
+        this.sprite = sprite;
+
         body = new Body({
             shape: {
                 width: geometry.width,
@@ -27,26 +31,23 @@ class Obstacle{
             kinematic: true,
             mass: 1,
             x: geometry.x,
-            y: geometry.y
+            y: geometry.y,
+            rotation: 1 // because of bug in debug renderer
         });
-
-        var spriteSize = 32;
-
-        // convert ObstacleType to tileIndex
-        var tileIndex:Int = switch type{
-            case RAMP: 1;
-            case WATER: 2;
-            case HOLE: 0;
-        }
-
-        // instance a new sprite
-        sprite = sprites.makeSprite(geometry.x, geometry.y, spriteSize, tileIndex);
         
         // bind movement in case we add moving obstacles
         body.on_move = (x, y) -> sprite.setPosition(x, y);
         
+        // store reference to Collider helper class for use in collisions
+        body.collider = new Collider(body -> collideWith(body));
+
         // register body in physics simulation
         world.add(body);
     }
 
+
+	function collideWith(body:Body) {
+        // todo
+        trace("obstacle collide");
+    }
 }

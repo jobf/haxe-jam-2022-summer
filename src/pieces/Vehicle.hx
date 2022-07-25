@@ -1,5 +1,6 @@
 package pieces;
 
+import echo.Collider;
 import tyke.Graphics;
 import tyke.Loop.CountDown;
 import echo.World;
@@ -110,6 +111,9 @@ class Accelerator {
 
 	public function new(body:Body, accelerationIncrement:Float) {
 		this.body = body;
+		// store reference to Collider helper class for use in collisions
+        body.collider = new Collider(body -> collideWith(body));
+
 		this.accelerationIncrement = accelerationIncrement;
 		this.label = this.accelerationIncrement > 0 ? "forwards" : "reverse";
 		accelerationCountDown = new CountDown(0.25, () -> applyAcceleration(), true);
@@ -133,5 +137,10 @@ class Accelerator {
 
 	public function reset() {
 		accelerationCountDown.reset();
+	}
+
+	function collideWith(body:Body) {
+		// todo
+		trace("vehicle collide");
 	}
 }
