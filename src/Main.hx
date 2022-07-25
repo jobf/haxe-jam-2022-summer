@@ -1,4 +1,4 @@
-import scenes.GetawayScene;
+import scenes.TitleScreen;
 import lime.ui.KeyCode;
 import echo.Body;
 import peote.view.Color;
@@ -32,7 +32,7 @@ class Main extends App {
 
 class Scenes extends SceneManager {
 	public function new(assets:Assets) {
-		super(assets, loop -> return new GetawayScene(this), 8192, 420);
+		super(assets, loop -> return new TitleScreen(this));
 	}
 }
 
