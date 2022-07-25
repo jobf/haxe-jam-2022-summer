@@ -3,6 +3,7 @@
 	<!-- Adds an `object` field with `FlxObject` type to echo's `Body` class -->
 	<haxeflag name="--macro" value="echo.Macros.add_data('sprite','tyke.Graphics.Sprite')" />
 	<haxeflag name="--macro" value="echo.Macros.add_data('hardlight','tyke.Echo.HardLight')"/>
+	<haxeflag name="--macro" value="echo.Macros.add_data('uiEntity','tyke.jam.EchoUi.UiEntity')"/>
 	<haxelib name="lime" />
 	<haxelib name="input2action" />
 	<haxelib name="json2object" />

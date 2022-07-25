@@ -33,6 +33,25 @@ class SceneManager extends PhysicalStageLoop {
         scene.update(deltaMs / 1000);
     }
 
+	override function onMouseMove(x:Float, y:Float) {
+		super.onMouseMove(x, y);
+		scene.onMouseMove(x, y);
+	}
+
+	override function onMouseDown(x:Float, y:Float, button:MouseButton) {
+		super.onMouseDown(x, y, button);
+		scene.onMouseDown(x, y, button);
+	}
+
+	override function onMouseUp(x:Float, y:Float, button:MouseButton) {
+		super.onMouseUp(x, y, button);
+		scene.onMouseUp(x, y, button);
+	}
+
+	override function onMouseScroll(deltaX:Float, deltaY:Float, wheelMode:MouseWheelMode) {
+		super.onMouseScroll(deltaX, deltaY, wheelMode);
+		scene.onMouseScroll(deltaX, deltaY, wheelMode);
+	}
 }
 
 class Scene {
@@ -43,4 +62,12 @@ class Scene {
 	public function create(){}
 	public function destroy(){}
 	public function update(elapsedSeconds:Float){}
+
+	public function onMouseMove(x:Float, y:Float) {}
+
+	public function onMouseDown(x:Float, y:Float, button:MouseButton) {}
+
+	public function onMouseUp(x:Float, y:Float, button:MouseButton) {}
+
+	public function onMouseScroll(deltaX:Float, deltaY:Float, wheelMode:MouseWheelMode) {}
 }

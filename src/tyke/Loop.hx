@@ -146,14 +146,14 @@ class PhysicalStageLoop extends PeoteViewLoop {
 		width = widthOverride == null ? display.width : widthOverride;
 		height = heightOverride == null ? display.height : heightOverride;
 		stage = new Stage(display, this, width, height);
-		trace('initialized stage');
+		trace('initialized stage $width $height');
 		world = Echo.start({
 			width: width,
 			height: height,
 			gravity_y: 100,
 			iterations: 2
 		});
-		trace('initialized echo');
+		trace('initialized echo $width $height');
 	}
 
 	var alwaysDraw:Bool = false;
