@@ -26,7 +26,7 @@ class GetawayScene extends BaseScene {
 			height: 16
 		};
 
-		player = new Vehicle(playerGeometry, sceneManager.world);
+		player = new Vehicle(playerGeometry, sceneManager.world, largeSprites.makeSprite(playerGeometry.x, playerGeometry.y, 96, 0));
 		controller.registerPlayer(player);
 
 		var enemyGeometry:RectangleGeometry = {
@@ -36,7 +36,7 @@ class GetawayScene extends BaseScene {
 			height: 16
 		};
 
-		var enemy = new Vehicle(enemyGeometry, sceneManager.world);
+		var enemy = new Vehicle(enemyGeometry, sceneManager.world, largeSprites.makeSprite(playerGeometry.x, playerGeometry.y, 96, 1));
 		computerControl = new ComputerControl(enemy);
 		// enemies array used for collisions listener
 		enemies.push(enemy.body);

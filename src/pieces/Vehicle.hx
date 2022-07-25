@@ -24,7 +24,7 @@ class Vehicle {
 	
 	var isColliding:Bool = false;
 
-	public function new(geometry:RectangleGeometry, world:World) {
+	public function new(geometry:RectangleGeometry, world:World, sprite:Sprite) {
 		this.geometry = geometry;
 		body = new Body({
 			shape: {
@@ -46,6 +46,7 @@ class Vehicle {
 		body.on_move = (x, y) -> {
 			geometry.x = Std.int(x);
 			geometry.y = Std.int(y);
+			sprite.setPosition(x, y);
 		};
 
 		// register body in physics simulation
@@ -135,6 +136,7 @@ class Vehicle {
 			if(!isControllingVertical){
 				// keep constant y position if not being controlled up or down
 				body.velocity.y = 0;
+				body.y = groundY;
 			}
 
 			forwards.update(elapsedSeconds);

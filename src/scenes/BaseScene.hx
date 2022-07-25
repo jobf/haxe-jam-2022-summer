@@ -1,5 +1,7 @@
 package scenes;
 
+import tyke.Loop.Text;
+import tyke.Loop.Glyphs;
 import tyke.Graphics;
 import tyke.Graphics.SpriteRenderer;
 import input.Controller;
@@ -11,10 +13,11 @@ class BaseScene extends Scene {
     var tileSize:Int;
     var beachTiles:SpriteRenderer;
     var sprites:SpriteRenderer;
+    var largeSprites:SpriteRenderer;
+    var text:Text;
     var beachTilesLayer:Layer;
     var debugRectangles:EchoDebug;
     var controller:Controller;
-    
 	override function create() {
         tileSize = 32;
         
@@ -24,6 +27,8 @@ class BaseScene extends Scene {
 
         // renderer for sprites
         sprites = sceneManager.stage.createSpriteRendererLayer("sprites", sceneManager.assets.imageCache[1], tileSize);
+
+        largeSprites = sceneManager.stage.createSpriteRendererLayer("largeSprites", sceneManager.assets.imageCache[2], 96);
 
         // renderer for body debugging
         debugRectangles = new EchoDebug(sceneManager.stage.createRectangleRenderLayer("debugrectangles"));
@@ -45,7 +50,7 @@ class BaseScene extends Scene {
 
 	override function update(elapsedSeconds:Float) {
         // need to call draw on the debug renderer
-        debugRectangles.draw(sceneManager.world);
+        // debugRectangles.draw(sceneManager.world);
     }
 
 

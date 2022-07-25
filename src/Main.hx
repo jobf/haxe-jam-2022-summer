@@ -1,3 +1,11 @@
+import scenes.BaseScene;
+import lime.ui.MouseButton;
+import tyke.Graphics.RectangleGeometry;
+import tyke.Loop.Text;
+import tyke.jam.EchoUi.ButtonConfig;
+import tyke.jam.EchoUi.ClickHandler;
+import tyke.jam.EchoUi.ButtonGrid;
+import tyke.Loop.Glyphs;
 import scenes.TitleScreen;
 import scenes.GetawayScene;
 import lime.ui.KeyCode;
@@ -23,8 +31,8 @@ class Main extends App {
 			fonts: ["assets/fonts/tiled/hack_ascii.json"],
 			images: [
 				"assets/ldtk/tracks/beach-tiles-32.png",
-				"assets/ldtk/tracks/sprites-32.png"
-			]
+				"assets/ldtk/tracks/sprites-32.png",
+				"assets/ldtk/tracks/sprites-96.png"]
 		});
 
 		gum.changeLoop(new Scenes(assets));
@@ -34,7 +42,8 @@ class Main extends App {
 class Scenes extends SceneManager {
 	public function new(assets:Assets) {
 		final levelWidth = 8192;
-		super(assets, loop -> return new TestScene(this), levelWidth);
+		// super(assets, loop -> return new TestScene(this), levelWidth);
+		super(assets, loop -> return new GetawayScene(this), levelWidth);
 		// super(assets, loop -> return new TitleScreen(this), levelWidth);
 	}
 }
