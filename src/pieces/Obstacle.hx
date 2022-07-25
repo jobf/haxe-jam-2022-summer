@@ -43,5 +43,8 @@ class Obstacle{
 	function collideWith(body:Body) {
         // todo
         trace("obstacle collide");
+        if(body.collider.type == VEHICLE){
+            this.body.remove();
+        }
     }
 }
