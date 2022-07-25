@@ -32,7 +32,8 @@ class Main extends App {
 
 class Scenes extends SceneManager {
 	public function new(assets:Assets) {
-		super(assets, loop -> return new TitleScreen(this));
+		final levelWidth = 8192;
+		super(assets, loop -> return new TitleScreen(this), levelWidth);
 	}
 }
 
