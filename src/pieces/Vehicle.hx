@@ -39,6 +39,9 @@ class Vehicle {
 		// register body in physics simulation
 		world.add(body);
 
+		// store reference to Collider helper class for use in collisions
+        body.collider = new Collider(VEHICLE, body -> collideWith(body));
+
 		// init acceleration logic
 		forwards = new Accelerator(body, 50);
 		backwards = new Accelerator(body, -50);
@@ -49,7 +52,7 @@ class Vehicle {
 	}
 
 	public function controlAccelerate(buttonIsDown:Bool) {
-		trace('controlAccelerate ${formatButtonIsDown(buttonIsDown)}');
+		// trace('controlAccelerate ${formatButtonIsDown(buttonIsDown)}');
 
 		forwards.accelerationIsActive = buttonIsDown;
 
@@ -60,7 +63,7 @@ class Vehicle {
 	}
 
 	public function controlReverse(buttonIsDown:Bool) {
-		trace('controlReverse ${formatButtonIsDown(buttonIsDown)}');
+		// trace('controlReverse ${formatButtonIsDown(buttonIsDown)}');
 
 		backwards.accelerationIsActive = buttonIsDown;
 
@@ -71,7 +74,7 @@ class Vehicle {
 	}
 
 	public function controlUp(buttonIsDown:Bool) {
-		trace('controlUp ${formatButtonIsDown(buttonIsDown)}');
+		// trace('controlUp ${formatButtonIsDown(buttonIsDown)}');
 		
 		if(buttonIsDown) {
 			body.velocity.y -= yIncrement;
@@ -81,7 +84,7 @@ class Vehicle {
 	}
 
 	public function controlDown(buttonIsDown:Bool) {
-		trace('controlDown ${formatButtonIsDown(buttonIsDown)}');
+		// trace('controlDown ${formatButtonIsDown(buttonIsDown)}');
 		
 		if(buttonIsDown) {
 			body.velocity.y += yIncrement;
@@ -91,19 +94,42 @@ class Vehicle {
 	}
 
 	public function controlAction(buttonIsDown:Bool) {
-		trace('controlAction ${formatButtonIsDown(buttonIsDown)}');
+		// trace('controlAction ${formatButtonIsDown(buttonIsDown)}');
 	}
-
+	
 	public function update(elapsedSeconds:Float) {
 		forwards.update(elapsedSeconds);
 		backwards.update(elapsedSeconds);
 	}
 
+	inline function stop(){
+		body.velocity.x = 0;
+		body.velocity.y = 0;
+	}
+
+	function collideWith(body:Body) {
+		trace('vehicle collide ${body.collider.type}');
+		switch body.collider.type{
+			case HOLE : fallInHole();
+			case RAMP : jump();
+			case _: return;
+		}
+	}
+
+	function fallInHole() {
+		trace('fall in hole');
+		forwards.canMove = false;
+		backwards.canMove = false;
+		stop();
+	}
+
+	function jump() {}
 }
 
 class Accelerator {
 	public var accelerationIsActive:Bool;
-
+	
+	public var canMove:Bool;
 	var accelerationCountDown:CountDown;
 	var accelerationIncrement:Float;
 	var body:Body;
@@ -111,12 +137,11 @@ class Accelerator {
 
 	public function new(body:Body, accelerationIncrement:Float) {
 		this.body = body;
-		// store reference to Collider helper class for use in collisions
-        body.collider = new Collider(body -> collideWith(body));
 
 		this.accelerationIncrement = accelerationIncrement;
 		this.label = this.accelerationIncrement > 0 ? "forwards" : "reverse";
 		accelerationCountDown = new CountDown(0.25, () -> applyAcceleration(), true);
+		canMove = true;
 	}
 
 	public function applyAcceleration() {
@@ -127,20 +152,21 @@ class Accelerator {
 	}
 
 	public function increaseVelocityX() {
-		trace('increaseVelocityX $label');
-		body.velocity.x += accelerationIncrement;
+		if(canMove){
+			// trace('increaseVelocityX $label');
+			body.velocity.x += accelerationIncrement;
+		}
 	}
 
+	
 	public function update(elapsedSeconds:Float) {
 		accelerationCountDown.update(elapsedSeconds);
 	}
-
+	
 	public function reset() {
 		accelerationCountDown.reset();
 	}
 
-	function collideWith(body:Body) {
-		// todo
-		trace("vehicle collide");
-	}
+
+
 }

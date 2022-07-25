@@ -1,5 +1,6 @@
 package scenes;
 
+import echo.Body;
 import input.ComputerControl;
 import tyke.Graphics.RectangleGeometry;
 import levels.LevelScroller;
@@ -10,10 +11,12 @@ class GetawayScene extends BaseScene {
 	var player:Vehicle;
 	var levelScroller:LevelScroller;
 	var computerControl:ComputerControl;
+	var enemies:Array<Body>;
 
 	override function create() {
 		super.create();
-
+		enemies = [];
+		
 		var levels = new LevelManager(beachTiles, sprites, tileSize, sceneManager.world);
 
 		var playerGeometry:RectangleGeometry = {
@@ -32,11 +35,25 @@ class GetawayScene extends BaseScene {
 			width: 32,
 			height: 16
 		};
+
 		var enemy = new Vehicle(enemyGeometry, sceneManager.world);
 		computerControl = new ComputerControl(enemy);
+		// enemies array used for collisions listener
+		enemies.push(enemy.body);
 
+		// register player and obstacle collisions
 		sceneManager.world.listen(player.body, levels.obstacleBodies, {
-			enter: (body1, body2, array) -> {
+			enter: (body1, body2, collisionData) -> {
+				trace('collision player obstacle');
+				body1.collider.collideWith(body2);
+				body2.collider.collideWith(body1);
+			}
+		});
+
+		// register enemies and obstacle collisions
+		sceneManager.world.listen(enemies, levels.obstacleBodies, {
+			enter: (body1, body2, collisionData) -> {
+				trace('collision enemy obstacle');
 				body1.collider.collideWith(body2);
 				body2.collider.collideWith(body1);
 			}

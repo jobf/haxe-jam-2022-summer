@@ -1,2 +1,2 @@
-lime build html5 -final
+lime build html5 -final --no-traces
 zip dist.zip -r bin/html5/bin

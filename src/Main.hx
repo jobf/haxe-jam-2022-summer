@@ -32,7 +32,7 @@ class Main extends App {
 
 class Scenes extends SceneManager {
 	public function new(assets:Assets) {
-		super(assets, loop -> return new GetawayScene(this));
+		super(assets, loop -> return new GetawayScene(this), 8192, 420);
 	}
 }
 

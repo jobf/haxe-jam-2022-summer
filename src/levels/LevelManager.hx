@@ -1,5 +1,6 @@
 package levels;
 
+import echo.Collider;
 import echo.Body;
 import echo.World;
 import tyke.Graphics.RectangleGeometry;
@@ -44,17 +45,20 @@ class LevelManager {
 				}
 
 				var sprite = this.obstacleSprites.makeSprite(tileX, tileY, tilePixelSize, tileData.tileId);
-				var obstacle = new Obstacle(determineObstacleType(tileData.tileId), geometry, world, sprite);
-                trace('spawned Obstacle x $tileX y $tileY');
+				var obstacleType = determineCollisionType(tileData.tileId);
+				var obstacle = new Obstacle(obstacleType, geometry, world, sprite);
+				// obstacleBodies array used for collision listener
 				obstacleBodies.push(obstacle.body);
+
+                trace('spawned Obstacle $obstacleType x $tileX y $tileY');
 			}
 		});
 	}
 
 	/**
-		converts the tile ID from the tile map used in ldtk to the ObstacleType enum for use in game 
+		converts the tile ID from the tile map used in ldtk to the CollisionType enum for use in game 
 	**/
-	inline function determineObstacleType(tileId:Int):ObstacleType {
+	inline function determineCollisionType(tileId:Int):CollisionType {
 		return switch tileId {
 			case 9: RAMP;
 			case 8: HOLE;

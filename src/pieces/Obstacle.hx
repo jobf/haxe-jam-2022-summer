@@ -7,19 +7,13 @@ import echo.Body;
 import echo.World;
 import tyke.Graphics.RectangleGeometry;
 
-enum ObstacleType{
-    UNDEFINED;
-    RAMP;
-    HOLE;
-    WATER;
-}
 
 class Obstacle{
     public var body(default, null):Body;
     var sprite:Sprite;
-    var type:ObstacleType;
+    var type:CollisionType;
 
-    public function new(type:ObstacleType, geometry:RectangleGeometry, world:World, sprite:Sprite){
+    public function new(type:CollisionType, geometry:RectangleGeometry, world:World, sprite:Sprite){
         this.type = type;
         this.sprite = sprite;
 
@@ -39,7 +33,7 @@ class Obstacle{
         body.on_move = (x, y) -> sprite.setPosition(x, y);
         
         // store reference to Collider helper class for use in collisions
-        body.collider = new Collider(body -> collideWith(body));
+        body.collider = new Collider(type, body -> collideWith(body));
 
         // register body in physics simulation
         world.add(body);
