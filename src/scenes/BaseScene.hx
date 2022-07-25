@@ -28,6 +28,9 @@ class BaseScene extends Scene {
         // renderer for body debugging
         debugRectangles = new EchoDebug(sceneManager.stage.createRectangleRenderLayer("debugrectangles"));
 
+        // for writing messages
+		text = Glyphs.initText(sceneManager.display, sceneManager.assets.fontCache[0]);
+
 		//bind a key to reset the scene
 		sceneManager.keyboard.bind(KeyCode.R, "RESET", "Reset Scene", loop -> sceneManager.resetScene());
 

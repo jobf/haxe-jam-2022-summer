@@ -20,7 +20,7 @@ class Main extends App {
 		});
 
 		var assets = new Assets({
-			fonts: [],
+			fonts: ["assets/fonts/tiled/hack_ascii.json"],
 			images: [
 				"assets/ldtk/tracks/beach-tiles-32.png",
 				"assets/ldtk/tracks/sprites-32.png"
@@ -34,54 +34,73 @@ class Main extends App {
 class Scenes extends SceneManager {
 	public function new(assets:Assets) {
 		final levelWidth = 8192;
-		super(assets, loop -> return new GetawayScene(this), levelWidth);
+		super(assets, loop -> return new TestScene(this), levelWidth);
 		// super(assets, loop -> return new TitleScreen(this), levelWidth);
 	}
 }
 
-class TestScene extends Scene {
+class TestScene extends BaseScene {
+	var clickHandler:ClickHandler;
+	var cursor:Body;
+
 	override function create() {
+		super.create();
+
 		// first need a shape renderer to draw shapes with
 		var shapes = sceneManager.stage.createShapeRenderLayer("shapes");
-
-		// init a new shape to show a graphic on screen
-		var x = Std.int(sceneManager.stage.centerX());
-		var y = Std.int(sceneManager.stage.centerY());
-		var w = 320;
-		var h = 32;
-		var shape = shapes.makeShape(x, y, w, h, RECT, Color.BLUE);
-
-		// init a new echo body to animate the shape with
-		var body = new Body({
+		cursor = new Body({
 			shape: {
-				width: w,
-				height: h,
+				solid: false,
+				width: 3,
+				height: 3,
 			},
 			kinematic: true,
-			mass: 1,
-			x: x,
-			y: y,
-			rotational_velocity: 30,
+			x: 0,
+			y: 0,
 		});
 
-		// bind body on_move to graphic position
-		body.on_move = (x, y) -> {
-			shape.setPosition(x, y);
+		clickHandler = new ClickHandler(cursor, sceneManager.world);
+
+		var buttonConfigs:Array<ButtonConfig> = [
+			{
+				text: "click",
+				action: entity -> trace('click')
+			},
+			{
+				text: "clack",
+				action: entity -> trace('clack')
+			}
+		];
+		var containerGeometry:RectangleGeometry = {
+			y: 0,
+			x: 0,
+			width: 640,
+			height: 360
 		};
 
-		// bind body rotation to graphic rotation
-		body.on_rotate = r -> {
-			shape.rotation = r;
-		};
+		var rowsInGrid = 2;
+		var columnsInGrid = 1;
+		var margin = 10;
 
-		// add body to world or it will do nothing
-		sceneManager.world.add(body);
-
+		var buttonGrid = new ButtonGrid(clickHandler, shapes, text.fontProgram, sceneManager.world, buttonConfigs, containerGeometry, margin, rowsInGrid, columnsInGrid);
 		// bind a key to reset the scene
 		sceneManager.keyboard.bind(KeyCode.R, "RESET", "Reset Scene", loop -> sceneManager.changeScene(new TestScene(sceneManager)));
 	}
 
 	override function destroy() {}
 
-	override function update(elapsedSeconds:Float) {}
+	override function update(elapsedSeconds:Float) {
+		super.update(elapsedSeconds);
+		// sceneManager.world.step(elapsedSeconds);
+	}
+
+	override function onMouseDown(x:Float, y:Float, button:MouseButton) {
+		super.onMouseDown(x, y, button);
+		clickHandler.onMouseDown();
+	}
+
+	override function onMouseMove(x:Float, y:Float) {
+		super.onMouseMove(x, y);
+		cursor.set_position(x, y);
+	}
 }
