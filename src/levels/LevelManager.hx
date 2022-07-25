@@ -50,7 +50,7 @@ class LevelManager {
 				// obstacleBodies array used for collision listener
 				obstacleBodies.push(obstacle.body);
 
-                trace('spawned Obstacle $obstacleType x $tileX y $tileY');
+                // trace('spawned Obstacle $obstacleType x $tileX y $tileY');
 			}
 		});
 	}

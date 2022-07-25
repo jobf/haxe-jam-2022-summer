@@ -20,7 +20,8 @@ class Obstacle{
         body = new Body({
             shape: {
                 width: geometry.width,
-                height: geometry.height
+                height: geometry.height,
+                solid: false
             },
             kinematic: true,
             mass: 1,
@@ -41,8 +42,7 @@ class Obstacle{
 
 
 	function collideWith(body:Body) {
-        // todo
-        trace("obstacle collide");
+        // trace('handle collide in ${this.body.collider.type} ');
         if(body.collider.type == VEHICLE){
             this.body.remove();
         }

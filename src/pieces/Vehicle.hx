@@ -15,11 +15,14 @@ class Vehicle {
 	var backwards:Accelerator;
 
 	var verticalVelocity:Float = 120;
+	var isControllingVertical:Bool = false;
+	var jumpVelocity = -90;
 
 	var groundY:Float;
-	var isJumping:Bool = false;
+	var isOnGround:Bool = true;
+	var isJumpInProgress:Bool = false;
+	
 	var isColliding:Bool = false;
-
 
 	public function new(geometry:RectangleGeometry, world:World) {
 		this.geometry = geometry;
@@ -28,13 +31,16 @@ class Vehicle {
 				width: geometry.width,
 				height: geometry.height,
 			},
-			kinematic: true,
+			kinematic: false,
 			mass: 1,
 			x: geometry.x,
 			y: geometry.y,
 			max_velocity_x: 300, // stop the vehicle going too fast
 			rotation: 1, // have a bug in debug renderer (does not draw rectangles if straight :thonk:)
 		});
+
+		// set initial ground position
+		groundY = geometry.y;
 
 		// track geometry with body movement
 		body.on_move = (x, y) -> {
@@ -70,6 +76,9 @@ class Vehicle {
 
 	public function controlReverse(buttonIsDown:Bool) {
 		// trace('controlReverse ${formatButtonIsDown(buttonIsDown)}');
+		if(!isOnGround){
+			return;
+		}
 
 		backwards.accelerationIsActive = buttonIsDown;
 
@@ -81,22 +90,39 @@ class Vehicle {
 
 	public function controlUp(buttonIsDown:Bool) {
 		// trace('controlUp ${formatButtonIsDown(buttonIsDown)}');
+		if(!isOnGround){
+			return;
+		}
 
 		if (buttonIsDown) {
+			isControllingVertical = true;
 			body.velocity.y = -verticalVelocity;
 		} else {
+			isControllingVertical = false;
 			body.velocity.y = 0;
 		}
+
+		// keep track of y position while grounded (used to know when to land)
+		groundY = body.y;
 	}
 
 	public function controlDown(buttonIsDown:Bool) {
 		// trace('controlDown ${formatButtonIsDown(buttonIsDown)}');
+		if(!isOnGround){
+			return;
+		}
 
 		if (buttonIsDown) {
+			isControllingVertical = true;
 			body.velocity.y = verticalVelocity;
 		} else {
+			isControllingVertical = false;
 			body.velocity.y = 0;
+		
 		}
+
+		// keep track of y position while grounded (used to know when to land)
+		groundY = body.y;
 	}
 
 	public function controlAction(buttonIsDown:Bool) {
@@ -104,13 +130,24 @@ class Vehicle {
 	}
 
 	public function update(elapsedSeconds:Float) {
-		forwards.update(elapsedSeconds);
-		backwards.update(elapsedSeconds);
-		if (isJumping) {
-			if (body.y >= groundY) {
+		
+		if(isOnGround){
+			if(!isControllingVertical){
+				// keep constant y position if not being controlled up or down
+				body.velocity.y = 0;
+			}
+
+			forwards.update(elapsedSeconds);
+			backwards.update(elapsedSeconds);
+		}
+		else{
+			// here we are off the ground (jumping)
+			if (body.y >= groundY + 5) {
+				// if we hit the last ground position need to land
 				land();
 			}
 		}
+		
 	}
 
 	inline function stop() {
@@ -119,45 +156,49 @@ class Vehicle {
 	}
 
 	function collideWith(body:Body) {
-		if (!isColliding) {
-			isColliding = true;
-			trace('vehicle collide ${body.collider.type}');
-			switch body.collider.type {
-				case HOLE:
-					fallInHole();
-				case RAMP:
-					jump();
-				case _:
-					isColliding = false;
-			}
+		// trace('vehicle collide ${body.collider.type}');
+		switch body.collider.type {
+			case HOLE:
+				fallInHole();
+			case RAMP:
+				jump();
+			case _:
+				return;
 		}
 	}
 
 	function fallInHole() {
-		trace('fall in hole');
-		forwards.canMove = false;
-		backwards.canMove = false;
-		stop();
+		if (isColliding) {
+			return;
+		}
+
+		if (isOnGround) {
+			trace('fall in hole');
+			isColliding = true;
+			forwards.canMove = false;
+			backwards.canMove = false;
+			stop();
+		}
 	}
 
 	function jump() {
-		if (!isJumping) {
+		if(isOnGround){
+			isOnGround = false;
+			isJumpInProgress = true;
+			body.velocity.y = jumpVelocity;
 			trace('jump');
-			groundY = body.y;
-			final trajectoryY = -50;
-			body.velocity.set(body.velocity.x, trajectoryY);
-			body.kinematic = false;
-			isJumping = true;
 		}
 	}
 
 	inline function land() {
-		trace('land');
-		body.y = groundY;
-		body.velocity.y = 0;
-		isJumping = false;
-		body.kinematic = true;
-		isColliding = false;
+		if (!isOnGround) {
+			trace('landed');
+			body.y = groundY;
+			body.velocity.y = 0;
+			isOnGround = true;
+			isJumpInProgress = false;
+			isColliding = false;
+		}
 	}
 }
 
