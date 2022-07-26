@@ -42,11 +42,12 @@ class BaseScene extends Scene {
 
         @:privateAccess
         controller = new Controller(sceneManager.gum.window);
-
+        
         trace('BaseScene initialized');
 	}
 
 	override function destroy() {
+        controller.disable();
 	}
 
 	override function update(elapsedSeconds:Float) {

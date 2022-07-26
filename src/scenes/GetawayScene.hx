@@ -69,6 +69,9 @@ class GetawayScene extends BaseScene {
 				body2.collider.collideWith(body1);
 			}
 		});
+
+		// allow using controller
+		controller.enable();
 	}
 
 	override function destroy() {}

@@ -14,8 +14,11 @@ class Controller {
 	var actionConfig:ActionConfig;
 	var actionMap:ActionMap;
 	var player:Vehicle;
+	var input2Action:Input2Action;
+	var window:Window;
 
 	public function new(window:Window) {
+		this.window = window;
 		actionConfig = [
 			{
 				gamepad: [GamepadButton.DPAD_LEFT, GamepadButton.LEFT_SHOULDER],
@@ -77,7 +80,7 @@ class Controller {
 			},
 		];
 
-		var input2Action = new Input2Action(actionConfig, actionMap);
+		input2Action = new Input2Action(actionConfig, actionMap);
 		input2Action.setKeyboard();
 
 		// event handler for new plugged gamepads
@@ -90,10 +93,18 @@ class Controller {
 			trace('player $player gamepad disconnected');
 		}
 
-		input2Action.enable(window);
 	}
-
+	
 	public function registerPlayer(player:Vehicle) {
 		this.player = player;
     }
+	
+	public function enable() {
+		input2Action.enable(window);
+	}
+
+	public function disable() {
+		input2Action.disable(window);
+	}
+
 }
