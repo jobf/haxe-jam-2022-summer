@@ -1,3 +1,4 @@
+import scenes.EndScene;
 import scenes.BaseScene;
 import lime.ui.MouseButton;
 import tyke.Graphics.RectangleGeometry;
@@ -19,7 +20,7 @@ import ob.gum.backends.Lime;
 
 class Main extends App {
 	override function init(window:Window, ?config:GumConfig) {
-		super.init(window, {
+    super.init(window, {
 			framesPerSecond: 30,
 			drawOnlyWhenRequested: false,
 			displayWidth: 640,
@@ -43,8 +44,9 @@ class Scenes extends SceneManager {
 	public function new(assets:Assets) {
 		final levelWidth = 8192;
 		// super(assets, loop -> return new TestScene(this), levelWidth);
-		super(assets, loop -> return new GetawayScene(this), levelWidth);
-		// super(assets, loop -> return new TitleScreen(this), levelWidth);
+		// super(assets, loop -> return new GetawayScene(this), levelWidth);
+		super(assets, loop -> return new TitleScreen(this), levelWidth);
+		// super(assets, loop -> return new EndScene(this), levelWidth);
 	}
 }
 
