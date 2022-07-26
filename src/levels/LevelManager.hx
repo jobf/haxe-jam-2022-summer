@@ -25,7 +25,7 @@ class LevelManager {
 
 		tracks = new Tracks();
 
-		var beachTileMap = tracks.levels[0].l_Beach;
+		var beachTileMap = tracks.levels[0].l_Track;
 		LevelLoader.renderLayer(beachTileMap, (stack, cx, cy) -> {
 			for (tileData in stack) {
 				var tileX = cx * tilePixelSize;

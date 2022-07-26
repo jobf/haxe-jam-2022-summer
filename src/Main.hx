@@ -30,7 +30,7 @@ class Main extends App {
 		var assets = new Assets({
 			fonts: ["assets/fonts/tiled/hack_ascii.json"],
 			images: [
-				"assets/ldtk/tracks/beach-tiles-32.png",
+				"assets/ldtk/tracks/track-tiles-32.png",
 				"assets/ldtk/tracks/sprites-32.png",
 				"assets/ldtk/tracks/sprites-96.png"]
 		});
