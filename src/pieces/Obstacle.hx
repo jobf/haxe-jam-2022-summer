@@ -44,7 +44,11 @@ class Obstacle{
 	function collideWith(body:Body) {
         // trace('handle collide in ${this.body.collider.type} ');
         if(body.collider.type == VEHICLE){
-            this.body.remove();
+            if(this.body.collider.type == RAMP){
+                this.body.remove();
+                // todo animate ramp collapse
+                this.sprite.tile = this.sprite.tile + 2;
+            }
         }
     }
 }
