@@ -17,7 +17,7 @@ class GetawayScene extends BaseScene {
 		super.create();
 		enemies = [];
 		
-		var levels = new LevelManager(beachTiles, sprites, tileSize, sceneManager.world);
+		var levels = new LevelManager(beachTiles, largeSprites, tileSize, sceneManager.world);
 
 		var playerGeometry:RectangleGeometry = {
 			y: Std.int(sceneManager.stage.centerY()),

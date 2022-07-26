@@ -12,12 +12,14 @@ class LevelManager {
 	var tracks:Tracks;
 	var levelSprites:SpriteRenderer;
 	var obstacleSprites:SpriteRenderer;
+	var largeSprites:SpriteRenderer;
 	var world:World;
     public var obstacleBodies(default, null):Array<Body>;
 
-	public function new(levelSprites:SpriteRenderer, obstacleSprites:SpriteRenderer, tilePixelSize:Int, world:World) {
+	public function new(levelSprites:SpriteRenderer, largeSprites:SpriteRenderer, tilePixelSize:Int, world:World) {
 		this.levelSprites = levelSprites;
-		this.obstacleSprites = obstacleSprites;
+		// this.obstacleSprites = obstacleSprites;
+		this.largeSprites = largeSprites;
 		this.world = world;
         obstacleBodies = [];
 
@@ -44,8 +46,14 @@ class LevelManager {
 					height: tilePixelSize
 				}
 
-				var sprite = this.obstacleSprites.makeSprite(tileX, tileY, tilePixelSize, tileData.tileId);
 				var obstacleType = determineCollisionType(tileData.tileId);
+				var largeIndex = switch obstacleType{
+					case RAMP: 6;
+					case HOLE: 12;
+					case _: 6;
+				};
+				var sprite = this.largeSprites.makeSprite(tileX, tileY, 96, largeIndex);
+				// sprite.tile = largeIndex;
 				var obstacle = new Obstacle(obstacleType, geometry, world, sprite);
 				// obstacleBodies array used for collision listener
 				obstacleBodies.push(obstacle.body);
