@@ -1,5 +1,6 @@
 package input;
 
+import peote.view.PeoteView;
 import echo.World;
 import echo.Body;
 import tyke.Graphics;
@@ -175,17 +176,19 @@ class EnemyManager {
 	var computerControls:Array<ComputerControl>;
 	var world:World;
 	var sprites:SpriteRenderer;
+	var peoteView:PeoteView;
 	var player:Vehicle;
 
 	var isColliding:Bool = false;
 	var minY:Int;
 	var maxY:Int;
 
-	public function new(world:World, sprites:SpriteRenderer, player:Vehicle, minY:Int, maxY:Int) {
+	public function new(world:World, sprites:SpriteRenderer, peoteView:PeoteView, player:Vehicle, minY:Int, maxY:Int) {
 		computerControls = [];
 		enemyBodies = [];
 		this.world = world;
 		this.sprites = sprites;
+		this.peoteView = peoteView;
 		this.player = player;
 		this.minY = minY;
 		this.maxY = maxY;
@@ -201,7 +204,8 @@ class EnemyManager {
 
 		final tileSize = 96;
 		final tileIndex = 1;
-		var enemy = new Vehicle(hitbox, world, sprites.makeSprite(hitbox.x, hitbox.y, tileSize, tileIndex), minY, maxY);
+		var sprite = sprites.makeSprite(hitbox.x, hitbox.y, tileSize, tileIndex);
+		var enemy = new Vehicle(hitbox, world, peoteView, sprite, minY, maxY, vehicle -> vehicle.destroy());
 
 		enemy.body.max_velocity.x = initialVelocityX;
 		enemy.body.velocity.x = initialVelocityX;

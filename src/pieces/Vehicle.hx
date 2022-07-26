@@ -1,5 +1,6 @@
 package pieces;
 
+import peote.view.PeoteView;
 import echo.Collider;
 import tyke.Graphics;
 import tyke.Loop.CountDown;
@@ -27,14 +28,21 @@ class Vehicle {
 	var isColliding:Bool = false;
 	var minY:Int;
 	var maxY:Int;
-	var defaultMaxVelocityX = 300;
+	var defaultMaxVelocityX = 400;
 	var isCrashed:Bool = false;
+	var isExpired:Bool = false;
+	var crashesRemaining:Int;
+	var sprite:Sprite;
+	var onExpire:Vehicle->Void;
 
-	public function new(geometry:RectangleGeometry, world:World, sprite:Sprite, minY:Int, maxY:Int) {
+	public function new(geometry:RectangleGeometry, world:World, peoteView:PeoteView, sprite:Sprite, minY:Int, maxY:Int, onExpire:Vehicle->Void, crashesRemaining:Int = 1) {
 		this.minY = minY;
 		this.maxY = maxY;
-
+		this.crashesRemaining = crashesRemaining;
 		this.geometry = geometry;
+		this.sprite = sprite;
+		this.onExpire = onExpire;
+		this.peoteView = peoteView;
 		body = new Body({
 			shape: {
 				width: geometry.width,
@@ -148,10 +156,10 @@ class Vehicle {
 	}
 
 	public function update(elapsedSeconds:Float) {
-		if(isCrashed){
+		if (isExpired) {
 			return;
 		}
-		
+
 		if (isOnGround) {
 			if (isControllingVertical) {
 				// limit vertical movement if moving that way
@@ -208,6 +216,7 @@ class Vehicle {
 			forwards.canMove = false;
 			backwards.canMove = false;
 			stop();
+			onExpire(this);
 		}
 	}
 
@@ -237,8 +246,25 @@ class Vehicle {
 		if (!isCrashed) {
 			isCrashed = true;
 			stop();
+			crashesRemaining--;
+			this.sprite.shake(peoteView.time);
+		}
+		if (crashesRemaining <= 0) {
+			expire();
 		}
 	}
+
+	function expire() {
+		onExpire(this);
+		isExpired = true;
+	}
+
+	public function destroy() {
+		this.body.remove();
+		this.sprite.visible = false;
+	}
+
+	var peoteView:PeoteView;
 }
 
 class Accelerator {

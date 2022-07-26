@@ -11,11 +11,10 @@ import lime.ui.KeyCode;
 class GetawayScene extends BaseScene {
 	var player:Vehicle;
 	var levelScroller:LevelScroller;
+	var enemyManager:EnemyManager;
 
 	override function create() {
 		super.create();
-
-		sceneManager.keyboard.bind(KeyCode.E, "END", "What do you want fs", loop -> sceneManager.changeScene(new EndScene(sceneManager)));
 
 		var levels = new LevelManager(beachTiles, largeSprites, tileSize, sceneManager.world);
 
@@ -26,7 +25,13 @@ class GetawayScene extends BaseScene {
 			height: 16
 		};
 
-		player = new Vehicle(playerGeometry, sceneManager.world, largeSprites.makeSprite(playerGeometry.x, playerGeometry.y, 96, 0), levels.minY, levels.maxY);
+		var playerExpired:Vehicle->Void = vehicle -> {
+			sceneManager.changeScene(new EndScene(sceneManager));
+		};
+
+		final playerMaximumCrashes = 2;
+		var sprite = largeSprites.makeSprite(playerGeometry.x, playerGeometry.y, 96, 0);
+		player = new Vehicle(playerGeometry, sceneManager.world, sceneManager.peoteView, sprite, levels.minY, levels.maxY, playerExpired, playerMaximumCrashes);
 		controller.registerPlayer(player);
 
 		levelScroller = new LevelScroller(beachTilesLayer.display, sceneManager.display.width, sceneManager.display.height, playerGeometry, player.body);
@@ -40,7 +45,7 @@ class GetawayScene extends BaseScene {
 			}
 		});
 
-		enemyManager = new EnemyManager(sceneManager.world, largeSprites, player, levels.minY, levels.maxY);
+		enemyManager = new EnemyManager(sceneManager.world, largeSprites, sceneManager.peoteView, player, levels.minY, levels.maxY);
 
 		// register player and enemy vehicle collisions
 		sceneManager.world.listen(player.body, enemyManager.enemyBodies, {
@@ -91,6 +96,4 @@ class GetawayScene extends BaseScene {
 		levelScroller.update(elapsedSeconds);
 		enemyManager.update(elapsedSeconds);
 	}
-
-	var enemyManager:EnemyManager;
 }
