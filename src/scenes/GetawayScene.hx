@@ -37,7 +37,7 @@ class GetawayScene extends BaseScene {
 			}
 		});
 
-		enemyManager = new EnemyManager(sceneManager.world, largeSprites);
+		enemyManager = new EnemyManager(sceneManager.world, largeSprites, player);
 
 		// register player and enemy spawn points
 		sceneManager.world.listen(player.body, levels.enemySpawnZones, {
