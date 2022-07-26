@@ -59,19 +59,19 @@ class GetawayScene extends BaseScene {
 			}
 		});
 
-		// register player and enemy spawn points
-		sceneManager.world.listen(player.body, level.enemySpawnZones, {
+		// register player and enemy trigger points
+		sceneManager.world.listen(player.body, level.enemyTriggerZones, {
 			enter: (body1, body2, collisionData) -> {
-				trace('collision player enemySpawnZone');
-				final spawnY = 200;
-				final spawnXOffset = 100;
-				var spawnX = levelScroller.edgeOfViewLeft() - spawnXOffset;
-				enemyManager.spawnCar(spawnX, spawnY, player.body.velocity.x * 2);
+				trace('collision player enemyTriggerZone');
+				final triggerY = 200;
+				final triggerXOffset = 100;
+				var triggerX = levelScroller.edgeOfViewLeft() - triggerXOffset;
+				enemyManager.spawnCar(triggerX, triggerY, player.body.velocity.x * 2);
 			}
 		});
 
-		// register player and end spawn points
-		sceneManager.world.listen(player.body, level.endSpawnZones, {
+		// register player and end trigger points
+		sceneManager.world.listen(player.body, level.endTriggerZones, {
 			enter: (body1, body2, collisionData) -> {
 				// trace("end");
 				var initSceneAfterMessageScene:Void->Scene = ()-> return new EndScene(sceneManager);

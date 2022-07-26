@@ -20,8 +20,8 @@ class LevelManager {
 	public var minY(default, null):Int;
 	public var maxY(default, null):Int;
     public var obstacleBodies(default, null):Array<Body>;
-	public var enemySpawnZones(default, null):Array<Body>;
-	public var endSpawnZones(default, null):Array<Body>;
+	public var enemyTriggerZones(default, null):Array<Body>;
+	public var endTriggerZones(default, null):Array<Body>;
 	
 	public function new(levelSprites:SpriteRenderer, largeSprites:SpriteRenderer, tilePixelSize:Int, world:World, levelId:Int) {
 		this.levelSprites = levelSprites;
@@ -31,8 +31,8 @@ class LevelManager {
 		this.world = world;
 		this.levelId = levelId;
         obstacleBodies = [];
-		enemySpawnZones = [];
-		endSpawnZones = [];
+		enemyTriggerZones = [];
+		endTriggerZones = [];
 		minY = 4 * 32;
 		maxY = 420 - minY;
 		tracks = new Tracks();
@@ -41,7 +41,7 @@ class LevelManager {
 		
 		setupObstacles();
 
-		setupEnemySpawnTriggers();
+		setupEnemyTriggers();
 
 		setupFinishLine();
 	}
@@ -95,19 +95,19 @@ class LevelManager {
 				// obstacleBodies array used for collision listener
 				obstacleBodies.push(obstacle.body);
 
-                // trace('spawned Obstacle $obstacleType x $tileX y $tileY');
+                // trace('triggered Obstacle $obstacleType x $tileX y $tileY');
 			}
 		});
 	}
 
-	function setupEnemySpawnTriggers() {
-		var spawnZones = tracks.levels[levelId].l_HitBoxes.all_EnemySpawn;
-		for(spawnZone in spawnZones){
+	function setupEnemyTriggers() {
+		var triggerZones = tracks.levels[levelId].l_HitBoxes.all_EnemyTrigger;
+		for(triggerZone in triggerZones){
 			// adjust position and size for 32 pixel grid (map is made with 16 pixels)
-			var x = spawnZone.cx * tilePixelSize;
-			var y = spawnZone.cy * tilePixelSize;
-			var w = spawnZone.width * 2;
-			var h = spawnZone.height * 2;
+			var x = triggerZone.cx * tilePixelSize;
+			var y = triggerZone.cy * tilePixelSize;
+			var w = triggerZone.width * 2;
+			var h = triggerZone.height * 2;
 			var hitZone = new Body({
 				shape: {
 					solid: false,
@@ -124,13 +124,13 @@ class LevelManager {
 			// register body in world
 			world.add(hitZone);
 
-			// enemySpawnZones use in collision listener
-			enemySpawnZones.push(hitZone);
+			// enemyTriggerZones use in collision listener
+			enemyTriggerZones.push(hitZone);
 		}
 	}
 
 	function setupFinishLine() {
-		var endZones = tracks.levels[levelId].l_HitBoxes.all_EndTag;
+		var endZones = tracks.levels[levelId].l_HitBoxes.all_EndTrigger;
 		for(endZone in endZones) {
 			var x = endZone.cx * tilePixelSize;
 			var y = endZone.cy * tilePixelSize;
@@ -151,7 +151,7 @@ class LevelManager {
 			});
 
 			world.add(endHitZone);
-			endSpawnZones.push(endHitZone);
+			endTriggerZones.push(endHitZone);
 		}
 	}
 }
