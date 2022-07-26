@@ -14,17 +14,20 @@ class LevelManager {
 	var obstacleSprites:SpriteRenderer;
 	var largeSprites:SpriteRenderer;
 	var world:World;
+	var levelId:Int;
+
 	public var minY(default, null):Int;
 	public var maxY(default, null):Int;
     public var obstacleBodies(default, null):Array<Body>;
 	public var enemySpawnZones(default, null):Array<Body>;
 	public var endSpawnZones(default, null):Array<Body>;
 	
-	public function new(levelSprites:SpriteRenderer, largeSprites:SpriteRenderer, tilePixelSize:Int, world:World) {
+	public function new(levelSprites:SpriteRenderer, largeSprites:SpriteRenderer, tilePixelSize:Int, world:World, levelId:Int) {
 		this.levelSprites = levelSprites;
 		// this.obstacleSprites = obstacleSprites;
 		this.largeSprites = largeSprites;
 		this.world = world;
+		this.levelId = levelId;
         obstacleBodies = [];
 		enemySpawnZones = [];
 		endSpawnZones = [];
@@ -32,7 +35,7 @@ class LevelManager {
 		maxY = 420 - minY;
 		tracks = new Tracks();
 
-		var beachTileMap = tracks.levels[0].l_Track;
+		var beachTileMap = tracks.levels[levelId].l_Track;
 		LevelLoader.renderLayer(beachTileMap, (stack, cx, cy) -> {
 			for (tileData in stack) {
 				var tileX = cx * tilePixelSize;
@@ -41,7 +44,7 @@ class LevelManager {
 			}
 		});
 
-		var obstacleTileMap = tracks.levels[0].l_Obstacles;
+		var obstacleTileMap = tracks.levels[levelId].l_Obstacles;
 		LevelLoader.renderLayer(obstacleTileMap, (stack, cx, cy) -> {
 			for (tileData in stack) {
 				var tileX = cx * tilePixelSize;
@@ -70,7 +73,7 @@ class LevelManager {
 			}
 		});
 
-		var spawnZones = tracks.levels[0].l_HitBoxes.all_EnemySpawn;
+		var spawnZones = tracks.levels[levelId].l_HitBoxes.all_EnemySpawn;
 		for(spawnZone in spawnZones){
 			// adjust position and size for 32 pixel grid (map is made with 16 pixels)
 			var x = spawnZone.cx * tilePixelSize;
@@ -97,7 +100,7 @@ class LevelManager {
 			enemySpawnZones.push(hitZone);
 		}
 
-		var endZones = tracks.levels[0].l_HitBoxes.all_EndTag;
+		var endZones = tracks.levels[levelId].l_HitBoxes.all_EndTag;
 		for(endZone in endZones) {
 			var x = endZone.cx * tilePixelSize;
 			var y = endZone.cy * tilePixelSize;

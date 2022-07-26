@@ -17,7 +17,8 @@ class GetawayScene extends BaseScene {
 	override function create() {
 		super.create();
 
-		var levels = new LevelManager(beachTiles, largeSprites, tileSize, sceneManager.world);
+		var levelId = 0;
+		var level = new LevelManager(beachTiles, largeSprites, tileSize, sceneManager.world, levelId);
 
 		var playerGeometry:RectangleGeometry = {
 			y: Std.int(sceneManager.stage.centerY()),
@@ -33,13 +34,13 @@ class GetawayScene extends BaseScene {
 
 		final playerMaximumCrashes = 2;
 		var sprite = largeSprites.makeSprite(playerGeometry.x, playerGeometry.y, 96, 0);
-		player = new Vehicle(playerGeometry, sceneManager.world, sceneManager.peoteView, sprite, levels.minY, levels.maxY, playerExpired, playerMaximumCrashes);
+		player = new Vehicle(playerGeometry, sceneManager.world, sceneManager.peoteView, sprite, level.minY, level.maxY, playerExpired, playerMaximumCrashes);
 		controller.registerPlayer(player);
 
 		levelScroller = new LevelScroller(beachTilesLayer.display, sceneManager.display.width, sceneManager.display.height, playerGeometry, player.body);
 
 		// register player and obstacle collisions
-		sceneManager.world.listen(player.body, levels.obstacleBodies, {
+		sceneManager.world.listen(player.body, level.obstacleBodies, {
 			enter: (body1, body2, collisionData) -> {
 				trace('collision player obstacle');
 				body1.collider.collideWith(body2);
@@ -47,7 +48,7 @@ class GetawayScene extends BaseScene {
 			}
 		});
 
-		enemyManager = new EnemyManager(sceneManager.world, largeSprites, sceneManager.peoteView, player, levels.minY, levels.maxY);
+		enemyManager = new EnemyManager(sceneManager.world, largeSprites, sceneManager.peoteView, player, level.minY, level.maxY);
 
 		// register player and enemy vehicle collisions
 		sceneManager.world.listen(player.body, enemyManager.enemyBodies, {
@@ -59,7 +60,7 @@ class GetawayScene extends BaseScene {
 		});
 
 		// register player and enemy spawn points
-		sceneManager.world.listen(player.body, levels.enemySpawnZones, {
+		sceneManager.world.listen(player.body, level.enemySpawnZones, {
 			enter: (body1, body2, collisionData) -> {
 				trace('collision player enemySpawnZone');
 				final spawnY = 200;
@@ -70,7 +71,7 @@ class GetawayScene extends BaseScene {
 		});
 
 		// register player and end spawn points
-		sceneManager.world.listen(player.body, levels.endSpawnZones, {
+		sceneManager.world.listen(player.body, level.endSpawnZones, {
 			enter: (body1, body2, collisionData) -> {
 				// trace("end");
 				var initSceneAfterMessageScene:Void->Scene = ()-> return new EndScene(sceneManager);
@@ -79,7 +80,7 @@ class GetawayScene extends BaseScene {
 		});
 
 		// register enemies and obstacle collisions
-		sceneManager.world.listen(enemyManager.enemyBodies, levels.obstacleBodies, {
+		sceneManager.world.listen(enemyManager.enemyBodies, level.obstacleBodies, {
 			enter: (body1, body2, collisionData) -> {
 				trace('collision enemy obstacle');
 				body1.collider.collideWith(body2);
