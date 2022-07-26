@@ -24,7 +24,7 @@ haxelib git ldtk-haxe-api https://github.com/deepnight/ldtk-haxe-api.git
 haxelib git ob.gum https://github.com/jobf/ob.gum.git
 
 # tyke (jam branch)
-haxelib git https://github.com/jobf/tyke.git feature/haxe-jam-2022-summer
+haxelib git tyke https://github.com/jobf/tyke.git feature/haxe-jam-summer-2022
 ```
 
 # Run
