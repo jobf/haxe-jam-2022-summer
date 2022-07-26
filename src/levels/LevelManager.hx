@@ -15,6 +15,7 @@ class LevelManager {
 	var largeSprites:SpriteRenderer;
 	var world:World;
 	var levelId:Int;
+	var tilePixelSize:Int;
 
 	public var minY(default, null):Int;
 	public var maxY(default, null):Int;
@@ -26,6 +27,7 @@ class LevelManager {
 		this.levelSprites = levelSprites;
 		// this.obstacleSprites = obstacleSprites;
 		this.largeSprites = largeSprites;
+		this.tilePixelSize = tilePixelSize;
 		this.world = world;
 		this.levelId = levelId;
         obstacleBodies = [];
@@ -35,6 +37,27 @@ class LevelManager {
 		maxY = 420 - minY;
 		tracks = new Tracks();
 
+		setupTrackTiles();
+		
+		setupObstacles();
+
+		setupEnemySpawnTriggers();
+
+		setupFinishLine();
+	}
+
+	/**
+		converts the tile ID from the tile map used in ldtk to the CollisionType enum for use in game 
+	**/
+	inline function determineCollisionType(tileId:Int):CollisionType {
+		return switch tileId {
+			case 9: RAMP;
+			case 8: HOLE;
+			case _: UNDEFINED;
+		}
+	}
+
+	function setupTrackTiles() {
 		var beachTileMap = tracks.levels[levelId].l_Track;
 		LevelLoader.renderLayer(beachTileMap, (stack, cx, cy) -> {
 			for (tileData in stack) {
@@ -44,6 +67,9 @@ class LevelManager {
 			}
 		});
 
+	}
+
+	function setupObstacles() {
 		var obstacleTileMap = tracks.levels[levelId].l_Obstacles;
 		LevelLoader.renderLayer(obstacleTileMap, (stack, cx, cy) -> {
 			for (tileData in stack) {
@@ -72,7 +98,9 @@ class LevelManager {
                 // trace('spawned Obstacle $obstacleType x $tileX y $tileY');
 			}
 		});
+	}
 
+	function setupEnemySpawnTriggers() {
 		var spawnZones = tracks.levels[levelId].l_HitBoxes.all_EnemySpawn;
 		for(spawnZone in spawnZones){
 			// adjust position and size for 32 pixel grid (map is made with 16 pixels)
@@ -99,7 +127,9 @@ class LevelManager {
 			// enemySpawnZones use in collision listener
 			enemySpawnZones.push(hitZone);
 		}
+	}
 
+	function setupFinishLine() {
 		var endZones = tracks.levels[levelId].l_HitBoxes.all_EndTag;
 		for(endZone in endZones) {
 			var x = endZone.cx * tilePixelSize;
@@ -122,17 +152,6 @@ class LevelManager {
 
 			world.add(endHitZone);
 			endSpawnZones.push(endHitZone);
-		}
-	}
-
-	/**
-		converts the tile ID from the tile map used in ldtk to the CollisionType enum for use in game 
-	**/
-	inline function determineCollisionType(tileId:Int):CollisionType {
-		return switch tileId {
-			case 9: RAMP;
-			case 8: HOLE;
-			case _: UNDEFINED;
 		}
 	}
 }
