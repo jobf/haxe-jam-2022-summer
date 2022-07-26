@@ -16,6 +16,7 @@ class LevelManager {
 	var world:World;
 	var levelId:Int;
 	var tilePixelSize:Int;
+	var totalEnemiesRemaining:Int;
 
 	public var minY(default, null):Int;
 	public var maxY(default, null):Int;
@@ -102,6 +103,7 @@ class LevelManager {
 
 	function setupEnemyTriggers() {
 		var triggerZones = tracks.levels[levelId].l_HitBoxes.all_EnemyTrigger;
+		totalEnemiesRemaining = triggerZones.length;
 		for(triggerZone in triggerZones){
 			// adjust position and size for 32 pixel grid (map is made with 16 pixels)
 			var x = triggerZone.cx * tilePixelSize;
@@ -154,4 +156,13 @@ class LevelManager {
 			endTriggerZones.push(endHitZone);
 		}
 	}
+
+	public function registerLostOneEnemy() {
+		totalEnemiesRemaining--;
+	}
+
+	public function isWon():Bool {
+		return totalEnemiesRemaining <= 0;
+	}
+
 }
