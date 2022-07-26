@@ -27,6 +27,7 @@ class Vehicle {
 	var isColliding:Bool = false;
 	var minY:Int;
 	var maxY:Int;
+	var defaultMaxVelocityX = 300;
 
 	public function new(geometry:RectangleGeometry, world:World, sprite:Sprite, minY:Int, maxY:Int) {
 		this.minY = minY;
@@ -45,7 +46,7 @@ class Vehicle {
 			material: {
 				gravity_scale: 0,
 			},
-			max_velocity_x: 300, // stop the vehicle going too fast
+			max_velocity_x: defaultMaxVelocityX, // stop the vehicle going too fast
 			rotation: 1, // have a bug in debug renderer (does not draw rectangles if straight :thonk:)
 		});
 
@@ -172,6 +173,10 @@ class Vehicle {
 	inline function stop() {
 		body.velocity.x = 0;
 		body.velocity.y = 0;
+	}
+
+	public function resetMaxVelocityX(){
+		body.velocity.x = defaultMaxVelocityX;
 	}
 
 	function collideWith(body:Body) {

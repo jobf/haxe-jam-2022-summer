@@ -16,6 +16,8 @@ enum ControlMode {
 class ComputerControl {
 	var vehicle:Vehicle;
 	var idleControlCountDown:CountDown;
+	var attackControlCountDown:CountDown;
+	var attackCountDown:CountDown;
 	var player:Vehicle;
 	var mode:ControlMode;
 
@@ -25,6 +27,8 @@ class ComputerControl {
 		this.mode = ENTERING;
 
 		idleControlCountDown = new CountDown(1.0, () -> idleControl(), true);
+		attackControlCountDown = new CountDown(2.0, () -> attackControl(), true);
+		attackCountDown = new CountDown(1.0, () -> stopAttack(), false);
 	}
 
 	public function update(elapsedSeconds:Float) {
@@ -50,8 +54,12 @@ class ComputerControl {
 			vehicle.body.max_velocity = player.body.max_velocity;
 
 			// start IDLE phase
-			mode = IDLE;
-			idleControlCountDown.reset();
+			// mode = IDLE;
+			// idleControlCountDown.reset();
+
+			// start ATTACK phase
+			mode = ATTACKING;
+			attackControlCountDown.reset();
 		}
 	}
 
@@ -71,19 +79,93 @@ class ComputerControl {
 			var oneOfThree = randomInt(2);
 			if (oneOfThree != 0) {
 				if (oneOfThree == 1) {
-					// move up
-					trace('enemy move up');
-					vehicle.controlUp(true);
+					moveUp();
 				} else {
-					// move down
-					trace('enemy move down');
-					vehicle.controlDown(true);
+					moveDown();
 				}
 			}
 		}
 	}
 
-	function handleAttackingPhase(elapsedSeconds:Float) {}
+	function handleAttackingPhase(elapsedSeconds:Float) {
+		attackControlCountDown.update(elapsedSeconds);
+		if (isAligningForAttack) {
+			// check if is aligned and stop aligning
+			if (checkVerticalAlignmentToPlayer() == 0) {
+				stopVerticalMovement();
+			}
+		}
+	}
+
+	function checkVerticalAlignmentToPlayer():Int {
+		// get vertical distance between this vehicle and player
+		var distanceToPlayer = player.body.y - vehicle.body.y;
+		// trace('distanceToPlayer $distanceToPlayer');
+
+		final distanceToAttackFrom = 10;
+		var moveInDirection = 0;
+		if (distanceToPlayer > distanceToAttackFrom) {
+			// move vertically down to align with player
+			trace('need to move down');
+			moveInDirection = 1;
+		} else if (distanceToPlayer < -distanceToAttackFrom) {
+			// move vertically down to align with player
+			trace('need to move up');
+			moveInDirection = -1;
+		}
+
+		return moveInDirection;
+	}
+
+	inline function stopVerticalMovement() {
+		vehicle.controlDown(false);
+		vehicle.controlUp(false);
+	}
+
+	function attackControl() {
+		var moveInDirection = checkVerticalAlignmentToPlayer();
+
+		if (moveInDirection == 0) {
+			// can attack
+			if (vehicle.isControllingVertical) {
+				// need to stop moving
+				stopVerticalMovement();
+			}
+			startAttack();
+		} else {
+			isAligningForAttack = true;
+			if (moveInDirection < 0) {
+				moveUp();
+			} else {
+				moveDown();
+			}
+		}
+	}
+
+	inline function moveUp() {
+		// move up
+		trace('enemy move up');
+		vehicle.controlUp(true);
+	}
+
+	inline function moveDown() {
+		// move down
+		trace('enemy move down');
+		vehicle.controlDown(true);
+	}
+
+	var isAligningForAttack:Bool;
+
+	inline function startAttack() {
+		var speed = player.body.velocity.x * 2;
+		vehicle.body.max_velocity.x = speed;
+		vehicle.body.velocity.x = speed;
+		attackCountDown.reset();
+	}
+
+	inline function stopAttack() {
+		vehicle.resetMaxVelocityX();
+	}
 }
 
 class EnemyManager {
