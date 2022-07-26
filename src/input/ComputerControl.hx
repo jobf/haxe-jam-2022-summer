@@ -51,6 +51,8 @@ class ComputerControl {
 	var lastChangedStateId:Int = -1;
 
 	function alterControl() {
+        return; // skip for now (will rework soon)
+
 		var nextPressState = randomChance();
 
 		// is button down
@@ -97,7 +99,7 @@ class EnemyManager {
 		this.sprites = sprites;
 	}
 
-	public function spawnCar(x:Int, y:Int) {
+	public function spawnCar(x:Int, y:Int, initialVelocityX:Float) {
 		var hitbox:RectangleGeometry = {
 			y: y,
 			x: x,
@@ -108,6 +110,9 @@ class EnemyManager {
 		final tileSize = 96;
 		final tileIndex = 1;
 		var enemy = new Vehicle(hitbox, world, sprites.makeSprite(hitbox.x, hitbox.y, tileSize, tileIndex));
+        
+        enemy.body.max_velocity.x = initialVelocityX;
+        enemy.body.velocity.x = initialVelocityX;
 
 		var computerControl = new ComputerControl(enemy);
 		computerControls.push(computerControl);

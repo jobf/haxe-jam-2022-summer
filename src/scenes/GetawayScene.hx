@@ -10,21 +10,23 @@ import pieces.Vehicle;
 class GetawayScene extends BaseScene {
 	var player:Vehicle;
 	var levelScroller:LevelScroller;
-
+	
 	override function create() {
 		super.create();
 		
 		var levels = new LevelManager(beachTiles, largeSprites, tileSize, sceneManager.world);
-
+		
 		var playerGeometry:RectangleGeometry = {
 			y: Std.int(sceneManager.stage.centerY()),
 			x: 42,
 			width: 32,
 			height: 16
 		};
-
+		
 		player = new Vehicle(playerGeometry, sceneManager.world, largeSprites.makeSprite(playerGeometry.x, playerGeometry.y, 96, 0));
 		controller.registerPlayer(player);
+		
+		levelScroller = new LevelScroller(beachTilesLayer.display, sceneManager.display.width, sceneManager.display.height, playerGeometry, player.body);
 
 		// register player and obstacle collisions
 		sceneManager.world.listen(player.body, levels.obstacleBodies, {
@@ -41,8 +43,10 @@ class GetawayScene extends BaseScene {
 		sceneManager.world.listen(player.body, levels.enemySpawnZones, {
 			enter: (body1, body2, collisionData) -> {
 				trace('collision player enemySpawnZone');
-				final enemySpawnY = 200;
-				enemyManager.spawnCar(Std.int(body2.x), enemySpawnY);
+				final spawnY = 200;
+				final spawnXOffset = 100;
+				var spawnX = levelScroller.edgeOfViewLeft() - spawnXOffset;
+				enemyManager.spawnCar(spawnX, spawnY, player.body.velocity.x * 2);
 			}
 		});
 
@@ -55,7 +59,6 @@ class GetawayScene extends BaseScene {
 			}
 		});
 
-		levelScroller = new LevelScroller(beachTilesLayer.display, sceneManager.display.width, sceneManager.display.height, playerGeometry, player.body);
 	}
 
 	override function destroy() {}

@@ -5,8 +5,8 @@ import peote.view.Display;
 import tyke.Graphics.RectangleGeometry;
 
 class LevelScroller {
-	var display:Display;
 	var viewGeometry:RectangleGeometry;
+	var display:Display;
 	var targetGeometry:RectangleGeometry;
 	var target:Body;
 	var margin:Int = 32 * 5;
@@ -45,5 +45,9 @@ class LevelScroller {
 		viewGeometry.x = targetGeometry.x - margin;
 		display.xOffset = -viewGeometry.x;
 		// viewGeometry.trace();
+	}
+
+	public function edgeOfViewLeft():Int {
+		return viewGeometry.x;
 	}
 }
