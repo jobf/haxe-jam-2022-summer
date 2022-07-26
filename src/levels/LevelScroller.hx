@@ -9,7 +9,7 @@ class LevelScroller {
 	var display:Display;
 	var targetGeometry:RectangleGeometry;
 	var target:Body;
-	var margin:Int = 32 * 5;
+	var margin:Int = 32 * 9;
 
 	public function new(display:Display, viewWidth:Int, viewHeight:Int, targetGeometry:RectangleGeometry, target:Body) {
 		this.display = display;
