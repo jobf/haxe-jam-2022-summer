@@ -32,6 +32,7 @@ class BaseScene extends Scene {
 
         // renderer for body debugging
         debugRectangles = new EchoDebug(sceneManager.stage.createRectangleRenderLayer("debugrectangles"));
+        debugRectangles.shape_color = 0xeeee33ff;
 
         // for writing messages
 		text = Glyphs.initText(sceneManager.display, sceneManager.assets.fontCache[0]);
@@ -50,7 +51,7 @@ class BaseScene extends Scene {
 
 	override function update(elapsedSeconds:Float) {
         // need to call draw on the debug renderer
-        // debugRectangles.draw(sceneManager.world);
+        debugRectangles.draw(sceneManager.world);
     }
 
 

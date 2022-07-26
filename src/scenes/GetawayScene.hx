@@ -10,12 +10,9 @@ import pieces.Vehicle;
 class GetawayScene extends BaseScene {
 	var player:Vehicle;
 	var levelScroller:LevelScroller;
-	var computerControl:ComputerControl;
-	var enemies:Array<Body>;
 
 	override function create() {
 		super.create();
-		enemies = [];
 		
 		var levels = new LevelManager(beachTiles, largeSprites, tileSize, sceneManager.world);
 
@@ -29,18 +26,6 @@ class GetawayScene extends BaseScene {
 		player = new Vehicle(playerGeometry, sceneManager.world, largeSprites.makeSprite(playerGeometry.x, playerGeometry.y, 96, 0));
 		controller.registerPlayer(player);
 
-		var enemyGeometry:RectangleGeometry = {
-			y: Std.int(sceneManager.stage.centerY()),
-			x: 42,
-			width: 32,
-			height: 16
-		};
-
-		var enemy = new Vehicle(enemyGeometry, sceneManager.world, largeSprites.makeSprite(playerGeometry.x, playerGeometry.y, 96, 1));
-		computerControl = new ComputerControl(enemy);
-		// enemies array used for collisions listener
-		enemies.push(enemy.body);
-
 		// register player and obstacle collisions
 		sceneManager.world.listen(player.body, levels.obstacleBodies, {
 			enter: (body1, body2, collisionData) -> {
@@ -50,8 +35,19 @@ class GetawayScene extends BaseScene {
 			}
 		});
 
+		enemyManager = new EnemyManager(sceneManager.world, largeSprites);
+
+		// register player and enemy spawn points
+		sceneManager.world.listen(player.body, levels.enemySpawnZones, {
+			enter: (body1, body2, collisionData) -> {
+				trace('collision player enemySpawnZone');
+				final enemySpawnY = 200;
+				enemyManager.spawnCar(Std.int(body2.x), enemySpawnY);
+			}
+		});
+
 		// register enemies and obstacle collisions
-		sceneManager.world.listen(enemies, levels.obstacleBodies, {
+		sceneManager.world.listen(enemyManager.enemyBodies, levels.obstacleBodies, {
 			enter: (body1, body2, collisionData) -> {
 				trace('collision enemy obstacle');
 				body1.collider.collideWith(body2);
@@ -68,6 +64,8 @@ class GetawayScene extends BaseScene {
 		super.update(elapsedSeconds);
 		player.update(elapsedSeconds);
 		levelScroller.update(elapsedSeconds);
-		computerControl.update(elapsedSeconds);
+		enemyManager.update(elapsedSeconds);
 	}
+
+	var enemyManager:EnemyManager;
 }

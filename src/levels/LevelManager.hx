@@ -15,13 +15,15 @@ class LevelManager {
 	var largeSprites:SpriteRenderer;
 	var world:World;
     public var obstacleBodies(default, null):Array<Body>;
-
+	public var enemySpawnZones(default, null):Array<Body>;
+	
 	public function new(levelSprites:SpriteRenderer, largeSprites:SpriteRenderer, tilePixelSize:Int, world:World) {
 		this.levelSprites = levelSprites;
 		// this.obstacleSprites = obstacleSprites;
 		this.largeSprites = largeSprites;
 		this.world = world;
         obstacleBodies = [];
+		enemySpawnZones = [];
 
 		tracks = new Tracks();
 
@@ -52,15 +54,43 @@ class LevelManager {
 					case HOLE: 12;
 					case _: 6;
 				};
+
 				var sprite = this.largeSprites.makeSprite(tileX, tileY, 96, largeIndex);
-				// sprite.tile = largeIndex;
 				var obstacle = new Obstacle(obstacleType, geometry, world, sprite);
+
 				// obstacleBodies array used for collision listener
 				obstacleBodies.push(obstacle.body);
 
                 // trace('spawned Obstacle $obstacleType x $tileX y $tileY');
 			}
 		});
+
+		var spawnZones = tracks.levels[0].l_HitBoxes.all_EnemySpawn;
+		for(spawnZone in spawnZones){
+			// adjust position and size for 32 pixel grid (map is made with 16 pixels)
+			var x = spawnZone.cx * tilePixelSize;
+			var y = spawnZone.cy * tilePixelSize;
+			var w = spawnZone.width * 2;
+			var h = spawnZone.height * 2;
+			var hitZone = new Body({
+				shape: {
+					solid: false,
+					width: w,
+					height: h,
+				},
+				kinematic: true,
+				mass: 0,
+				x: x + (w * 0.5), // need to add half the width to position correctly (because body origin is in center)
+				y: y + (h * 0.5), // need to add half the height to position correctly (because body origin is in center)
+				rotation: 1 // needed to render debug (bug in rectangle render)
+			});
+
+			// register body in world
+			world.add(hitZone);
+
+			// enemySpawnZones use in collision listener
+			enemySpawnZones.push(hitZone);
+		}
 	}
 
 	/**
