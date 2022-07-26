@@ -23,7 +23,7 @@ class GetawayScene extends BaseScene {
 			height: 16
 		};
 		
-		player = new Vehicle(playerGeometry, sceneManager.world, largeSprites.makeSprite(playerGeometry.x, playerGeometry.y, 96, 0));
+		player = new Vehicle(playerGeometry, sceneManager.world, largeSprites.makeSprite(playerGeometry.x, playerGeometry.y, 96, 0), levels.minY, levels.maxY);
 		controller.registerPlayer(player);
 		
 		levelScroller = new LevelScroller(beachTilesLayer.display, sceneManager.display.width, sceneManager.display.height, playerGeometry, player.body);
@@ -37,7 +37,7 @@ class GetawayScene extends BaseScene {
 			}
 		});
 
-		enemyManager = new EnemyManager(sceneManager.world, largeSprites, player);
+		enemyManager = new EnemyManager(sceneManager.world, largeSprites, player, levels.minY, levels.maxY);
 
 		// register player and enemy spawn points
 		sceneManager.world.listen(player.body, levels.enemySpawnZones, {

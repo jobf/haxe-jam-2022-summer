@@ -15,16 +15,23 @@ class Vehicle {
 	var backwards:Accelerator;
 
 	var verticalVelocity:Float = 120;
-	var isControllingVertical:Bool = false;
+
+	public var isControllingVertical(default, null):Bool = false;
+
 	var jumpVelocity = -90;
 
 	var groundY:Float;
 	var isOnGround:Bool = true;
 	var isJumpInProgress:Bool = false;
-	
-	var isColliding:Bool = false;
 
-	public function new(geometry:RectangleGeometry, world:World, sprite:Sprite) {
+	var isColliding:Bool = false;
+	var minY:Int;
+	var maxY:Int;
+
+	public function new(geometry:RectangleGeometry, world:World, sprite:Sprite, minY:Int, maxY:Int) {
+		this.minY = minY;
+		this.maxY = maxY;
+		
 		this.geometry = geometry;
 		body = new Body({
 			shape: {
@@ -35,6 +42,9 @@ class Vehicle {
 			mass: 1,
 			x: geometry.x,
 			y: geometry.y,
+			material: {
+				gravity_scale: 0,
+			},
 			max_velocity_x: 300, // stop the vehicle going too fast
 			rotation: 1, // have a bug in debug renderer (does not draw rectangles if straight :thonk:)
 		});
@@ -77,7 +87,7 @@ class Vehicle {
 
 	public function controlReverse(buttonIsDown:Bool) {
 		// trace('controlReverse ${formatButtonIsDown(buttonIsDown)}');
-		if(!isOnGround){
+		if (!isOnGround) {
 			return;
 		}
 
@@ -91,7 +101,7 @@ class Vehicle {
 
 	public function controlUp(buttonIsDown:Bool) {
 		// trace('controlUp ${formatButtonIsDown(buttonIsDown)}');
-		if(!isOnGround){
+		if (!isOnGround) {
 			return;
 		}
 
@@ -99,17 +109,16 @@ class Vehicle {
 			isControllingVertical = true;
 			body.velocity.y = -verticalVelocity;
 		} else {
-			isControllingVertical = false;
-			body.velocity.y = 0;
+			stopVerticalMovement();
 		}
 
-		// keep track of y position while grounded (used to know when to land)
+		// keep track of y position while grounded (used to know position to land)
 		groundY = body.y;
 	}
 
 	public function controlDown(buttonIsDown:Bool) {
 		// trace('controlDown ${formatButtonIsDown(buttonIsDown)}');
-		if(!isOnGround){
+		if (!isOnGround) {
 			return;
 		}
 
@@ -117,12 +126,18 @@ class Vehicle {
 			isControllingVertical = true;
 			body.velocity.y = verticalVelocity;
 		} else {
-			isControllingVertical = false;
-			body.velocity.y = 0;
-		
+			stopVerticalMovement();
 		}
 
-		// keep track of y position while grounded (used to know when to land)
+		// keep track of y position while grounded (used to know position to land)
+		groundY = body.y;
+	}
+
+	inline function stopVerticalMovement() {
+		isControllingVertical = false;
+		body.velocity.y = 0;
+
+		// keep track of y position while grounded (used to know position to land)
 		groundY = body.y;
 	}
 
@@ -131,25 +146,27 @@ class Vehicle {
 	}
 
 	public function update(elapsedSeconds:Float) {
-		
-		if(isOnGround){
-			if(!isControllingVertical){
-				// keep constant y position if not being controlled up or down
-				body.velocity.y = 0;
-				body.y = groundY;
+		if (isOnGround) {
+			if (isControllingVertical) {
+				// limit vertical movement if moving that way
+				if(body.y <= minY){
+					stopVerticalMovement();
+				}
+				if(body.y >= maxY){
+					stopVerticalMovement();
+				}
 			}
 
 			forwards.update(elapsedSeconds);
 			backwards.update(elapsedSeconds);
-		}
-		else{
+
+		} else {
 			// here we are off the ground (jumping)
 			if (body.y >= groundY + 5) {
 				// if we hit the last ground position need to land
 				land();
 			}
 		}
-		
 	}
 
 	inline function stop() {
@@ -184,9 +201,10 @@ class Vehicle {
 	}
 
 	function jump() {
-		if(isOnGround){
+		if (isOnGround) {
 			isOnGround = false;
 			isJumpInProgress = true;
+			body.material.gravity_scale = 1;
 			body.velocity.y = jumpVelocity;
 			trace('jump');
 		}
@@ -196,6 +214,7 @@ class Vehicle {
 		if (!isOnGround) {
 			trace('landed');
 			body.y = groundY;
+			body.material.gravity_scale = 0;
 			body.velocity.y = 0;
 			isOnGround = true;
 			isJumpInProgress = false;

@@ -14,6 +14,8 @@ class LevelManager {
 	var obstacleSprites:SpriteRenderer;
 	var largeSprites:SpriteRenderer;
 	var world:World;
+	public var minY(default, null):Int;
+	public var maxY(default, null):Int;
     public var obstacleBodies(default, null):Array<Body>;
 	public var enemySpawnZones(default, null):Array<Body>;
 	
@@ -24,7 +26,8 @@ class LevelManager {
 		this.world = world;
         obstacleBodies = [];
 		enemySpawnZones = [];
-
+		minY = 4 * 32;
+		maxY = 420 - minY;
 		tracks = new Tracks();
 
 		var beachTileMap = tracks.levels[0].l_Track;
