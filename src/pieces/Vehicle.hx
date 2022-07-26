@@ -28,11 +28,12 @@ class Vehicle {
 	var minY:Int;
 	var maxY:Int;
 	var defaultMaxVelocityX = 300;
+	var isCrashed:Bool = false;
 
 	public function new(geometry:RectangleGeometry, world:World, sprite:Sprite, minY:Int, maxY:Int) {
 		this.minY = minY;
 		this.maxY = maxY;
-		
+
 		this.geometry = geometry;
 		body = new Body({
 			shape: {
@@ -147,20 +148,23 @@ class Vehicle {
 	}
 
 	public function update(elapsedSeconds:Float) {
+		if(isCrashed){
+			return;
+		}
+		
 		if (isOnGround) {
 			if (isControllingVertical) {
 				// limit vertical movement if moving that way
-				if(body.y <= minY){
+				if (body.y <= minY) {
 					stopVerticalMovement();
 				}
-				if(body.y >= maxY){
+				if (body.y >= maxY) {
 					stopVerticalMovement();
 				}
 			}
 
 			forwards.update(elapsedSeconds);
 			backwards.update(elapsedSeconds);
-
 		} else {
 			// here we are off the ground (jumping)
 			if (body.y >= groundY + 5) {
@@ -175,7 +179,7 @@ class Vehicle {
 		body.velocity.y = 0;
 	}
 
-	public function resetMaxVelocityX(){
+	public function resetMaxVelocityX() {
 		body.velocity.x = defaultMaxVelocityX;
 	}
 
@@ -186,6 +190,8 @@ class Vehicle {
 				fallInHole();
 			case RAMP:
 				jump();
+			case VEHICLE:
+				crash();
 			case _:
 				return;
 		}
@@ -224,6 +230,13 @@ class Vehicle {
 			isOnGround = true;
 			isJumpInProgress = false;
 			isColliding = false;
+		}
+	}
+
+	function crash() {
+		if (!isCrashed) {
+			isCrashed = true;
+			stop();
 		}
 	}
 }

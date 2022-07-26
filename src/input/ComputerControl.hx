@@ -93,6 +93,7 @@ class ComputerControl {
 			// check if is aligned and stop aligning
 			if (checkVerticalAlignmentToPlayer() == 0) {
 				stopVerticalMovement();
+				isAligningForAttack = false;
 			}
 		}
 	}
@@ -157,7 +158,7 @@ class ComputerControl {
 	var isAligningForAttack:Bool;
 
 	inline function startAttack() {
-		var speed = player.body.velocity.x * 2;
+		var speed = player.body.velocity.x * 2.5;
 		vehicle.body.max_velocity.x = speed;
 		vehicle.body.velocity.x = speed;
 		attackCountDown.reset();

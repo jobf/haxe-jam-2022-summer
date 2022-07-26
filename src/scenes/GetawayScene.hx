@@ -11,24 +11,24 @@ import lime.ui.KeyCode;
 class GetawayScene extends BaseScene {
 	var player:Vehicle;
 	var levelScroller:LevelScroller;
-	
+
 	override function create() {
 		super.create();
 
 		sceneManager.keyboard.bind(KeyCode.E, "END", "What do you want fs", loop -> sceneManager.changeScene(new EndScene(sceneManager)));
-		
+
 		var levels = new LevelManager(beachTiles, largeSprites, tileSize, sceneManager.world);
-		
+
 		var playerGeometry:RectangleGeometry = {
 			y: Std.int(sceneManager.stage.centerY()),
 			x: 42,
 			width: 32,
 			height: 16
 		};
-		
+
 		player = new Vehicle(playerGeometry, sceneManager.world, largeSprites.makeSprite(playerGeometry.x, playerGeometry.y, 96, 0), levels.minY, levels.maxY);
 		controller.registerPlayer(player);
-		
+
 		levelScroller = new LevelScroller(beachTilesLayer.display, sceneManager.display.width, sceneManager.display.height, playerGeometry, player.body);
 
 		// register player and obstacle collisions
@@ -41,6 +41,15 @@ class GetawayScene extends BaseScene {
 		});
 
 		enemyManager = new EnemyManager(sceneManager.world, largeSprites, player, levels.minY, levels.maxY);
+
+		// register player and enemy vehicle collisions
+		sceneManager.world.listen(player.body, enemyManager.enemyBodies, {
+			enter: (body1, body2, collisionData) -> {
+				trace('collision player enemy');
+				body1.collider.collideWith(body2);
+				body2.collider.collideWith(body1);
+			}
+		});
 
 		// register player and enemy spawn points
 		sceneManager.world.listen(player.body, levels.enemySpawnZones, {
