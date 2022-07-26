@@ -1,0 +1,5 @@
+-cp src
+-lib lime
+-lib tyke
+-cpp _
+-main Main
