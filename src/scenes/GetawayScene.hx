@@ -1,5 +1,6 @@
 package scenes;
 
+import tyke.jam.Scene;
 import echo.Body;
 import input.ComputerControl;
 import tyke.Graphics.RectangleGeometry;
@@ -26,7 +27,8 @@ class GetawayScene extends BaseScene {
 		};
 
 		var playerExpired:Vehicle->Void = vehicle -> {
-			sceneManager.changeScene(new EndScene(sceneManager));
+			var initSceneAfterMessageScene:Void->Scene = ()-> return new EndScene(sceneManager);
+			sceneManager.changeScene(new MessageScene(sceneManager, "Too bad you smashed!", initSceneAfterMessageScene));
 		};
 
 		final playerMaximumCrashes = 2;
@@ -71,7 +73,8 @@ class GetawayScene extends BaseScene {
 		sceneManager.world.listen(player.body, levels.endSpawnZones, {
 			enter: (body1, body2, collisionData) -> {
 				// trace("end");
-				sceneManager.changeScene(new EndScene(sceneManager));
+				var initSceneAfterMessageScene:Void->Scene = ()-> return new EndScene(sceneManager);
+				sceneManager.changeScene(new MessageScene(sceneManager, "Finished Level!!!", initSceneAfterMessageScene));
 			}
 		});
 

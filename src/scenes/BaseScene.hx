@@ -52,7 +52,7 @@ class BaseScene extends Scene {
 
 	override function update(elapsedSeconds:Float) {
         // need to call draw on the debug renderer
-        debugRectangles.draw(sceneManager.world);
+        // debugRectangles.draw(sceneManager.world);
     }
 
 
