@@ -18,6 +18,7 @@ class LevelManager {
 	public var maxY(default, null):Int;
     public var obstacleBodies(default, null):Array<Body>;
 	public var enemySpawnZones(default, null):Array<Body>;
+	public var endSpawnZones(default, null):Array<Body>;
 	
 	public function new(levelSprites:SpriteRenderer, largeSprites:SpriteRenderer, tilePixelSize:Int, world:World) {
 		this.levelSprites = levelSprites;
@@ -26,6 +27,7 @@ class LevelManager {
 		this.world = world;
         obstacleBodies = [];
 		enemySpawnZones = [];
+		endSpawnZones = [];
 		minY = 4 * 32;
 		maxY = 420 - minY;
 		tracks = new Tracks();
@@ -93,6 +95,30 @@ class LevelManager {
 
 			// enemySpawnZones use in collision listener
 			enemySpawnZones.push(hitZone);
+		}
+
+		var endZones = tracks.levels[0].l_HitBoxes.all_EndTag;
+		for(endZone in endZones) {
+			var x = endZone.cx * tilePixelSize;
+			var y = endZone.cy * tilePixelSize;
+			var w = endZone.width * 2;
+			var h = endZone.height * 2;
+
+			var endHitZone = new Body({
+				shape: {
+					solid: false,
+					width: w,
+					height: h,
+				},
+				kinematic: true,
+				mass: 0,
+				x: x + (w * 0.5),
+				y: y + (h * 0.5),
+				rotation: 1
+			});
+
+			world.add(endHitZone);
+			endSpawnZones.push(endHitZone);
 		}
 	}
 

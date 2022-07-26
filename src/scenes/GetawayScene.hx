@@ -6,6 +6,7 @@ import tyke.Graphics.RectangleGeometry;
 import levels.LevelScroller;
 import levels.LevelManager;
 import pieces.Vehicle;
+import lime.ui.KeyCode;
 
 class GetawayScene extends BaseScene {
 	var player:Vehicle;
@@ -13,6 +14,8 @@ class GetawayScene extends BaseScene {
 	
 	override function create() {
 		super.create();
+
+		sceneManager.keyboard.bind(KeyCode.E, "END", "What do you want fs", loop -> sceneManager.changeScene(new EndScene(sceneManager)));
 		
 		var levels = new LevelManager(beachTiles, largeSprites, tileSize, sceneManager.world);
 		
@@ -50,6 +53,14 @@ class GetawayScene extends BaseScene {
 			}
 		});
 
+		// register player and end spawn points
+		sceneManager.world.listen(player.body, levels.endSpawnZones, {
+			enter: (body1, body2, collisionData) -> {
+				// trace("end");
+				sceneManager.changeScene(new EndScene(sceneManager));
+			}
+		});
+
 		// register enemies and obstacle collisions
 		sceneManager.world.listen(enemyManager.enemyBodies, levels.obstacleBodies, {
 			enter: (body1, body2, collisionData) -> {
@@ -58,7 +69,6 @@ class GetawayScene extends BaseScene {
 				body2.collider.collideWith(body1);
 			}
 		});
-
 	}
 
 	override function destroy() {}

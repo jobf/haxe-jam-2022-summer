@@ -9,8 +9,8 @@
 		"url": "https://ldtk.io"
 	},
 	"jsonVersion": "1.1.3",
-	"appBuildId": 458364,
-	"nextUid": 11,
+	"appBuildId": 458775,
+	"nextUid": 12,
 	"identifierStyle": "Capitalize",
 	"worldLayout": "Free",
 	"worldGridWidth": 256,
@@ -143,6 +143,34 @@
 			"pivotX": 0,
 			"pivotY": 0,
 			"fieldDefs": []
+		},
+		{
+			"identifier": "EndTag",
+			"uid": 11,
+			"tags": [],
+			"width": 16,
+			"height": 16,
+			"resizableX": false,
+			"resizableY": true,
+			"keepAspectRatio": false,
+			"tileOpacity": 1,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#000000",
+			"renderMode": "Rectangle",
+			"showName": true,
+			"tilesetId": null,
+			"tileId": null,
+			"tileRenderMode": "FitInside",
+			"tileRect": null,
+			"nineSliceBorders": [],
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": []
 		}
 	], "tilesets": [
 		{
@@ -248,6 +276,20 @@
 							"height": 208,
 							"defUid": 9,
 							"px": [240,0],
+							"fieldInstances": []
+						},
+						{
+							"__identifier": "EndTag",
+							"__grid": [252,0],
+							"__pivot": [0,0],
+							"__tags": [],
+							"__tile": null,
+							"__smartColor": "#000000",
+							"iid": "1a6c2a10-02f0-11ed-b0e7-57c7a12c62dd",
+							"width": 16,
+							"height": 208,
+							"defUid": 11,
+							"px": [4032,0],
 							"fieldInstances": []
 						}
 					]
