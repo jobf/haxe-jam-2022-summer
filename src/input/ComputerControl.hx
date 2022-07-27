@@ -9,9 +9,10 @@ import tyke.Loop.CountDown;
 import pieces.Vehicle;
 
 enum ControlMode {
-	ENTERING;
-	IDLE;
-	ATTACKING;
+	ENTERING; // moving from off screen to on
+	IDLE; // moving across the road but not attacking
+	ATTACKING; // tracking the player and attacking
+	WAITING; // waiting by side of road
 }
 
 class ComputerControl {
@@ -19,6 +20,7 @@ class ComputerControl {
 	var idleControlCountDown:CountDown;
 	var attackControlCountDown:CountDown;
 	var attackCountDown:CountDown;
+	var waitingCountDown:CountDown;
 	var player:Vehicle;
 	var mode:ControlMode;
 
@@ -30,6 +32,7 @@ class ComputerControl {
 		idleControlCountDown = new CountDown(1.0, () -> idleControl(), true);
 		attackControlCountDown = new CountDown(2.0, () -> attackControl(), true);
 		attackCountDown = new CountDown(1.0, () -> stopAttack(), false);
+		waitingCountDown = new CountDown(1.0, () -> waitControl(), false);
 	}
 
 	public function update(elapsedSeconds:Float) {
@@ -40,6 +43,8 @@ class ComputerControl {
 				handleIdlePhase(elapsedSeconds);
 			case ATTACKING:
 				handleAttackingPhase(elapsedSeconds);
+			case WAITING:
+				handleWaitingPhase(elapsedSeconds);
 		}
 
 		vehicle.update(elapsedSeconds);
@@ -58,9 +63,7 @@ class ComputerControl {
 			// mode = IDLE;
 			// idleControlCountDown.reset();
 
-			// start ATTACK phase
-			mode = ATTACKING;
-			attackControlCountDown.reset();
+			startAttackPhase();
 		}
 	}
 
@@ -88,6 +91,12 @@ class ComputerControl {
 		}
 	}
 
+	function startAttackPhase() {
+		// start ATTACK phase
+		mode = ATTACKING;
+		attackControlCountDown.reset();
+	}
+
 	function handleAttackingPhase(elapsedSeconds:Float) {
 		attackControlCountDown.update(elapsedSeconds);
 		if (isAligningForAttack) {
@@ -96,6 +105,14 @@ class ComputerControl {
 				stopVerticalMovement();
 				isAligningForAttack = false;
 			}
+		}
+		// todo - pass screenwidth in
+		final screenwidth = 640;
+		if (vehicle.body.x - player.body.x >= screenwidth * 2) {
+			// start WAITING phase
+			mode = WAITING;
+			waitingCountDown.reset();
+			vehicle.parkAtSide();
 		}
 	}
 
@@ -108,11 +125,11 @@ class ComputerControl {
 		var moveInDirection = 0;
 		if (distanceToPlayer > distanceToAttackFrom) {
 			// move vertically down to align with player
-			trace('need to move down');
+			// trace('need to move down');
 			moveInDirection = 1;
 		} else if (distanceToPlayer < -distanceToAttackFrom) {
 			// move vertically down to align with player
-			trace('need to move up');
+			// trace('need to move up');
 			moveInDirection = -1;
 		}
 
@@ -167,6 +184,19 @@ class ComputerControl {
 
 	inline function stopAttack() {
 		vehicle.resetMaxVelocityX();
+	}
+
+	function waitControl() {
+		final distanceToStartFollowingFrom = 200;
+		if (player.body.x - vehicle.body.x > distanceToStartFollowingFrom) {
+			@:privateAccess
+			vehicle.isParking = false;
+			startAttackPhase();
+		}
+	}
+
+	function handleWaitingPhase(elapsedSeconds:Float) {
+		waitingCountDown.update(elapsedSeconds);
 	}
 }
 

@@ -35,6 +35,10 @@ class Vehicle {
 	var sprite:Sprite;
 	var onExpire:Vehicle->Void;
 
+	var peoteView:PeoteView;
+
+	var isParking:Bool;
+
 	public function new(geometry:RectangleGeometry, world:World, peoteView:PeoteView, sprite:Sprite, minY:Int, maxY:Int, onExpire:Vehicle->Void, crashesRemaining:Int = 1) {
 		this.minY = minY;
 		this.maxY = maxY;
@@ -206,7 +210,7 @@ class Vehicle {
 	}
 
 	function fallInHole() {
-		if (isColliding) {
+		if (isColliding || isParking) {
 			return;
 		}
 
@@ -221,6 +225,10 @@ class Vehicle {
 	}
 
 	function jump() {
+		if(isParking){
+			return;
+		}
+
 		if (isOnGround) {
 			isOnGround = false;
 			isJumpInProgress = true;
@@ -263,8 +271,13 @@ class Vehicle {
 		this.body.remove();
 		this.sprite.visible = false;
 	}
+	public function parkAtSide() {
+		trace('parkAtSide');
+		isParking = true;
+		body.y = minY + geometry.height + 1;
+		stop();
+	}
 
-	var peoteView:PeoteView;
 }
 
 class Accelerator {
