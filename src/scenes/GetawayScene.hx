@@ -137,8 +137,10 @@ class GetawayScene extends BaseScene {
 		// allow using controller
 		controller.enable();
 
+		#if !debug
 		// hide all shapes (when no debugging)
-		debugShapes.setVisibility(true);
+		debugShapes.setVisibility(false);
+		#end
 	}
 
 	override function update(elapsedSeconds:Float) {
