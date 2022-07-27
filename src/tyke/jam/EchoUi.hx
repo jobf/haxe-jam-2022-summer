@@ -41,7 +41,7 @@ class ClickHandler {
 
 	// todo check that the Body arguments are always in this order?
 	function onItemOver(cursor:Body, item:Body, collisions:Array<CollisionData>) {
-		trace('mouseover');
+		// trace('mouseover');
 		var entity:UiEntity = item.uiEntity;
 		if (entity != null) {
 			if (!itemsUnderMouse.contains(entity)) {
@@ -55,7 +55,7 @@ class ClickHandler {
 
 	// todo check that the Body arguments are always in this order?
 	function onItemLeave(cursor:Body, item:Body) {
-		trace('mouseleave');
+		// trace('mouseleave');
 		var entity:UiEntity = item.uiEntity;
 
 		if (entity != null && itemsUnderMouse.length > 0) {
