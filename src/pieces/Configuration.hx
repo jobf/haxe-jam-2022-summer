@@ -17,35 +17,35 @@ class Configuration {
         the int key is the index of the tile used in ldtk Obstacles tile set 
     **/
 	public static var obstacles:Map<Int, ObstacleConfiguration> = [
-        8 => {
-            spriteTileIndex: 12,
-            hitboxWidth: 70,
-            hitboxHeight: 70,
-            collisionMode: HOLE,
-			shape: CIRCLE
-        },
-		9 => {
+		6 => {
 			spriteTileIndex: 6,
 			hitboxWidth: 32,
 			hitboxHeight: 36,
 			collisionMode: RAMP,
 			shape: RECT
 		},
-		10 => {
+        12 => {
+            spriteTileIndex: 12,
+            hitboxWidth: 70,
+            hitboxHeight: 70,
+            collisionMode: HOLE,
+			shape: CIRCLE
+        },
+		13 => {
 			spriteTileIndex: 13,
 			hitboxWidth: 46,
 			hitboxHeight: 50,
 			collisionMode: SLICK,
 			shape: RECT
 		},
-		11 => {
+		14 => {
 			spriteTileIndex: 14,
 			hitboxWidth: 58,
 			hitboxHeight: 50,
 			collisionMode: ROCK,
 			shape: RECT
 		},
-		12 => {
+		15 => {
 			spriteTileIndex: 15,
 			hitboxWidth: 46,
 			hitboxHeight: 46,

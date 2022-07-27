@@ -63,6 +63,7 @@ class LevelManager {
 
 	function setupObstacles() {
 		final obstacleTileSize = 96;
+		final obstacleTileSizeOffset = obstacleTileSize * 0.5;
 		var obstacleTileMap = tracks.levels[levelId].l_Obstacles;
 		LevelLoader.renderLayer(obstacleTileMap, (stack, cx, cy) -> {
 			for (tileData in stack) {
@@ -70,8 +71,8 @@ class LevelManager {
 					var config = Configuration.obstacles[tileData.tileId];
 					
 					var geometry:RectangleGeometry = {
-						y: cy * tracksTileRenderSize,
-						x: cx * tracksTileRenderSize,
+						x: Std.int(cx * obstacleTileSize + obstacleTileSizeOffset),
+						y: Std.int(cy * obstacleTileSize + obstacleTileSizeOffset),
 						width: config.hitboxWidth,
 						height: config.hitboxHeight
 					}
