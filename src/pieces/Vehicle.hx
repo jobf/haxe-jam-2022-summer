@@ -160,6 +160,12 @@ class Vehicle extends BasePiece {
 			}
 			forwards.update(elapsedSeconds);
 			backwards.update(elapsedSeconds);
+			if (body.y < vehicleOptions.minY) {
+				body.y = vehicleOptions.minY;
+			}
+			if (body.y > vehicleOptions.maxY) {
+				body.y =  vehicleOptions.maxY;
+			}
 		} else {
 			// here we are off the ground (jumping)
 			if (body.y >= groundY + 5) {
@@ -167,6 +173,8 @@ class Vehicle extends BasePiece {
 				land();
 			}
 		}
+
+
 	}
 
 	public function resetMaxVelocityX() {
