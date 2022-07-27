@@ -134,7 +134,7 @@ class GetawayScene extends BaseScene {
 		hud = new HUD(iconSprites, text.fontProgram);
 		player.registerHud(hud);
 
-		// allow using controller
+		// need to enable controller before it will respond 
 		controller.enable();
 
 		#if !debug
@@ -152,6 +152,7 @@ class GetawayScene extends BaseScene {
 	}
 
 	override function destroy() {
+		// clean up controller
 		controller.disable();
 	}
 }
