@@ -23,7 +23,7 @@ class MessageScene extends BaseScene {
 			{
 				text: message,
 				action: entity -> return,
-				color: 0x00000000
+				color: Color.GREY4
 			},
 			{
 				text: "Continue",
@@ -34,8 +34,8 @@ class MessageScene extends BaseScene {
 		var containerGeometry:RectangleGeometry = {
 			y: 0,
 			x: 0,
-			width: 640,
-			height: 360
+			width: 625,
+			height: 350
 		};
 
 		var rowsInGrid = 2;

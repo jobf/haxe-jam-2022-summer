@@ -22,7 +22,7 @@ class EndScene extends BaseScene {
 		var containerGeometry:RectangleGeometry = {
 			y: 0,
 			x: 0,
-			width: 640,
+			width: 625,
 			height: 360
 		};
 
