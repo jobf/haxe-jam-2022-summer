@@ -37,7 +37,7 @@ class LevelManager {
 		enemyTriggerZones = [];
 		endTriggerZones = [];
 		minY = 3 * 32;
-		maxY = 420 - 32 - 20;// - minY;
+		maxY = 420 - 52;
     var json = sys.io.File.getContent("../../../assets/ldtk/tracks/tracks.ldtk");
 		tracks = new Tracks(json);
 

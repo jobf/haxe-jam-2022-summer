@@ -1,11 +1,7 @@
 package pieces;
 
 import pieces.BasePiece;
-import peote.view.PeoteView;
-import echo.Collider;
-import tyke.Graphics;
 import tyke.Loop.CountDown;
-import echo.World;
 import echo.Body;
 
 @:structInit
@@ -141,12 +137,7 @@ class Vehicle extends BasePiece {
 
 		if (isOnGround) {
 			if (isSlipping) {
-				// todo - fix this
 				slippingCountDown.update(elapsedSeconds);
-				// oscillate y position with sin wave
-				var y = groundY + (Math.sin(core.peoteView.time) * 250);
-				trace(y);
-				body.y = groundY;
 			} else {
 				if (isControllingVertical) {
 					// limit vertical movement if moving that way
@@ -197,7 +188,7 @@ class Vehicle extends BasePiece {
 				vehicleOptions.crashesRemaining = 0;
 				crash();
 			case SLICK:
-				startSlipping();
+				slip();
 			case _:
 				return;
 		}
@@ -274,12 +265,18 @@ class Vehicle extends BasePiece {
 		stop();
 	}
 
-	function startSlipping() {
-		isSlipping = true;
+	function slip() {
+		if(isOnGround){
+			isSlipping = true;
+			body.rotational_velocity = 300;
+			slippingCountDown.reset();
+		}
 	}
 
 	function stopSlipping() {
 		isSlipping = false;
+		body.rotational_velocity = 0;
+		body.rotation = 0;
 	}
 
 }
