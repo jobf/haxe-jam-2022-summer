@@ -18,7 +18,8 @@ class LevelManager {
 	var world:World;
 	var levelId:Int;
 	var tracksTileRenderSize:Int;
-	var totalEnemiesRemaining:Int;
+	public var totalEnemiesRemaining(default, null):Int;
+	public var finishLineX(default, null):Int;
 
 	public var minY(default, null):Int;
 	public var maxY(default, null):Int;
@@ -142,7 +143,7 @@ class LevelManager {
 			var y = endZone.cy * tracksTileRenderSize;
 			var w = endZone.width * 2;
 			var h = endZone.height * 2;
-
+			
 			var endHitZone = new Body({
 				shape: {
 					solid: false,
@@ -155,6 +156,8 @@ class LevelManager {
 				y: y + (h * 0.5),
 				rotation: 1
 			});
+			
+			finishLineX = Std.int(endHitZone.x);
 
 			world.add(endHitZone);
 			endTriggerZones.push(endHitZone);
@@ -168,4 +171,5 @@ class LevelManager {
 	public function isWon():Bool {
 		return totalEnemiesRemaining <= 0;
 	}
+
 }

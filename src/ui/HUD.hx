@@ -35,13 +35,36 @@ class HUD {
 		var healthIconX = 304 + halfTileSize;
 		var endIconX = 418 + halfTileSize;
 
-		enemiesSprite = iconSprites.makeSprite(enemiesIconX, y, tileSize, enemiesIconTileId);
-		healthText = fontProgram.createLine("00", enemiesIconX + tileSize, y);
-
 		healthSprite = iconSprites.makeSprite(healthIconX, y, tileSize, healthIconTileId);
-		enemiesText = fontProgram.createLine("00", healthIconX + tileSize, y);
+		healthText = fontProgram.createLine(formatNumber(0), healthIconX + tileSize, y);
+        
+		enemiesSprite = iconSprites.makeSprite(enemiesIconX, y, tileSize, enemiesIconTileId);
+		enemiesText = fontProgram.createLine(formatNumber(0), enemiesIconX + tileSize, y);
 
 		endSprite = iconSprites.makeSprite(endIconX, y, tileSize, finishIconTileId);
 		endText = fontProgram.createLine("00", endIconX + tileSize, y);
 	}
+
+    inline function formatNumber(number:Int):String{
+        if(number >= 100){
+            number = 99;
+        }
+        return StringTools.lpad('$number', "0", 2);
+    }
+
+	public function updateEndText(playerX:Float, finishLineX:Int) {
+		var percentComplete = Std.int((playerX / finishLineX) * 100);
+		fontProgram.lineSetChars(endText, formatNumber(percentComplete));
+		fontProgram.updateLine(endText);
+	}
+
+	public function updateHealthText(remainingCrashes:Int) {
+        fontProgram.lineSetChars(healthText, formatNumber(remainingCrashes));
+		fontProgram.updateLine(healthText);
+    }
+
+	public function updateEnemiesText(totalEnemiesRemaining:Int) {
+        fontProgram.lineSetChars(enemiesText, formatNumber(totalEnemiesRemaining));
+		fontProgram.updateLine(enemiesText);
+    }
 }
