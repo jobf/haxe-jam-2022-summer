@@ -1,5 +1,6 @@
 package scenes;
 
+import input.Controller;
 import pieces.Player;
 import ui.HUD;
 import peote.view.Color;
@@ -10,6 +11,7 @@ import levels.LevelScroller;
 import levels.LevelManager;
 
 class GetawayScene extends BaseScene {
+	var controller:Controller;
 	var player:Player;
 	var level:LevelManager;
 	var levelScroller:LevelScroller;
@@ -20,6 +22,9 @@ class GetawayScene extends BaseScene {
 	override function create() {
 		super.create();
 
+		@:privateAccess
+		controller = new Controller(sceneManager.gum.window);
+		
 		var currentLevel = 0; // for testing only
 		var currentLevel = 1; // start at 1 normally
 
@@ -36,8 +41,7 @@ class GetawayScene extends BaseScene {
 		final verticalVelocity:Float = 120;
 		final jumpVelocity = -90;
 
-		player = new Player(pieceCore, 
-		{
+		player = new Player(pieceCore, {
 			spriteTileSize: 96,
 			spriteTileId: 0,
 			shape: RECT,
@@ -57,11 +61,10 @@ class GetawayScene extends BaseScene {
 				},
 				max_velocity_x: defaultMaxVelocityX, // stop the vehicle going too fast
 			}
-		},
-		{
+		}, {
 			verticalVelocity: verticalVelocity,
 			onExpire: vehicle -> {
-				var initSceneAfterMessageScene:Void->Scene = ()-> return new EndScene(sceneManager);
+				var initSceneAfterMessageScene:Void->Scene = () -> return new EndScene(sceneManager);
 				sceneManager.changeScene(new MessageScene(sceneManager, "Too bad you smashed!", initSceneAfterMessageScene));
 			},
 			minY: level.minY,
@@ -69,9 +72,8 @@ class GetawayScene extends BaseScene {
 			jumpVelocity: jumpVelocity,
 			defaultMaxVelocityX: defaultMaxVelocityX,
 			crashesRemaining: 2
-		},
-		level);
-		
+		}, level);
+
 		controller.registerPlayer(player);
 
 		levelScroller = new LevelScroller(beachTilesLayer.display, sceneManager.display.width, sceneManager.display.height, player.body);
@@ -112,11 +114,10 @@ class GetawayScene extends BaseScene {
 			enter: (body1, body2, collisionData) -> {
 				// trace("end");
 				var message = "Did not lose them all!";
-				if(level.isWon())
-				{
+				if (level.isWon()) {
 					message = "\\o/ lost them all!!!";
 				}
-				var initSceneAfterMessageScene:Void->Scene = ()-> return new EndScene(sceneManager);
+				var initSceneAfterMessageScene:Void->Scene = () -> return new EndScene(sceneManager);
 				sceneManager.changeScene(new MessageScene(sceneManager, message, initSceneAfterMessageScene));
 			}
 		});
@@ -145,9 +146,12 @@ class GetawayScene extends BaseScene {
 	override function update(elapsedSeconds:Float) {
 		super.update(elapsedSeconds);
 
-    player.update(elapsedSeconds);
+		player.update(elapsedSeconds);
 		levelScroller.update(elapsedSeconds);
 		enemyManager.update(elapsedSeconds);
 	}
 
+	override function destroy() {
+		controller.disable();
+	}
 }

@@ -6,7 +6,6 @@ import tyke.Loop.Text;
 import tyke.Loop.Glyphs;
 import tyke.Graphics;
 import tyke.Graphics.SpriteRenderer;
-import input.Controller;
 import lime.ui.KeyCode;
 import lime.ui.MouseButton;
 import tyke.jam.Scene;
@@ -24,7 +23,6 @@ class BaseScene extends Scene {
 	var beachTilesLayer:Layer;
 	var iconSprites:SpriteRenderer;
 	var debugShapes:ShapeRenderer;
-	var controller:Controller;
 	var pieceCore:PieceCore;
 
 	override function create() {
@@ -35,9 +33,6 @@ class BaseScene extends Scene {
 		// bind a key to reset the scene
 		sceneManager.keyboard.bind(KeyCode.R, "RESET", "Reset Scene", loop -> sceneManager.resetScene());
 
-		@:privateAccess
-		controller = new Controller(sceneManager.gum.window);
-
 		pieceCore = {
 			world: sceneManager.world,
 			tiles: largeSprites,
@@ -46,10 +41,6 @@ class BaseScene extends Scene {
 		};
 
 		trace('BaseScene initialized');
-	}
-
-	override function destroy() {
-		controller.disable();
 	}
 
 	inline function initGameGraphics(){
