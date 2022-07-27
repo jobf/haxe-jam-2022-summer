@@ -17,11 +17,13 @@ class VehicleOptions {
 
 class Vehicle extends BasePiece {
 	public var isControllingVertical(default, null):Bool;
+
 	var vehicleOptions:VehicleOptions;
 	var groundY:Null<Float>;
 	var forwards:Accelerator;
 	var backwards:Accelerator;
 	var slippingCountDown:CountDown;
+	var damagedCountDown:CountDown;
 	var isOnGround:Bool;
 	var isExpired:Bool;
 	var isSlipping:Bool;
@@ -29,6 +31,7 @@ class Vehicle extends BasePiece {
 	var isCrashed:Bool;
 	var isParking:Bool;
 	var isJumpInProgress:Bool;
+	var canBeDamaged:Bool = true;
 
 	public function new(core:PieceCore, options:PieceOptions, vehicleOptions:VehicleOptions) {
 		super(core, options);
@@ -47,6 +50,9 @@ class Vehicle extends BasePiece {
 
 		// init countdown used when vehicle is slipping
 		slippingCountDown = new CountDown(2.0, () -> stopSlipping(), false);
+
+		// init countdown used when vehicle is damaged
+		damagedCountDown = new CountDown(1.5, () -> enableIsDamaged(), false);
 	}
 
 	inline function traceButtonState(name:String, buttonIsDown:Bool) {
@@ -130,10 +136,12 @@ class Vehicle extends BasePiece {
 
 	override public function update(elapsedSeconds:Float) {
 		super.update(elapsedSeconds);
-
+		
 		if (isExpired) {
 			return;
 		}
+		
+		damagedCountDown.update(elapsedSeconds);
 
 		if (isOnGround) {
 			if (isSlipping) {
@@ -155,7 +163,7 @@ class Vehicle extends BasePiece {
 				body.y = vehicleOptions.minY;
 			}
 			if (body.y > vehicleOptions.maxY) {
-				body.y =  vehicleOptions.maxY;
+				body.y = vehicleOptions.maxY;
 			}
 		} else {
 			// here we are off the ground (jumping)
@@ -164,8 +172,6 @@ class Vehicle extends BasePiece {
 				land();
 			}
 		}
-
-
 	}
 
 	public function resetMaxVelocityX() {
@@ -174,7 +180,7 @@ class Vehicle extends BasePiece {
 
 	override function collideWith(body:Body) {
 		super.collideWith(body);
-		
+
 		// trace('vehicle collide ${body.collider.type}');
 		switch body.collider.type {
 			case HOLE:
@@ -236,11 +242,16 @@ class Vehicle extends BasePiece {
 	}
 
 	function crash() {
+		if(!canBeDamaged){
+			return;
+		}
+
 		if (!isCrashed) {
 			isCrashed = true;
 			stop();
 			vehicleOptions.crashesRemaining--;
 			this.sprite.shake(core.peoteView.time);
+			disableDamage();
 		}
 		if (vehicleOptions.crashesRemaining <= 0) {
 			expire();
@@ -266,7 +277,7 @@ class Vehicle extends BasePiece {
 	}
 
 	function slip() {
-		if(isOnGround){
+		if (isOnGround) {
 			isSlipping = true;
 			body.rotational_velocity = 300;
 			slippingCountDown.reset();
@@ -279,6 +290,20 @@ class Vehicle extends BasePiece {
 		body.rotation = 0;
 	}
 
+	inline function enableIsDamaged() {
+		// vehicle can be damaged
+		canBeDamaged = true;
+		sprite.setFlashing(false);
+	}
+	
+	inline function disableDamage(){
+		// vehicle can NOT be damaged
+		canBeDamaged = false;
+		// flash to show it's not able to be damaged for a time
+		sprite.setFlashing(true);
+		// reset damagedCountDown - will enableIsDamaged again at the end
+		damagedCountDown.reset();
+	}
 }
 
 class Accelerator {
