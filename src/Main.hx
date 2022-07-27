@@ -33,7 +33,9 @@ class Main extends App {
 			images: [
 				"assets/ldtk/tracks/track-tiles-32.png",
 				"assets/ldtk/tracks/sprites-32.png",
-				"assets/ldtk/tracks/sprites-96.png"]
+				"assets/ldtk/tracks/sprites-96.png",
+				"assets/png/icons-32.png"
+			]
 		});
 
 		gum.changeLoop(new Scenes(assets));

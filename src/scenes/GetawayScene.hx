@@ -1,5 +1,6 @@
 package scenes;
 
+import ui.HUD;
 import peote.view.Color;
 import tyke.jam.Scene;
 import input.ComputerControl;
@@ -12,6 +13,7 @@ class GetawayScene extends BaseScene {
 	var player:Vehicle;
 	var levelScroller:LevelScroller;
 	var enemyManager:EnemyManager;
+	var hud:HUD;
 	var levelsIds = [0, 1];
 
 	override function create() {
@@ -126,6 +128,8 @@ class GetawayScene extends BaseScene {
 			}
 		});
 
+		hud = new HUD(iconSprites, text.fontProgram);
+
 		// allow using controller
 		controller.enable();
 
@@ -139,4 +143,5 @@ class GetawayScene extends BaseScene {
 		levelScroller.update(elapsedSeconds);
 		enemyManager.update(elapsedSeconds);
 	}
+
 }
