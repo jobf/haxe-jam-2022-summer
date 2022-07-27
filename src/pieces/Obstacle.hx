@@ -2,7 +2,6 @@ package pieces;
 
 import echo.Collider;
 import tyke.Graphics;
-import tyke.Graphics.SpriteRenderer;
 import echo.Body;
 import echo.World;
 import tyke.Graphics.RectangleGeometry;
@@ -48,6 +47,10 @@ class Obstacle{
                 this.body.remove();
                 // todo animate ramp collapse
                 this.sprite.tile = this.sprite.tile + 2;
+            }
+            else if(this.body.collider.type == INFLATABLE){
+                this.body.kinematic = false;
+                this.body.velocity.set(body.velocity.x, 45);
             }
         }
     }

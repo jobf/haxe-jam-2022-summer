@@ -13,12 +13,15 @@ class GetawayScene extends BaseScene {
 	var player:Vehicle;
 	var levelScroller:LevelScroller;
 	var enemyManager:EnemyManager;
+	var levelsIds = [0, 1];
 
 	override function create() {
 		super.create();
 
-		var levelId = 0;
-		var level = new LevelManager(beachTiles, largeSprites, tileSize, sceneManager.world, levelId);
+		var currentLevel = 0; // for testing only
+		// var currentLevel = 1; // start at 1 normally
+
+		var level = new LevelManager(beachTiles, largeSprites, tileSize, sceneManager.world, levelsIds[currentLevel]);
 
 		var playerGeometry:RectangleGeometry = {
 			y: Std.int(sceneManager.stage.centerY()),

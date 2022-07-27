@@ -1,5 +1,6 @@
 package levels;
 
+import pieces.Configuration;
 import echo.Collider;
 import echo.Body;
 import echo.World;
@@ -15,23 +16,23 @@ class LevelManager {
 	var largeSprites:SpriteRenderer;
 	var world:World;
 	var levelId:Int;
-	var tilePixelSize:Int;
+	var tracksTileRenderSize:Int;
 	var totalEnemiesRemaining:Int;
 
 	public var minY(default, null):Int;
 	public var maxY(default, null):Int;
-    public var obstacleBodies(default, null):Array<Body>;
+	public var obstacleBodies(default, null):Array<Body>;
 	public var enemyTriggerZones(default, null):Array<Body>;
 	public var endTriggerZones(default, null):Array<Body>;
-	
-	public function new(levelSprites:SpriteRenderer, largeSprites:SpriteRenderer, tilePixelSize:Int, world:World, levelId:Int) {
+
+	public function new(levelSprites:SpriteRenderer, largeSprites:SpriteRenderer, tracksTileRenderSize:Int, world:World, levelId:Int) {
 		this.levelSprites = levelSprites;
 		// this.obstacleSprites = obstacleSprites;
 		this.largeSprites = largeSprites;
-		this.tilePixelSize = tilePixelSize;
+		this.tracksTileRenderSize = tracksTileRenderSize;
 		this.world = world;
 		this.levelId = levelId;
-        obstacleBodies = [];
+		obstacleBodies = [];
 		enemyTriggerZones = [];
 		endTriggerZones = [];
 		minY = 4 * 32;
@@ -39,7 +40,7 @@ class LevelManager {
 		tracks = new Tracks();
 
 		setupTrackTiles();
-		
+
 		setupObstacles();
 
 		setupEnemyTriggers();
@@ -47,56 +48,42 @@ class LevelManager {
 		setupFinishLine();
 	}
 
-	/**
-		converts the tile ID from the tile map used in ldtk to the CollisionType enum for use in game 
-	**/
-	inline function determineCollisionType(tileId:Int):CollisionType {
-		return switch tileId {
-			case 9: RAMP;
-			case 8: HOLE;
-			case _: UNDEFINED;
-		}
-	}
-
 	function setupTrackTiles() {
 		var beachTileMap = tracks.levels[levelId].l_Track;
 		LevelLoader.renderLayer(beachTileMap, (stack, cx, cy) -> {
 			for (tileData in stack) {
-				var tileX = cx * tilePixelSize;
-				var tileY = cy * tilePixelSize;
-				this.levelSprites.makeSprite(tileX, tileY, tilePixelSize, tileData.tileId);
+				var tileX = cx * tracksTileRenderSize;
+				var tileY = cy * tracksTileRenderSize;
+				this.levelSprites.makeSprite(tileX, tileY, tracksTileRenderSize, tileData.tileId);
 			}
 		});
-
 	}
 
 	function setupObstacles() {
+		final obstacleTileSize = 96;
 		var obstacleTileMap = tracks.levels[levelId].l_Obstacles;
 		LevelLoader.renderLayer(obstacleTileMap, (stack, cx, cy) -> {
 			for (tileData in stack) {
-				var tileX = cx * tilePixelSize;
-				var tileY = cy * tilePixelSize;
-				var geometry:RectangleGeometry = {
-					y: tileY,
-					x: tileX,
-					width: tilePixelSize,
-					height: tilePixelSize
+				if (Configuration.obstacles.exists(tileData.tileId)) {
+					var config = Configuration.obstacles[tileData.tileId];
+					
+					var geometry:RectangleGeometry = {
+						y: cy * tracksTileRenderSize,
+						x: cx * tracksTileRenderSize,
+						width: config.hitboxWidth,
+						height: config.hitboxHeight
+					}
+					
+					trace('init ${config.collisionMode} ${geometry.x} ${geometry.y}');
+
+					var sprite = this.largeSprites.makeSprite(geometry.x, geometry.y, obstacleTileSize, config.spriteTileIndex);
+					var obstacle = new Obstacle(config.collisionMode, geometry, world, sprite);
+
+					// obstacleBodies array used for collision listener
+					obstacleBodies.push(obstacle.body);
+				} else {
+					trace('warning no obstacle configuration for tile id ${tileData.tileId}');
 				}
-
-				var obstacleType = determineCollisionType(tileData.tileId);
-				var largeIndex = switch obstacleType{
-					case RAMP: 6;
-					case HOLE: 12;
-					case _: 6;
-				};
-
-				var sprite = this.largeSprites.makeSprite(tileX, tileY, 96, largeIndex);
-				var obstacle = new Obstacle(obstacleType, geometry, world, sprite);
-
-				// obstacleBodies array used for collision listener
-				obstacleBodies.push(obstacle.body);
-
-                // trace('triggered Obstacle $obstacleType x $tileX y $tileY');
 			}
 		});
 	}
@@ -104,10 +91,10 @@ class LevelManager {
 	function setupEnemyTriggers() {
 		var triggerZones = tracks.levels[levelId].l_HitBoxes.all_EnemyTrigger;
 		totalEnemiesRemaining = triggerZones.length;
-		for(triggerZone in triggerZones){
+		for (triggerZone in triggerZones) {
 			// adjust position and size for 32 pixel grid (map is made with 16 pixels)
-			var x = triggerZone.cx * tilePixelSize;
-			var y = triggerZone.cy * tilePixelSize;
+			var x = triggerZone.cx * tracksTileRenderSize;
+			var y = triggerZone.cy * tracksTileRenderSize;
 			var w = triggerZone.width * 2;
 			var h = triggerZone.height * 2;
 			var hitZone = new Body({
@@ -133,9 +120,9 @@ class LevelManager {
 
 	function setupFinishLine() {
 		var endZones = tracks.levels[levelId].l_HitBoxes.all_EndTrigger;
-		for(endZone in endZones) {
-			var x = endZone.cx * tilePixelSize;
-			var y = endZone.cy * tilePixelSize;
+		for (endZone in endZones) {
+			var x = endZone.cx * tracksTileRenderSize;
+			var y = endZone.cy * tracksTileRenderSize;
 			var w = endZone.width * 2;
 			var h = endZone.height * 2;
 
@@ -164,5 +151,4 @@ class LevelManager {
 	public function isWon():Bool {
 		return totalEnemiesRemaining <= 0;
 	}
-
 }

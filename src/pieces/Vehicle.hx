@@ -34,12 +34,13 @@ class Vehicle {
 	var crashesRemaining:Int;
 	var sprite:Sprite;
 	var onExpire:Vehicle->Void;
-
 	var peoteView:PeoteView;
-
 	var isParking:Bool;
+	var isSlipping:Bool;
+	var slippingCountDown:CountDown;
 
-	public function new(geometry:RectangleGeometry, world:World, peoteView:PeoteView, sprite:Sprite, minY:Int, maxY:Int, onExpire:Vehicle->Void, crashesRemaining:Int = 1) {
+	public function new(geometry:RectangleGeometry, world:World, peoteView:PeoteView, sprite:Sprite, minY:Int, maxY:Int, onExpire:Vehicle->Void,
+			crashesRemaining:Int = 1) {
 		this.minY = minY;
 		this.maxY = maxY;
 		this.crashesRemaining = crashesRemaining;
@@ -82,6 +83,8 @@ class Vehicle {
 		// init acceleration logic
 		forwards = new Accelerator(body, 50);
 		backwards = new Accelerator(body, -50);
+
+		slippingCountDown = new CountDown(2.0, () -> stopSlipping(), false);
 	}
 
 	inline function formatButtonIsDown(buttonIsDown:Bool):String {
@@ -165,16 +168,24 @@ class Vehicle {
 		}
 
 		if (isOnGround) {
-			if (isControllingVertical) {
-				// limit vertical movement if moving that way
-				if (body.y <= minY) {
-					stopVerticalMovement();
-				}
-				if (body.y >= maxY) {
-					stopVerticalMovement();
+			if (isSlipping) {
+				// todo - fix this
+				slippingCountDown.update(elapsedSeconds);
+				// oscillate y position with sin wave
+				var y = groundY + (Math.sin(peoteView.time)*250);
+				trace(y);
+				body.y = groundY;
+			} else {
+				if (isControllingVertical) {
+					// limit vertical movement if moving that way
+					if (body.y <= minY) {
+						stopVerticalMovement();
+					}
+					if (body.y >= maxY) {
+						stopVerticalMovement();
+					}
 				}
 			}
-
 			forwards.update(elapsedSeconds);
 			backwards.update(elapsedSeconds);
 		} else {
@@ -204,6 +215,12 @@ class Vehicle {
 				jump();
 			case VEHICLE:
 				crash();
+			case ROCK:
+				// ensure expiry is triggered
+				crashesRemaining = 0;
+				crash();
+			case SLICK:
+				startSlipping();
 			case _:
 				return;
 		}
@@ -225,7 +242,7 @@ class Vehicle {
 	}
 
 	function jump() {
-		if(isParking){
+		if (isParking) {
 			return;
 		}
 
@@ -271,6 +288,7 @@ class Vehicle {
 		this.body.remove();
 		this.sprite.visible = false;
 	}
+
 	public function parkAtSide() {
 		trace('parkAtSide');
 		isParking = true;
@@ -278,6 +296,13 @@ class Vehicle {
 		stop();
 	}
 
+	function startSlipping() {
+		isSlipping = true;
+	}
+
+	function stopSlipping() {
+		isSlipping = false;
+	}
 }
 
 class Accelerator {

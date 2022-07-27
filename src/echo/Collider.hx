@@ -20,4 +20,7 @@ enum CollisionType{
     RAMP;
     HOLE;
     WATER;
+    SLICK;
+    ROCK;
+    INFLATABLE;
 }
