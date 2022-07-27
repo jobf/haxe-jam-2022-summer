@@ -1,5 +1,6 @@
 package scenes;
 
+import peote.view.Color;
 import scenes.BaseScene;
 import tyke.Graphics.RectangleGeometry;
 import tyke.jam.EchoUi.ButtonConfig;
@@ -14,7 +15,8 @@ class EndScene extends BaseScene {
 		var buttonConfigs:Array<ButtonConfig> = [
 			{
 				text: "Play again",
-				action: entity -> sceneManager.changeScene(new GetawayScene(sceneManager))
+				action: entity -> sceneManager.changeScene(new GetawayScene(sceneManager)),
+				color: Color.GREY6
 			}
 		];
 		var containerGeometry:RectangleGeometry = {

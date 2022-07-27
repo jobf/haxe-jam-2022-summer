@@ -1,5 +1,6 @@
 package scenes;
 
+import peote.view.Color;
 import scenes.BaseScene;
 import tyke.Graphics.RectangleGeometry;
 import tyke.jam.EchoUi;
@@ -21,11 +22,13 @@ class MessageScene extends BaseScene {
 		var buttonConfigs:Array<ButtonConfig> = [
 			{
 				text: message,
-				action: entity -> return
+				action: entity -> return,
+				color: 0x00000000
 			},
 			{
 				text: "Continue",
-				action: entity -> sceneManager.changeScene(initNextScene())
+				action: entity -> sceneManager.changeScene(initNextScene()),
+				color: Color.GREY6
 			}
 		];
 		var containerGeometry:RectangleGeometry = {

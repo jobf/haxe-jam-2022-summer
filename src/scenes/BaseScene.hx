@@ -91,6 +91,8 @@ class BaseScene extends Scene {
 
 		// glyphs for writing text
 		text = Glyphs.initText(sceneManager.display, sceneManager.assets.fontCache[0]);
+		text.fontProgram.fontStyle.bgColor = 0x00000000;
+		text.fontProgram.fontStyle.color = 0x00000070;
 	}
 
 

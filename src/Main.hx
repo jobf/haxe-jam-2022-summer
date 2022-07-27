@@ -1,3 +1,4 @@
+import peote.view.Color;
 import tyke.Graphics;
 import tyke.jam.EchoUi;
 import tyke.jam.Scene;
@@ -52,11 +53,13 @@ class TestScene extends BaseScene {
 		var buttonConfigs:Array<ButtonConfig> = [
 			{
 				text: "click",
-				action: entity -> trace('click')
+				action: entity -> trace('click'),
+				color: Color.MAGENTA
 			},
 			{
 				text: "clack",
-				action: entity -> trace('clack')
+				action: entity -> trace('clack'),
+				color: Color.CYAN
 			}
 		];
 		var containerGeometry:RectangleGeometry = {
