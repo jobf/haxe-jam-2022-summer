@@ -1,5 +1,6 @@
 package pieces;
 
+import pieces.BasePiece;
 import peote.view.PeoteView;
 import echo.Collider;
 import tyke.Graphics;
@@ -7,92 +8,58 @@ import tyke.Loop.CountDown;
 import echo.World;
 import echo.Body;
 
-class Vehicle {
-	public var body(default, null):Body;
+@:structInit
+class VehicleOptions {
+	public var minY:Int;
+	public var maxY:Int;
+	public var jumpVelocity:Float;
+	public var verticalVelocity:Float;
+	public var defaultMaxVelocityX:Float;
+	public var crashesRemaining:Int;
+	public var onExpire:Vehicle->Void;
+}
 
-	var geometry:RectangleGeometry;
-
+class Vehicle extends BasePiece {
+	public var isControllingVertical(default, null):Bool;
+	var vehicleOptions:VehicleOptions;
+	var groundY:Null<Float>;
 	var forwards:Accelerator;
 	var backwards:Accelerator;
-
-	var verticalVelocity:Float = 120;
-
-	public var isControllingVertical(default, null):Bool = false;
-
-	var jumpVelocity = -90;
-
-	var groundY:Float;
-	var isOnGround:Bool = true;
-	var isJumpInProgress:Bool = false;
-
-	var isColliding:Bool = false;
-	var minY:Int;
-	var maxY:Int;
-	var defaultMaxVelocityX = 400;
-	var isCrashed:Bool = false;
-	var isExpired:Bool = false;
-	var crashesRemaining:Int;
-	var sprite:Sprite;
-	var onExpire:Vehicle->Void;
-	var peoteView:PeoteView;
-	var isParking:Bool;
-	var isSlipping:Bool;
 	var slippingCountDown:CountDown;
+	var isOnGround:Bool;
+	var isExpired:Bool;
+	var isSlipping:Bool;
+	var isColliding:Bool;
+	var isCrashed:Bool;
+	var isParking:Bool;
+	var isJumpInProgress:Bool;
 
-	public function new(geometry:RectangleGeometry, world:World, peoteView:PeoteView, sprite:Sprite, minY:Int, maxY:Int, onExpire:Vehicle->Void,
-			crashesRemaining:Int = 1) {
-		this.minY = minY;
-		this.maxY = maxY;
-		this.crashesRemaining = crashesRemaining;
-		this.geometry = geometry;
-		this.sprite = sprite;
-		this.onExpire = onExpire;
-		this.peoteView = peoteView;
-		body = new Body({
-			shape: {
-				width: geometry.width,
-				height: geometry.height,
-			},
-			kinematic: false,
-			mass: 1,
-			x: geometry.x,
-			y: geometry.y,
-			material: {
-				gravity_scale: 0,
-			},
-			max_velocity_x: defaultMaxVelocityX, // stop the vehicle going too fast
-			rotation: 1, // have a bug in debug renderer (does not draw rectangles if straight :thonk:)
-		});
+	public function new(core:PieceCore, options:PieceOptions, vehicleOptions:VehicleOptions) {
+		super(core, options);
+		this.vehicleOptions = vehicleOptions;
+		initVehicle();
+	}
 
-		// set initial ground position
-		groundY = geometry.y;
-
-		// track geometry with body movement
-		body.on_move = (x, y) -> {
-			geometry.x = Std.int(x);
-			geometry.y = Std.int(y);
-			sprite.setPosition(x, y);
-		};
-
-		// register body in physics simulation
-		world.add(body);
-
-		// store reference to Collider helper class for use in collisions
-		body.collider = new Collider(VEHICLE, body -> collideWith(body));
+	inline function initVehicle() {
+		// set initial ground position (used to determine where to land)
+		groundY = options.bodyOptions.y;
+		isOnGround = true;
 
 		// init acceleration logic
 		forwards = new Accelerator(body, 50);
 		backwards = new Accelerator(body, -50);
 
+		// init countdown used when vehicle is slipping
 		slippingCountDown = new CountDown(2.0, () -> stopSlipping(), false);
 	}
 
-	inline function formatButtonIsDown(buttonIsDown:Bool):String {
-		return buttonIsDown ? "press" : "release";
+	inline function traceButtonState(name:String, buttonIsDown:Bool) {
+		var state = buttonIsDown ? "press" : "release";
+		trace('$name $state');
 	}
 
 	public function controlAccelerate(buttonIsDown:Bool) {
-		// trace('controlAccelerate ${formatButtonIsDown(buttonIsDown)}');
+		// traceButtonState("controlAccelerate",buttonIsDown);
 
 		forwards.accelerationIsActive = buttonIsDown;
 
@@ -103,7 +70,8 @@ class Vehicle {
 	}
 
 	public function controlReverse(buttonIsDown:Bool) {
-		// trace('controlReverse ${formatButtonIsDown(buttonIsDown)}');
+		// traceButtonState("controlReverse",buttonIsDown);
+
 		if (!isOnGround) {
 			return;
 		}
@@ -117,14 +85,15 @@ class Vehicle {
 	}
 
 	public function controlUp(buttonIsDown:Bool) {
-		// trace('controlUp ${formatButtonIsDown(buttonIsDown)}');
+		// traceButtonState("controlUp",buttonIsDown);
+
 		if (!isOnGround) {
 			return;
 		}
 
 		if (buttonIsDown) {
 			isControllingVertical = true;
-			body.velocity.y = -verticalVelocity;
+			body.velocity.y = -vehicleOptions.verticalVelocity;
 		} else {
 			stopVerticalMovement();
 		}
@@ -134,14 +103,15 @@ class Vehicle {
 	}
 
 	public function controlDown(buttonIsDown:Bool) {
-		// trace('controlDown ${formatButtonIsDown(buttonIsDown)}');
+		// traceButtonState("controlDown",buttonIsDown);
+
 		if (!isOnGround) {
 			return;
 		}
 
 		if (buttonIsDown) {
 			isControllingVertical = true;
-			body.velocity.y = verticalVelocity;
+			body.velocity.y = vehicleOptions.verticalVelocity;
 		} else {
 			stopVerticalMovement();
 		}
@@ -159,10 +129,12 @@ class Vehicle {
 	}
 
 	public function controlAction(buttonIsDown:Bool) {
-		// trace('controlAction ${formatButtonIsDown(buttonIsDown)}');
+		// traceButtonState("controlAction",buttonIsDown);
 	}
 
-	public function update(elapsedSeconds:Float) {
+	override public function update(elapsedSeconds:Float) {
+		super.update(elapsedSeconds);
+
 		if (isExpired) {
 			return;
 		}
@@ -172,16 +144,16 @@ class Vehicle {
 				// todo - fix this
 				slippingCountDown.update(elapsedSeconds);
 				// oscillate y position with sin wave
-				var y = groundY + (Math.sin(peoteView.time)*250);
+				var y = groundY + (Math.sin(core.peoteView.time) * 250);
 				trace(y);
 				body.y = groundY;
 			} else {
 				if (isControllingVertical) {
 					// limit vertical movement if moving that way
-					if (body.y <= minY) {
+					if (body.y <= vehicleOptions.minY) {
 						stopVerticalMovement();
 					}
-					if (body.y >= maxY) {
+					if (body.y >= vehicleOptions.maxY) {
 						stopVerticalMovement();
 					}
 				}
@@ -197,16 +169,13 @@ class Vehicle {
 		}
 	}
 
-	inline function stop() {
-		body.velocity.x = 0;
-		body.velocity.y = 0;
-	}
-
 	public function resetMaxVelocityX() {
-		body.velocity.x = defaultMaxVelocityX;
+		body.velocity.x = vehicleOptions.defaultMaxVelocityX;
 	}
 
-	function collideWith(body:Body) {
+	override function collideWith(body:Body) {
+		super.collideWith(body);
+		
 		// trace('vehicle collide ${body.collider.type}');
 		switch body.collider.type {
 			case HOLE:
@@ -217,7 +186,7 @@ class Vehicle {
 				crash();
 			case ROCK:
 				// ensure expiry is triggered
-				crashesRemaining = 0;
+				vehicleOptions.crashesRemaining = 0;
 				crash();
 			case SLICK:
 				startSlipping();
@@ -237,7 +206,7 @@ class Vehicle {
 			forwards.canMove = false;
 			backwards.canMove = false;
 			stop();
-			onExpire(this);
+			vehicleOptions.onExpire(this);
 		}
 	}
 
@@ -250,7 +219,7 @@ class Vehicle {
 			isOnGround = false;
 			isJumpInProgress = true;
 			body.material.gravity_scale = 1;
-			body.velocity.y = jumpVelocity;
+			body.velocity.y = vehicleOptions.jumpVelocity;
 			trace('jump');
 		}
 	}
@@ -271,28 +240,29 @@ class Vehicle {
 		if (!isCrashed) {
 			isCrashed = true;
 			stop();
-			crashesRemaining--;
-			this.sprite.shake(peoteView.time);
+			vehicleOptions.crashesRemaining--;
+			this.sprite.shake(core.peoteView.time);
 		}
-		if (crashesRemaining <= 0) {
+		if (vehicleOptions.crashesRemaining <= 0) {
 			expire();
 		}
 	}
 
 	function expire() {
-		onExpire(this);
+		vehicleOptions.onExpire(this);
 		isExpired = true;
 	}
 
 	public function destroy() {
 		this.body.remove();
 		this.sprite.visible = false;
+		this.debug.visible = false;
 	}
 
 	public function parkAtSide() {
 		trace('parkAtSide');
 		isParking = true;
-		body.y = minY + geometry.height + 1;
+		body.y = vehicleOptions.minY + options.bodyOptions.shape.height + 1;
 		stop();
 	}
 

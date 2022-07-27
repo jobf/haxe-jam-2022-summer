@@ -1,5 +1,7 @@
 package input;
 
+import peote.view.Color;
+import pieces.BasePiece.PieceCore;
 import peote.view.PeoteView;
 import echo.World;
 import echo.Body;
@@ -212,20 +214,20 @@ class EnemyManager {
 	var isColliding:Bool = false;
 	var minY:Int;
 	var maxY:Int;
+	var pieceCore:PieceCore;
 
-	public function new(world:World, sprites:SpriteRenderer, peoteView:PeoteView, player:Vehicle, minY:Int, maxY:Int) {
+	public function new(world:World, pieceCore:PieceCore, player:Vehicle, minY:Int, maxY:Int) {
 		computerControls = [];
 		enemyBodies = [];
 		this.world = world;
-		this.sprites = sprites;
-		this.peoteView = peoteView;
+		this.pieceCore = pieceCore;
 		this.player = player;
 		this.minY = minY;
 		this.maxY = maxY;
 	}
 
 	public function spawnCar(x:Int, y:Int, initialVelocityX:Float) {
-		var hitbox:RectangleGeometry = {
+		var geometry:RectangleGeometry = {
 			y: y,
 			x: x,
 			width: 32,
@@ -234,11 +236,44 @@ class EnemyManager {
 
 		final tileSize = 96;
 		final tileIndex = 1;
-		var sprite = sprites.makeSprite(hitbox.x, hitbox.y, tileSize, tileIndex);
-		var enemy = new Vehicle(hitbox, world, peoteView, sprite, minY, maxY, vehicle -> vehicle.destroy());
 
-		enemy.body.max_velocity.x = initialVelocityX;
-		enemy.body.velocity.x = initialVelocityX;
+		final defaultMaxVelocityX = 400;
+		final verticalVelocity:Float = 120;
+		final jumpVelocity = -90;
+		// var sprite = sprites.makeSprite(hitbox.x, hitbox.y, tileSize, tileIndex);
+		// var enemy = new Vehicle(hitbox, world, peoteView, sprite, minY, maxY, vehicle -> vehicle.destroy());
+		var enemy = new Vehicle(pieceCore, 
+		{
+			spriteTileSize: tileSize,
+			spriteTileId: tileIndex,
+			shape: RECT,
+			debugColor: Color.CYAN,
+			collisionType: VEHICLE,
+			bodyOptions: {
+				shape: {
+					width: geometry.width,
+					height: geometry.height,
+				},
+				kinematic: false,
+				mass: 1,
+				x: geometry.x,
+				y: geometry.y,
+				material: {
+					gravity_scale: 0,
+				},
+				velocity_x: initialVelocityX, // start moving
+				max_velocity_x: initialVelocityX
+			}
+		},
+		{
+			verticalVelocity: verticalVelocity,
+			onExpire: vehicle -> vehicle.destroy(),
+			minY: minY,
+			maxY: maxY,
+			jumpVelocity: jumpVelocity,
+			defaultMaxVelocityX: defaultMaxVelocityX,
+			crashesRemaining: 0 // enemy only have 1 hit point (maybe later enemies have more)
+		});
 
 		var computerControl = new ComputerControl(enemy, player);
 		computerControls.push(computerControl);

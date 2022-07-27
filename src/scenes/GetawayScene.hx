@@ -1,13 +1,12 @@
 package scenes;
 
+import peote.view.Color;
 import tyke.jam.Scene;
-import echo.Body;
 import input.ComputerControl;
 import tyke.Graphics.RectangleGeometry;
 import levels.LevelScroller;
 import levels.LevelManager;
 import pieces.Vehicle;
-import lime.ui.KeyCode;
 
 class GetawayScene extends BaseScene {
 	var player:Vehicle;
@@ -21,26 +20,57 @@ class GetawayScene extends BaseScene {
 		var currentLevel = 0; // for testing only
 		// var currentLevel = 1; // start at 1 normally
 
-		var level = new LevelManager(beachTiles, largeSprites, tileSize, sceneManager.world, levelsIds[currentLevel]);
+		var level = new LevelManager(pieceCore, beachTiles, tileSize, sceneManager.world, levelsIds[currentLevel]);
 
-		var playerGeometry:RectangleGeometry = {
+		var geometry:RectangleGeometry = {
 			y: Std.int(sceneManager.stage.centerY()),
 			x: 42,
 			width: 32,
 			height: 16
 		};
 
-		var playerExpired:Vehicle->Void = vehicle -> {
-			var initSceneAfterMessageScene:Void->Scene = ()-> return new EndScene(sceneManager);
-			sceneManager.changeScene(new MessageScene(sceneManager, "Too bad you smashed!", initSceneAfterMessageScene));
-		};
+		final defaultMaxVelocityX = 400;
+		final verticalVelocity:Float = 120;
+		final jumpVelocity = -90;
 
-		final playerMaximumCrashes = 2;
-		var sprite = largeSprites.makeSprite(playerGeometry.x, playerGeometry.y, 96, 0);
-		player = new Vehicle(playerGeometry, sceneManager.world, sceneManager.peoteView, sprite, level.minY, level.maxY, playerExpired, playerMaximumCrashes);
+		player = new Vehicle(pieceCore, 
+		{
+			spriteTileSize: 96,
+			spriteTileId: 0,
+			shape: RECT,
+			debugColor: Color.YELLOW,
+			collisionType: VEHICLE,
+			bodyOptions: {
+				shape: {
+					width: geometry.width,
+					height: geometry.height,
+				},
+				kinematic: false,
+				mass: 1,
+				x: geometry.x,
+				y: geometry.y,
+				material: {
+					gravity_scale: 0,
+				},
+				max_velocity_x: defaultMaxVelocityX, // stop the vehicle going too fast
+			}
+		},
+		{
+			verticalVelocity: verticalVelocity,
+			onExpire: vehicle -> {
+				var initSceneAfterMessageScene:Void->Scene = ()-> return new EndScene(sceneManager);
+				sceneManager.changeScene(new MessageScene(sceneManager, "Too bad you smashed!", initSceneAfterMessageScene));
+			},
+			minY: level.minY,
+			maxY: level.maxY,
+			jumpVelocity: jumpVelocity,
+			defaultMaxVelocityX: defaultMaxVelocityX,
+			crashesRemaining: 2
+		});
+		
 		controller.registerPlayer(player);
 
-		levelScroller = new LevelScroller(beachTilesLayer.display, sceneManager.display.width, sceneManager.display.height, playerGeometry, player.body);
+		levelScroller = new LevelScroller(beachTilesLayer.display, sceneManager.display.width, sceneManager.display.height, player.body);
 
 		// register player and obstacle collisions
 		sceneManager.world.listen(player.body, level.obstacleBodies, {
@@ -51,7 +81,7 @@ class GetawayScene extends BaseScene {
 			}
 		});
 
-		enemyManager = new EnemyManager(sceneManager.world, largeSprites, sceneManager.peoteView, player, level.minY, level.maxY);
+		enemyManager = new EnemyManager(sceneManager.world, pieceCore, player, level.minY, level.maxY);
 
 		// register player and enemy vehicle collisions
 		sceneManager.world.listen(player.body, enemyManager.enemyBodies, {
@@ -98,9 +128,10 @@ class GetawayScene extends BaseScene {
 
 		// allow using controller
 		controller.enable();
-	}
 
-	override function destroy() {}
+		// hide all shapes (when no debugging)
+		debugShapes.setVisibility(false);
+	}
 
 	override function update(elapsedSeconds:Float) {
 		super.update(elapsedSeconds);

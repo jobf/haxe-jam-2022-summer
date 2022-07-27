@@ -1,5 +1,6 @@
 package pieces;
 
+import tyke.Graphics.Geometry;
 import echo.Collider;
 
 @:structInit
@@ -8,6 +9,7 @@ class ObstacleConfiguration {
 	public var collisionMode:CollisionType;
 	public var hitboxWidth:Int;
 	public var hitboxHeight:Int;
+	public var shape:Geometry;
 }
 
 class Configuration {
@@ -19,31 +21,36 @@ class Configuration {
             spriteTileIndex: 12,
             hitboxWidth: 80,
             hitboxHeight: 80,
-            collisionMode: HOLE
+            collisionMode: HOLE,
+			shape: CIRCLE
         },
 		9 => {
 			spriteTileIndex: 6,
 			hitboxWidth: 32,
 			hitboxHeight: 36,
-			collisionMode: RAMP
+			collisionMode: RAMP,
+			shape: RECT
 		},
 		10 => {
 			spriteTileIndex: 13,
 			hitboxWidth: 46,
 			hitboxHeight: 50,
-			collisionMode: SLICK
+			collisionMode: SLICK,
+			shape: RECT
 		},
 		11 => {
 			spriteTileIndex: 14,
 			hitboxWidth: 58,
 			hitboxHeight: 50,
-			collisionMode: ROCK
+			collisionMode: ROCK,
+			shape: RECT
 		},
 		12 => {
 			spriteTileIndex: 15,
 			hitboxWidth: 46,
 			hitboxHeight: 46,
-			collisionMode: INFLATABLE
+			collisionMode: INFLATABLE,
+			shape: CIRCLE
 		},
 	];
 }

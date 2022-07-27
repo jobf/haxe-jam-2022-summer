@@ -1,5 +1,7 @@
 package levels;
 
+import pieces.BasePiece.PieceCore;
+import peote.view.Color;
 import pieces.Configuration;
 import echo.Collider;
 import echo.Body;
@@ -11,9 +13,8 @@ import tyke.Graphics.SpriteRenderer;
 
 class LevelManager {
 	var tracks:Tracks;
+	var pieceCore:PieceCore;
 	var levelSprites:SpriteRenderer;
-	var obstacleSprites:SpriteRenderer;
-	var largeSprites:SpriteRenderer;
 	var world:World;
 	var levelId:Int;
 	var tracksTileRenderSize:Int;
@@ -25,10 +26,9 @@ class LevelManager {
 	public var enemyTriggerZones(default, null):Array<Body>;
 	public var endTriggerZones(default, null):Array<Body>;
 
-	public function new(levelSprites:SpriteRenderer, largeSprites:SpriteRenderer, tracksTileRenderSize:Int, world:World, levelId:Int) {
+	public function new(pieceCore:PieceCore, levelSprites:SpriteRenderer, tracksTileRenderSize:Int, world:World, levelId:Int) {
+		this.pieceCore = pieceCore;
 		this.levelSprites = levelSprites;
-		// this.obstacleSprites = obstacleSprites;
-		this.largeSprites = largeSprites;
 		this.tracksTileRenderSize = tracksTileRenderSize;
 		this.world = world;
 		this.levelId = levelId;
@@ -54,7 +54,7 @@ class LevelManager {
 			for (tileData in stack) {
 				var tileX = cx * tracksTileRenderSize;
 				var tileY = cy * tracksTileRenderSize;
-				this.levelSprites.makeSprite(tileX, tileY, tracksTileRenderSize, tileData.tileId);
+				levelSprites.makeSprite(tileX, tileY, tracksTileRenderSize, tileData.tileId);
 			}
 		});
 	}
@@ -76,8 +76,25 @@ class LevelManager {
 					
 					trace('init ${config.collisionMode} ${geometry.x} ${geometry.y}');
 
-					var sprite = this.largeSprites.makeSprite(geometry.x, geometry.y, obstacleTileSize, config.spriteTileIndex);
-					var obstacle = new Obstacle(config.collisionMode, geometry, world, sprite);
+					// var sprite = this.largeSprites.makeSprite(geometry.x, geometry.y, obstacleTileSize, config.spriteTileIndex);
+					var obstacle = new Obstacle(pieceCore, {
+						spriteTileSize: obstacleTileSize,
+						spriteTileId: config.spriteTileIndex,
+						shape: config.shape,
+						debugColor: 0xff101060,
+						collisionType: config.collisionMode,
+						bodyOptions: {
+							shape: {
+								width: geometry.width,
+								height: geometry.height,
+								solid: false
+							},
+							kinematic: true,
+							mass: 1,
+							x: geometry.x,
+							y: geometry.y,
+						}
+					});
 
 					// obstacleBodies array used for collision listener
 					obstacleBodies.push(obstacle.body);
