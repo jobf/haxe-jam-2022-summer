@@ -166,7 +166,12 @@ class UiEntity {
 		this.background = bg;
 		this.onClick = onClick;
 		this.fontProgram = fontProgram;
-		this.fontProgram.createLine(labelText, body.x, body.y);
+		var textX = bg.w * 0.5;
+		var textY = body.y - fontProgram.fontStyle.height * 0.5;
+		label = this.fontProgram.createLine(labelText, textX, textY);
+		var offsetX = label.x - (label.textSize * 0.5);
+		this.fontProgram.lineSetPosition(label, offsetX, label.y);
+		this.fontProgram.updateLine(label);
 	}
 
 	public function over() {}
