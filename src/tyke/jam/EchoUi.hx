@@ -106,7 +106,7 @@ class TextButton {
 	}
 }
 
-typedef ButtonConfig = {text:String, action:UiEntity->Void}
+typedef ButtonConfig = {text:String, action:UiEntity->Void, color:Color}
 
 class ButtonGrid {
 	public function new(clickHandler:ClickHandler, shapeRenderer:ShapeRenderer, fontProgram:FontProgram<FontStyle>, world:World, buttons:Array<ButtonConfig>,
@@ -143,7 +143,7 @@ class ButtonGrid {
 					y: buttonY,
 				});
 
-				var bg = shapeRenderer.makeShape(buttonX, buttonY, buttonWidth, buttonHeight, RECT, Color.GREY3);
+				var bg = shapeRenderer.makeShape(buttonX, buttonY, buttonWidth, buttonHeight, RECT, buttonConfig.color);
 				var button = new UiEntity(body, bg, fontProgram, buttonConfig.action, buttonConfig.text);
 				clickHandler.registerUiEntity(button);
 				i++;
