@@ -13,11 +13,13 @@ import tyke.Graphics.SpriteRenderer;
 
 class LevelManager {
 	public var tracks:Tracks;
+
 	var pieceCore:PieceCore;
 	var levelSprites:SpriteRenderer;
 	var world:World;
 	var levelId:Int;
 	var tracksTileRenderSize:Int;
+
 	public var totalEnemiesRemaining(default, null):Int;
 	public var finishLineX(default, null):Int;
 
@@ -38,8 +40,14 @@ class LevelManager {
 		endTriggerZones = [];
 		minY = 3 * 32;
 		maxY = 420 - 52;
-    var json = sys.io.File.getContent("../../../assets/ldtk/tracks/tracks.ldtk");
+		#if editinglevels
+		// load src version of tracks.ldtk (for hot reload)
+		var json = sys.io.File.getContent("../../../assets/ldtk/tracks/tracks.ldtk");
 		tracks = new Tracks(json);
+		#else
+		// load packaged version of tracks.ldtk (for distribution)
+		tracks = new Tracks();
+		#end
 
 		setupTrackTiles();
 
@@ -69,14 +77,14 @@ class LevelManager {
 			for (tileData in stack) {
 				if (Configuration.obstacles.exists(tileData.tileId)) {
 					var config = Configuration.obstacles[tileData.tileId];
-					
+
 					var geometry:RectangleGeometry = {
 						x: Std.int(cx * obstacleTileSize + obstacleTileSizeOffset),
 						y: Std.int(cy * obstacleTileSize + obstacleTileSizeOffset),
 						width: config.hitboxWidth,
 						height: config.hitboxHeight
 					}
-					
+
 					trace('init ${config.collisionMode} ${geometry.x} ${geometry.y}');
 
 					// var sprite = this.largeSprites.makeSprite(geometry.x, geometry.y, obstacleTileSize, config.spriteTileIndex);
@@ -145,7 +153,7 @@ class LevelManager {
 			var y = endZone.cy * tracksTileRenderSize;
 			var w = endZone.width * 2;
 			var h = endZone.height * 2;
-			
+
 			var endHitZone = new Body({
 				shape: {
 					solid: false,
@@ -158,7 +166,7 @@ class LevelManager {
 				y: y + (h * 0.5),
 				rotation: 1
 			});
-			
+
 			finishLineX = Std.int(endHitZone.x);
 
 			world.add(endHitZone);
@@ -173,5 +181,4 @@ class LevelManager {
 	public function isWon():Bool {
 		return totalEnemiesRemaining <= 0;
 	}
-
 }

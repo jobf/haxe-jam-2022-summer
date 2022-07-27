@@ -37,6 +37,14 @@ haxelib git tyke https://github.com/jobf/tyke.git feature/haxe-jam-summer-2022
 ./web-debug
 ```
 
+# Editing levels
+
+For quicker level editing feedback, run with compiler flag `-D editinglevels`.
+
+Now whenever you save the level in ldtk you can simply press `r` while in the GetawayScene to restart the level and reload the latest version of the levels.
+
+Example in `hl-edit-debug` script.
+
 # Theme Ideas
 
 Theme is 
