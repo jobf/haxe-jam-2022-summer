@@ -13,14 +13,15 @@ class GetawayScene extends BaseScene {
 	var levelScroller:LevelScroller;
 	var enemyManager:EnemyManager;
 	var levelsIds = [0, 1];
+  var level:LevelManager;
 
 	override function create() {
 		super.create();
 
-		var currentLevel = 0; // for testing only
+		var currentLevel = 1; // for testing only
 		// var currentLevel = 1; // start at 1 normally
 
-		var level = new LevelManager(pieceCore, beachTiles, tileSize, sceneManager.world, levelsIds[currentLevel]);
+		level = new LevelManager(pieceCore, beachTiles, tileSize, sceneManager.world, levelsIds[currentLevel]);
 
 		var geometry:RectangleGeometry = {
 			y: Std.int(sceneManager.stage.centerY()),
@@ -130,12 +131,13 @@ class GetawayScene extends BaseScene {
 		controller.enable();
 
 		// hide all shapes (when no debugging)
-		debugShapes.setVisibility(false);
+		debugShapes.setVisibility(true);
 	}
 
 	override function update(elapsedSeconds:Float) {
 		super.update(elapsedSeconds);
-		player.update(elapsedSeconds);
+
+    player.update(elapsedSeconds);
 		levelScroller.update(elapsedSeconds);
 		enemyManager.update(elapsedSeconds);
 	}

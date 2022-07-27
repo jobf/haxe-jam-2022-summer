@@ -19,8 +19,8 @@ class Configuration {
 	public static var obstacles:Map<Int, ObstacleConfiguration> = [
         8 => {
             spriteTileIndex: 12,
-            hitboxWidth: 80,
-            hitboxHeight: 80,
+            hitboxWidth: 70,
+            hitboxHeight: 70,
             collisionMode: HOLE,
 			shape: CIRCLE
         },

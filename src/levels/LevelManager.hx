@@ -12,7 +12,7 @@ import tyke.Ldtk.LevelLoader;
 import tyke.Graphics.SpriteRenderer;
 
 class LevelManager {
-	var tracks:Tracks;
+	public var tracks:Tracks;
 	var pieceCore:PieceCore;
 	var levelSprites:SpriteRenderer;
 	var world:World;
@@ -37,7 +37,8 @@ class LevelManager {
 		endTriggerZones = [];
 		minY = 4 * 32;
 		maxY = 420 - minY;
-		tracks = new Tracks();
+    var json = sys.io.File.getContent("../../../assets/ldtk/tracks/tracks.ldtk");
+		tracks = new Tracks(json);
 
 		setupTrackTiles();
 
