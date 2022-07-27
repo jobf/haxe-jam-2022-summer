@@ -1,5 +1,7 @@
 package scenes;
 
+import pieces.Player;
+import ui.HUD;
 import peote.view.Color;
 import tyke.jam.Scene;
 import input.ComputerControl;
@@ -9,17 +11,18 @@ import levels.LevelManager;
 import pieces.Vehicle;
 
 class GetawayScene extends BaseScene {
-	var player:Vehicle;
+	var player:Player;
+	var level:LevelManager;
 	var levelScroller:LevelScroller;
 	var enemyManager:EnemyManager;
+	var hud:HUD;
 	var levelsIds = [0, 1];
-  var level:LevelManager;
 
 	override function create() {
 		super.create();
 
-		var currentLevel = 1; // for testing only
-		// var currentLevel = 1; // start at 1 normally
+		var currentLevel = 0; // for testing only
+		var currentLevel = 1; // start at 1 normally
 
 		level = new LevelManager(pieceCore, beachTiles, tileSize, sceneManager.world, levelsIds[currentLevel]);
 
@@ -34,7 +37,7 @@ class GetawayScene extends BaseScene {
 		final verticalVelocity:Float = 120;
 		final jumpVelocity = -90;
 
-		player = new Vehicle(pieceCore, 
+		player = new Player(pieceCore, 
 		{
 			spriteTileSize: 96,
 			spriteTileId: 0,
@@ -67,7 +70,8 @@ class GetawayScene extends BaseScene {
 			jumpVelocity: jumpVelocity,
 			defaultMaxVelocityX: defaultMaxVelocityX,
 			crashesRemaining: 2
-		});
+		},
+		level);
 		
 		controller.registerPlayer(player);
 
@@ -127,6 +131,9 @@ class GetawayScene extends BaseScene {
 			}
 		});
 
+		hud = new HUD(iconSprites, text.fontProgram);
+		player.registerHud(hud);
+
 		// allow using controller
 		controller.enable();
 
@@ -141,4 +148,5 @@ class GetawayScene extends BaseScene {
 		levelScroller.update(elapsedSeconds);
 		enemyManager.update(elapsedSeconds);
 	}
+
 }

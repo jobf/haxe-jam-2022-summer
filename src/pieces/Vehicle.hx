@@ -273,6 +273,7 @@ class Vehicle extends BasePiece {
 	function stopSlipping() {
 		isSlipping = false;
 	}
+
 }
 
 class Accelerator {

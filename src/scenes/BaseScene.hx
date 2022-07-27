@@ -17,6 +17,7 @@ class BaseScene extends Scene {
 	var largeSprites:SpriteRenderer;
 	var text:Text;
 	var beachTilesLayer:Layer;
+	var iconSprites:SpriteRenderer;
 	var debugShapes:ShapeRenderer;
 	var controller:Controller;
 	var pieceCore:PieceCore;
@@ -28,10 +29,14 @@ class BaseScene extends Scene {
 		beachTiles = sceneManager.stage.createSpriteRendererLayer("beachTiles", sceneManager.assets.imageCache[0], tileSize);
 		beachTilesLayer = sceneManager.stage.getLayer("beachTiles");
 
-		// renderer for sprites
+		// renderer for sprites 32x32 - NB not actually used anymore
 		sprites = sceneManager.stage.createSpriteRendererLayer("sprites", sceneManager.assets.imageCache[1], tileSize);
 
+        // renderer for main game sprites (96x96 pixel)
 		largeSprites = sceneManager.stage.createSpriteRendererLayer("largeSprites", sceneManager.assets.imageCache[2], 96);
+
+        // renderer for icon sprites
+        iconSprites = sceneManager.stage.createSpriteRendererLayer("iconSprites", sceneManager.assets.imageCache[3], 32, false, true);
 
 		// renderer for body debugging
 		debugShapes = sceneManager.stage.createShapeRenderLayer("debugShapes");
