@@ -36,7 +36,7 @@ class BaseScene extends Scene {
 		largeSprites = sceneManager.stage.createSpriteRendererLayer("largeSprites", sceneManager.assets.imageCache[2], 96);
 
         // renderer for icon sprites
-        iconSprites = sceneManager.stage.createSpriteRendererLayer("iconSprites", sceneManager.assets.imageCache[3], 32);
+        iconSprites = sceneManager.stage.createSpriteRendererLayer("iconSprites", sceneManager.assets.imageCache[3], 32, false, true);
 
 		// renderer for body debugging
 		debugShapes = sceneManager.stage.createShapeRenderLayer("debugShapes");
