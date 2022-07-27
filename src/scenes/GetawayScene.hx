@@ -8,7 +8,6 @@ import input.ComputerControl;
 import tyke.Graphics.RectangleGeometry;
 import levels.LevelScroller;
 import levels.LevelManager;
-import pieces.Vehicle;
 
 class GetawayScene extends BaseScene {
 	var player:Player;
