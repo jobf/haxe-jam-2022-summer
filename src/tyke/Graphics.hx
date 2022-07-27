@@ -193,8 +193,10 @@ class Shape implements Element {
 
 class ShapeRenderer implements IHaveGraphicsBuffer {
 	var buffer:Buffer<Shape>;
-	var _program:Program;
+	var shapesInBuffer:Array<Shape>;
 
+	var _program:Program;
+	// var shapeInBuffer
 	public var program(get, null):Program;
 
 	public function get_program():Program {
@@ -203,6 +205,7 @@ class ShapeRenderer implements IHaveGraphicsBuffer {
 
 	public function new(bufferSize:Int = 256) {
 		buffer = new Buffer<Shape>(bufferSize, bufferSize, true);
+		shapesInBuffer = [];
 		_program = new Program(buffer);
 		_program.setFragmentFloatPrecision("high");
 		_program.discardAtAlpha(null);
@@ -224,13 +227,22 @@ class ShapeRenderer implements IHaveGraphicsBuffer {
 		}
 
 		var shape = new Shape(Std.int(x), Std.int(y), width, height, shapeType, numSides, color);
+
 		buffer.addElement(shape);
+		shapesInBuffer.push(shape);
+		
 		return shape;
 	}
 
 	public function updateGraphicsBuffers() {
 		// trace('shape renderer update');
 		buffer.update();
+	}
+
+	public function setVisibility(isVisible:Bool) {
+		for(shape in shapesInBuffer){
+			shape.visible = isVisible;
+		}
 	}
 }
 
