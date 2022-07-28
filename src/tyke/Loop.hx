@@ -1,5 +1,6 @@
 package tyke;
 
+import tyke.jam.SoundManager;
 import echo.Echo;
 import echo.World;
 import tyke.Layers;
@@ -112,20 +113,24 @@ class GlyphLoop extends PeoteViewLoop {
 class PhysicalStageLoop extends PeoteViewLoop {
 	public var stage(default, null):Stage;
 	public var world(default, null):World;
+	public var soundManager(default, null):SoundManager;
+
 	var onInitComplete:Void->Void;
+
 	public var assets(default, null):Assets;
 	public var keyboard(default, null):KeyPresses<PhysicalStageLoop>;
 	public var width(default, null):Int;
 	public var height(default, null):Int;
+
 	var widthOverride(default, null):Null<Int>;
 	var heightOverride(default, null):Null<Int>;
 
 	public function new(assets:Assets, onInitComplete:Void->Void, ?width:Int, ?height:Int) {
 		super();
-		if(width != null){
+		if (width != null) {
 			widthOverride = width;
 		}
-		if(height != null){
+		if (height != null) {
 			heightOverride = height;
 		}
 		this.assets = assets;
@@ -158,6 +163,11 @@ class PhysicalStageLoop extends PeoteViewLoop {
 
 	var alwaysDraw:Bool = false;
 
+	override function onPreloadComplete() {
+		super.onPreloadComplete();
+		this.soundManager = new SoundManager();
+	}
+
 	override public function onTick(tick:Int) {
 		var requestDrawUpdate = false;
 
@@ -167,6 +177,9 @@ class PhysicalStageLoop extends PeoteViewLoop {
 	override public function onUpdate(deltaMs:Int) {
 		// trace('world step $deltaMs');
 		world.step(deltaMs / 1000);
+		if(this.soundManager != null){
+			this.soundManager.update(deltaMs / 1000);
+		}
 	}
 
 	override public function onDraw(deltaMs:Int) {
