@@ -136,11 +136,6 @@ class GetawayScene extends BaseScene {
 
 		// need to enable controller before it will respond 
 		controller.enable();
-
-		#if !debug
-		// hide all shapes (when no debugging)
-		debugShapes.setVisibility(false);
-		#end
 	}
 
 	override function update(elapsedSeconds:Float) {

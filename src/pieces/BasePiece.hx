@@ -53,6 +53,10 @@ class BasePiece  {
         var y = Std.int(options.bodyOptions.y);
         sprite = core.tiles.makeSprite(x, y, options.spriteTileSize, options.spriteTileId);
         debug = core.shapes.makeShape(x, y, Std.int(options.bodyOptions.shape.width), Std.int(options.bodyOptions.shape.height), options.shape, options.debugColor);
+        #if !debug
+        // don't need to show debug shapes unless we're debugging
+        debug.visible = false;
+        #end
 
         // init body for arcade physics
         body = new Body(options.bodyOptions);
