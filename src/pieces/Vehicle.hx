@@ -136,11 +136,11 @@ class Vehicle extends BasePiece {
 
 	override public function update(elapsedSeconds:Float) {
 		super.update(elapsedSeconds);
-		
+
 		if (isExpired) {
 			return;
 		}
-		
+
 		damagedCountDown.update(elapsedSeconds);
 
 		if (isOnGround) {
@@ -190,11 +190,14 @@ class Vehicle extends BasePiece {
 			case VEHICLE:
 				crash();
 			case ROCK:
-				// ensure expiry is triggered
+				// ensure expiry is triggered (remove all health)
 				vehicleOptions.crashesRemaining = 0;
 				crash();
 			case SLICK:
 				slip();
+			case INFLATABLE:
+				// pass 0 into crash() so that it does affect crashesRemaining
+				crash(0);
 			case _:
 				return;
 		}
@@ -241,15 +244,17 @@ class Vehicle extends BasePiece {
 		}
 	}
 
-	function crash() {
-		if(!canBeDamaged){
+	function crash(damage:Int = 1) {
+		if (!canBeDamaged) {
 			return;
 		}
 
 		if (!isCrashed) {
 			isCrashed = true;
-			stop();
-			vehicleOptions.crashesRemaining--;
+			if (damage > 0) {
+				stop();
+			}
+			vehicleOptions.crashesRemaining -= damage;
 			this.sprite.shake(core.peoteView.time);
 			disableDamage();
 		}
@@ -295,8 +300,8 @@ class Vehicle extends BasePiece {
 		canBeDamaged = true;
 		sprite.setFlashing(false);
 	}
-	
-	inline function disableDamage(){
+
+	inline function disableDamage() {
 		// vehicle can NOT be damaged
 		canBeDamaged = false;
 		// flash to show it's not able to be damaged for a time

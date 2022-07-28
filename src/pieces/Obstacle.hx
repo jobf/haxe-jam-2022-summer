@@ -20,7 +20,8 @@ class Obstacle extends BasePiece{
             }
             else if(this.body.collider.type == INFLATABLE){
                 this.body.kinematic = false;
-                this.body.velocity.set(body.velocity.x, 45);
+                this.body.rotational_velocity = 500;
+                this.body.velocity.set(body.velocity.x * 2, -145);
             }
         }
     }

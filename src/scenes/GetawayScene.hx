@@ -113,7 +113,7 @@ class GetawayScene extends BaseScene {
 		sceneManager.world.listen(player.body, level.endTriggerZones, {
 			enter: (body1, body2, collisionData) -> {
 				// trace("end");
-				var message = "Did not lose them all!";
+				var message = "Did not lose them all :(";
 				if (level.isWon()) {
 					message = "\\o/ lost them all!!!";
 				}
