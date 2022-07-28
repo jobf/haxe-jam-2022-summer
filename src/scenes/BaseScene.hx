@@ -1,5 +1,6 @@
 package scenes;
 
+import Main.Scenes;
 import tyke.jam.EchoUi;
 import pieces.BasePiece.PieceCore;
 import tyke.Loop.Text;
@@ -24,6 +25,7 @@ class BaseScene extends Scene {
 	var iconSprites:SpriteRenderer;
 	var debugShapes:ShapeRenderer;
 	var pieceCore:PieceCore;
+	var musicIsStarted:Bool = false;
 
 	override function create() {
 		initGameGraphics();
@@ -41,6 +43,21 @@ class BaseScene extends Scene {
 		};
 
 		trace('BaseScene initialized');
+	}
+
+	override function update(elapsedSeconds:Float) {
+		super.update(elapsedSeconds);
+		if(!musicIsStarted && sceneManager.isPreloadComplete && !sceneManager.soundManager.isMusicPlaying){
+			// todo - find sounds and complete this section
+			
+			var musicAssetPath = ""; 
+			sceneManager.soundManager.playMusic(musicAssetPath);
+			musicIsStarted = true;
+
+			sceneManager.soundManager.loadSounds([
+				0 => ""
+			]);
+		}
 	}
 
 	inline function initGameGraphics(){

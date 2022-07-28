@@ -13,7 +13,7 @@ import scenes.GetawayScene;
 
 class Main extends App {
 	override function init(window:Window, ?config:GumConfig) {
-    super.init(window, {
+		super.init(window, {
 			framesPerSecond: 30,
 			drawOnlyWhenRequested: false,
 			displayWidth: 640,
@@ -39,26 +39,29 @@ class Scenes extends SceneManager {
 	public function new(assets:Assets) {
 		final levelWidth = 8192;
 		// super(assets, loop -> return new TestScene(this), levelWidth);
-		// super(assets, loop -> return new GetawayScene(this), levelWidth);
 		super(assets, loop -> return new TitleScreen(this), levelWidth);
+		// super(assets, loop -> return new GetawayScene(this), levelWidth);
 		// super(assets, loop -> return new EndScene(this), levelWidth);
 	}
 }
 
 class TestScene extends BaseScene {
-
 	override function create() {
 		super.create();
-
 		var buttonConfigs:Array<ButtonConfig> = [
 			{
-				text: "click",
-				action: entity -> trace('click'),
+				text: "stop music",
+				action: entity -> stopMusic(),
 				color: Color.MAGENTA
 			},
 			{
-				text: "clack",
-				action: entity -> trace('clack'),
+				text: "play existing",
+				action: entity -> playExisting(),
+				color: Color.GREEN
+			},
+			{
+				text: "play null",
+				action: entity -> playNull(),
 				color: Color.CYAN
 			}
 		];
@@ -69,11 +72,29 @@ class TestScene extends BaseScene {
 			height: 360
 		};
 
-		var rowsInGrid = 2;
+		var rowsInGrid = 3;
 		var columnsInGrid = 1;
 		var margin = 10;
 
-		var buttonGrid = new ButtonGrid(clickHandler, uiShapes, text.fontProgram, sceneManager.world, buttonConfigs, containerGeometry, margin, rowsInGrid, columnsInGrid);
+
+
+		var buttonGrid = new ButtonGrid(clickHandler, uiShapes, text.fontProgram, sceneManager.world, buttonConfigs, containerGeometry, margin, rowsInGrid,
+			columnsInGrid);
 	}
 
+	function stopMusic() {
+		sceneManager.soundManager.stopMusic();
+	}
+
+	function playNull() {
+		sceneManager.soundManager.playSound(1);
+	}
+
+	function playExisting() {
+		sceneManager.soundManager.playSound(0);
+	}
+}
+
+@:enum abstract Sound(Int) from Int to Int {
+	var TEST = 0;
 }
