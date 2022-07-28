@@ -26,7 +26,7 @@ class GetawayScene extends BaseScene {
 		controller = new Controller(sceneManager.gum.window);
 		
 		var currentLevel = 0; // for testing only
-		var currentLevel = 1; // start at 1 normally
+		// var currentLevel = 1; // start at 1 normally
 
 		level = new LevelManager(pieceCore, beachTiles, tileSize, sceneManager.world, levelsIds[currentLevel]);
 

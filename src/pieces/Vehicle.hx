@@ -76,7 +76,7 @@ class Vehicle extends BasePiece {
 	public function controlReverse(buttonIsDown:Bool) {
 		// traceButtonState("controlReverse",buttonIsDown);
 
-		if (!isOnGround) {
+		if (!isOnGround || isSlipping) {
 			return;
 		}
 
@@ -91,7 +91,7 @@ class Vehicle extends BasePiece {
 	public function controlUp(buttonIsDown:Bool) {
 		// traceButtonState("controlUp",buttonIsDown);
 
-		if (!isOnGround) {
+		if (!isOnGround || isSlipping) {
 			return;
 		}
 
@@ -109,7 +109,7 @@ class Vehicle extends BasePiece {
 	public function controlDown(buttonIsDown:Bool) {
 		// traceButtonState("controlDown",buttonIsDown);
 
-		if (!isOnGround) {
+		if (!isOnGround || isSlipping) {
 			return;
 		}
 
