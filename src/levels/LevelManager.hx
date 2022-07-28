@@ -1,5 +1,6 @@
 package levels;
 
+import echo.data.Types.ShapeType;
 import pieces.BasePiece.PieceCore;
 import peote.view.Color;
 import pieces.Configuration;
@@ -96,6 +97,8 @@ class LevelManager {
 						collisionType: config.collisionMode,
 						bodyOptions: {
 							shape: {
+								type: config.shape == CIRCLE ? ShapeType.CIRCLE : ShapeType.RECT,
+								radius: geometry.width * 0.5,
 								width: geometry.width,
 								height: geometry.height,
 								solid: false
