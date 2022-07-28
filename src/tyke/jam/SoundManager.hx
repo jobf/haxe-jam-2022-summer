@@ -9,6 +9,7 @@ import lime.media.AudioSource;
 class SoundManager {
 	var musicFadeOutCountDown:CountDown;
 	var music:AudioSource;
+	var sounds:Map<Int, AudioSource>;
 	var isStoppingMusic:Bool = false;
 	var loadingMusic:Future<AudioBuffer>;
 
@@ -16,11 +17,12 @@ class SoundManager {
 
 	public function new() {
 		musicFadeOutCountDown = new CountDown(0.2, () -> reduceMusicGain(), true);
+		sounds = [];
 		trace('initialized SoundManager');
 	}
 
 	/**
-		can only be called after preload complete
+		can only be called after lime preload complete
 	**/
 	public function playMusic(assetPath:String) {
 		trace('called playMusic()');
@@ -39,6 +41,36 @@ class SoundManager {
 		loadingMusic.onProgress((i1, i2) -> {
 			trace('loading music progress $i1 $i2');
 		});
+	}
+
+	/**
+		can only be called after lime preload complete
+	**/
+	public function loadSounds(soundPaths:Map<Int, String>){
+		for(key in soundPaths.keys()){
+			var soundPath = soundPaths[key];
+			var loadingSound = Assets.loadAudioBuffer(soundPath);
+			loadingSound.onComplete(buffer -> {
+				var offset = 0;
+				var length = null;
+				var loops = 1;
+				sounds[key] = new AudioSource(buffer, offset, length, loops);
+				trace('init sound $soundPath');
+			});
+			loadingSound.onError(d -> {
+				trace('error');
+				trace(d);
+			});
+			loadingSound.onProgress((i1, i2) -> {
+				trace('loading sound progress $i1 $i2');
+			});
+		}
+	}
+
+	public function playSound(key:Int){
+		if(sounds.exists(key)){
+			sounds[key].play();
+		}
 	}
 
 	public function stopMusic() {
