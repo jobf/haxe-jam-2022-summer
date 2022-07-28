@@ -363,6 +363,10 @@ class Sprite implements Element {
 	@posX @set("Position") @formula("x + shake(shakeAtTime, shakeFrequencyX, shakeDistanceX, shakeDurationX)") public var x:Float;
 	@posY @set("Position") @formula("y + shake(shakeAtTime, shakeFrequencyY, shakeDistanceY, shakeDurationY)") public var y:Float;
 
+	// params for blinking alpha
+	@custom("alpha") @varying @constEnd(1.0) @anim("A", "pingpong") public var alpha:Float;
+	// @custom("alpha") @varying @constStart(0.0) @constEnd(1.0) @anim("A", "pingpong") public var alpha:Float;
+
 	var OPTIONS = {alpha: true};
 
 	public static var InjectVertex = "
@@ -393,6 +397,16 @@ class Sprite implements Element {
 	public function shake(atTime:Float) {
 		shakeAtTime = atTime;
 		// buffer.updateElement(this);
+	}
+
+	public function setFlashing(isFlashing:Bool){
+		// todo - adhere to previously set alpha
+		if(isFlashing){
+			alphaStart = 0.0;
+		}
+		else{
+			alphaStart = 1.0;
+		}
 	}
 
 	public var isFlippedX(default, null):Bool;
@@ -459,10 +473,14 @@ class SpriteRenderer implements IHaveGraphicsBuffer {
 		_program.injectIntoVertexShader(Sprite.InjectVertex, true);
 		_program.injectIntoFragmentShader(Sprite.InjectFragment, false);
 		_program.addTexture(spriteSheet, "base");
+		_program.setColorFormula( 'vec4(base.r, base.g, base.b, base.a * alpha)' );
 	}
 
 	public function makeSprite(x:Int, y:Int, spriteSize:Int, tileIndex:Int, framesIndex:Int = 0, isVisible:Bool = true):Sprite {
 		var sprite = new Sprite(x, y, spriteSize, spriteSize, tileIndex, isVisible);
+		sprite.alphaStart = 1.0;
+		sprite.timeAStart = 0.5;
+		sprite.timeADuration = 0.25; 
 		buffer.addElement(sprite);
 		return sprite;
 	}
