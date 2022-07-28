@@ -1,11 +1,11 @@
 package scenes;
 
+import levels.EnemyManager;
 import input.Controller;
 import pieces.Player;
 import ui.HUD;
 import peote.view.Color;
 import tyke.jam.Scene;
-import input.ComputerControl;
 import tyke.Graphics.RectangleGeometry;
 import levels.LevelScroller;
 import levels.LevelManager;
@@ -87,7 +87,7 @@ class GetawayScene extends BaseScene {
 			}
 		});
 
-		enemyManager = new EnemyManager(sceneManager.world, pieceCore, player, level.minY, level.maxY);
+		enemyManager = new EnemyManager(sceneManager.world, pieceCore, player, level);
 
 		// register player and enemy vehicle collisions
 		sceneManager.world.listen(player.body, enemyManager.enemyBodies, {

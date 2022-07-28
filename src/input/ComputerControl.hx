@@ -38,18 +38,20 @@ class ComputerControl {
 	}
 
 	public function update(elapsedSeconds:Float) {
-		switch mode {
-			case ENTERING:
-				handleEnteringPhase(elapsedSeconds);
-			case IDLE:
-				handleIdlePhase(elapsedSeconds);
-			case ATTACKING:
-				handleAttackingPhase(elapsedSeconds);
-			case WAITING:
-				handleWaitingPhase(elapsedSeconds);
-		}
+		if (vehicle.isAlive) {
+			switch mode {
+				case ENTERING:
+					handleEnteringPhase(elapsedSeconds);
+				case IDLE:
+					handleIdlePhase(elapsedSeconds);
+				case ATTACKING:
+					handleAttackingPhase(elapsedSeconds);
+				case WAITING:
+					handleWaitingPhase(elapsedSeconds);
+			}
 
-		vehicle.update(elapsedSeconds);
+			vehicle.update(elapsedSeconds);
+		}
 	}
 
 	function handleEnteringPhase(elapsedSeconds:Float) {
@@ -199,92 +201,5 @@ class ComputerControl {
 
 	function handleWaitingPhase(elapsedSeconds:Float) {
 		waitingCountDown.update(elapsedSeconds);
-	}
-}
-
-class EnemyManager {
-	public var enemyBodies(default, null):Array<Body>;
-
-	var computerControls:Array<ComputerControl>;
-	var world:World;
-	var sprites:SpriteRenderer;
-	var peoteView:PeoteView;
-	var player:Vehicle;
-
-	var isColliding:Bool = false;
-	var minY:Int;
-	var maxY:Int;
-	var pieceCore:PieceCore;
-
-	public function new(world:World, pieceCore:PieceCore, player:Vehicle, minY:Int, maxY:Int) {
-		computerControls = [];
-		enemyBodies = [];
-		this.world = world;
-		this.pieceCore = pieceCore;
-		this.player = player;
-		this.minY = minY;
-		this.maxY = maxY;
-	}
-
-	public function spawnCar(x:Int, y:Int, initialVelocityX:Float) {
-		var geometry:RectangleGeometry = {
-			y: y,
-			x: x,
-			width: 32,
-			height: 16
-		};
-
-		final tileSize = 96;
-		final tileIndex = 1;
-
-		final defaultMaxVelocityX = 400;
-		final verticalVelocity:Float = 120;
-		final jumpVelocity = -90;
-		// var sprite = sprites.makeSprite(hitbox.x, hitbox.y, tileSize, tileIndex);
-		// var enemy = new Vehicle(hitbox, world, peoteView, sprite, minY, maxY, vehicle -> vehicle.destroy());
-		var enemy = new Vehicle(pieceCore, 
-		{
-			spriteTileSize: tileSize,
-			spriteTileId: tileIndex,
-			shape: RECT,
-			debugColor: Color.CYAN,
-			collisionType: VEHICLE,
-			bodyOptions: {
-				shape: {
-					width: geometry.width,
-					height: geometry.height,
-				},
-				kinematic: false,
-				mass: 1,
-				x: geometry.x,
-				y: geometry.y,
-				material: {
-					gravity_scale: 0,
-				},
-				velocity_x: initialVelocityX, // start moving
-				max_velocity_x: initialVelocityX
-			}
-		},
-		{
-			verticalVelocity: verticalVelocity,
-			onExpire: vehicle -> vehicle.destroy(),
-			minY: minY,
-			maxY: maxY,
-			jumpVelocity: jumpVelocity,
-			defaultMaxVelocityX: defaultMaxVelocityX,
-			crashesRemaining: 0 // enemy only have 1 hit point (maybe later enemies have more)
-		});
-
-		var computerControl = new ComputerControl(enemy, player);
-		computerControls.push(computerControl);
-
-		// enemies array used for collisions listener
-		enemyBodies.push(enemy.body);
-	}
-
-	public function update(elapsedSeconds:Float) {
-		for (controller in computerControls) {
-			controller.update(elapsedSeconds);
-		}
 	}
 }

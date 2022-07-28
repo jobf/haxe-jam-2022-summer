@@ -26,17 +26,20 @@ class Player extends Vehicle {
 
 		// update HUD progress on level
 		hud.updateEndText(body.x, level.finishLineX);
-	}
-
-	override function collideWith(body:Body) {
-		super.collideWith(body);
 
 		// update HUD number of remaining enemies
-		if (body.collider.type == VEHICLE) {
-			level.registerLostOneEnemy();
-			hud.updateEnemiesText(level.totalEnemiesRemaining);
-		}
+		hud.updateEnemiesText(level.totalEnemiesRemaining);
 	}
+
+	// override function collideWith(body:Body) {
+	// 	super.collideWith(body);
+
+	// 	// update HUD number of remaining enemies
+	// 	if (body.collider.type == VEHICLE) {
+	// 		level.registerLostOneEnemy();
+	// 		hud.updateEnemiesText(level.totalEnemiesRemaining);
+	// 	}
+	// }
 
 	override function crash(damage:Int = 1) {
 		super.crash(damage);

@@ -17,7 +17,8 @@ class VehicleOptions {
 
 class Vehicle extends BasePiece {
 	public var isControllingVertical(default, null):Bool;
-
+	public var isAlive(default, null):Bool;
+	
 	var vehicleOptions:VehicleOptions;
 	var groundY:Null<Float>;
 	var forwards:Accelerator;
@@ -36,6 +37,7 @@ class Vehicle extends BasePiece {
 	public function new(core:PieceCore, options:PieceOptions, vehicleOptions:VehicleOptions) {
 		super(core, options);
 		this.vehicleOptions = vehicleOptions;
+		isAlive = true;
 		initVehicle();
 	}
 
@@ -270,6 +272,7 @@ class Vehicle extends BasePiece {
 
 	public function destroy() {
 		this.body.remove();
+		this.isAlive = false;
 		this.sprite.visible = false;
 		this.debug.visible = false;
 	}
@@ -309,6 +312,7 @@ class Vehicle extends BasePiece {
 		// reset damagedCountDown - will enableIsDamaged again at the end
 		damagedCountDown.reset();
 	}
+
 }
 
 class Accelerator {
