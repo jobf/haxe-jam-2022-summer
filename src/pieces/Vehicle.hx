@@ -98,24 +98,26 @@ class Vehicle extends BasePiece {
 		if (buttonIsDown) {
 			isControllingVertical = true;
 			body.velocity.y = -vehicleOptions.verticalVelocity;
+			body.rotation = -15; // to make the vehicle look like it's steering
 		} else {
 			stopVerticalMovement();
 		}
-
+		
 		// keep track of y position while grounded (used to know position to land)
 		groundY = body.y;
 	}
-
+	
 	public function controlDown(buttonIsDown:Bool) {
 		// traceButtonState("controlDown",buttonIsDown);
-
+		
 		if (!isOnGround || isSlipping) {
 			return;
 		}
-
+		
 		if (buttonIsDown) {
 			isControllingVertical = true;
 			body.velocity.y = vehicleOptions.verticalVelocity;
+			body.rotation = 15;// to make the vehicle look like it's steering
 		} else {
 			stopVerticalMovement();
 		}
@@ -127,9 +129,11 @@ class Vehicle extends BasePiece {
 	inline function stopVerticalMovement() {
 		isControllingVertical = false;
 		body.velocity.y = 0;
+		body.rotation = 0; // reset angle to have car continue going straight
 
 		// keep track of y position while grounded (used to know position to land)
 		groundY = body.y;
+
 	}
 
 	public function controlAction(buttonIsDown:Bool) {
