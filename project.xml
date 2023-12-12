@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 	
-	<meta title="tyke" package="tyke" version="0.0.1" company="ob" />
+	<meta title="buggy" package="prototype" version="0.0.1" company="haxejam22" />
 	
 	<!-- <template path="templates" /> -->
 	<!-- <template path="templates/html5/template/index.html" rename="index.html" /> -->
 	<android target-sdk-version="28" />
 	<!-- <meta build-number="1" /> --> <!-- let set the buildnumber manual (android) -->
 	
-	<app main="Main" path="bin" file="monocave" />
+	<app main="Main" path="bin" file="buggy" />
 	<!--<define name="stats" if="html5" />-->
 	
 	<window fps="60" width="640" height="360" vsync="true" resizable="true" hardware="true" allow-shaders="true" require-shaders="true" depth-buffer="true" stencil-buffer="false" />
@@ -25,6 +25,7 @@
 	
 	<haxelib name="tyke" />
 	
+	<haxedef name="no_deprecation_warnings" />
 	<haxedef name="peotetext_debug_macro" />
 	
 	<!-- force compiling for a special opengl-es version (only set one of them) -->

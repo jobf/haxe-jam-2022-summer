@@ -55,16 +55,16 @@ class HUD {
 	public function updateEndText(playerX:Float, finishLineX:Int) {
 		var percentComplete = Std.int((playerX / finishLineX) * 100);
 		fontProgram.lineSetChars(endText, formatNumber(percentComplete));
-		fontProgram.updateLine(endText);
+		fontProgram.lineUpdate(endText);
 	}
 
 	public function updateHealthText(remainingCrashes:Int) {
         fontProgram.lineSetChars(healthText, formatNumber(remainingCrashes));
-		fontProgram.updateLine(healthText);
+		fontProgram.lineUpdate(healthText);
     }
 
 	public function updateEnemiesText(totalEnemiesRemaining:Int) {
         fontProgram.lineSetChars(enemiesText, formatNumber(totalEnemiesRemaining));
-		fontProgram.updateLine(enemiesText);
+		fontProgram.lineUpdate(enemiesText);
     }
 }
